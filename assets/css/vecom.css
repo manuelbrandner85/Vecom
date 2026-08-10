@@ -215,6 +215,10 @@ body.is-locked{overflow:hidden}
 .hero__bild,.hero__film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transform:scale(1.06);animation:atmen 26s ease-in-out infinite alternate}
 .hero__film{opacity:0;transition:opacity 1.2s var(--ease)}
+/* Läuft echtes Material, hört die künstliche Fahrt auf — sonst überlagern
+   sich zwei Bewegungen und man sieht keinen Unterschied zum Standbild. */
+.hero__film.laeuft{animation:none;transform:scale(1.02)}
+.hero--film.film-laeuft .hero__bild{animation-play-state:paused;opacity:0;transition:opacity 1.2s var(--ease)}
 .hero__film.laeuft{opacity:1}
 @keyframes atmen{from{transform:scale(1.055) translate3d(0,0,0)}to{transform:scale(1.115) translate3d(-1.2%,-1%,0)}}
 .hero__schleier{position:absolute;inset:0;
@@ -259,6 +263,15 @@ body.is-locked{overflow:hidden}
 .btn--hell{border-color:rgba(246,238,219,.5);color:#F6EEDB;background:rgba(246,238,219,.06);
   backdrop-filter:blur(6px)}
 .btn--hell:hover{background:rgba(246,238,219,.16);border-color:rgba(246,238,219,.8)}
+
+.filmstart{position:absolute;z-index:3;left:50%;bottom:5.4rem;transform:translateX(-50%);
+  display:none;align-items:center;gap:.55rem;padding:.6rem 1.1rem;border-radius:100px;
+  border:1px solid rgba(246,238,219,.45);background:rgba(12,16,2,.55);backdrop-filter:blur(8px);
+  color:#F6EEDB;font-family:var(--ui);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer}
+.filmstart svg{width:14px;height:14px;fill:currentColor}
+.hero--film.film-blockiert .filmstart{display:flex}
+.filmstart:hover{background:rgba(12,16,2,.75);border-color:var(--citron);color:var(--citron)}
 
 .hero__cue{position:absolute;z-index:1;left:50%;bottom:1.6rem;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:.6rem;text-decoration:none;

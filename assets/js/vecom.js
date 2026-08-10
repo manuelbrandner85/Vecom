@@ -1175,9 +1175,19 @@ document.addEventListener("keydown", e => {
       s.src = q.datei; s.type = q.typ;
       film.appendChild(s);
     });
-    film.addEventListener("playing", () => film.classList.add("laeuft"), {once:true});
+    film.addEventListener("playing", () => {
+      film.classList.add("laeuft");
+      buehne.classList.add("film-laeuft");
+      buehne.classList.remove("film-blockiert");
+    }, {once:true});
     film.load();
-    const start = () => film.play().catch(() => {});
+    /* Manche Browser verweigern die Wiedergabe trotz stumm — etwa Safari im
+       Energiesparmodus. Dann bekommt der Besucher einen Knopf statt gar nichts. */
+    const start = () => film.play().catch(() => buehne.classList.add("film-blockiert"));
+    const knopf = buehne.querySelector("[data-filmstart]");
+    if(knopf) knopf.addEventListener("click", () => {
+      film.play().then(() => buehne.classList.remove("film-blockiert")).catch(()=>{});
+    });
     if(bild && !bild.complete) bild.addEventListener("load", start, {once:true}); else start();
     /* Außerhalb des Sichtfelds anhalten — ein Film, den niemand sieht, kostet nur Akku */
     new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? film.play().catch(()=>{}) : film.pause()),
