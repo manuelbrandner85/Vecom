@@ -110,7 +110,7 @@ const P = [
    ============================================================ */
 const SEITEN = {"olio-noc": "produkt-natives-olivenoel-extra-nocellara.html", "olio-bia": "produkt-natives-olivenoel-extra-biancolilla.html", "aceto": "produkt-weinessig-aus-nero-davola.html", "marm-lim": "produkt-zitronenmarmelade-femminello.html", "marm-ora": "produkt-blutorangen-konfituere-tarocco.html", "pistacchio": "produkt-pistaziencreme-aus-bronte.html", "miele": "produkt-zagara-honig-orangenbluete.html", "mandorle": "produkt-mandeln-aus-avola-naturbelassen.html", "olive-verdi": "produkt-gruene-oliven-nocellara-del-belice.html", "capperi": "produkt-kapern-aus-pantelleria-in-meersalz.html", "pomodori": "produkt-getrocknete-tomaten-in-olivenoel.html", "pesto": "produkt-pesto-siciliano-mit-pistazie.html", "sale": "produkt-meersalz-aus-den-salinen-von-trapani.html", "origano": "produkt-oregano-vom-aetna-hang.html", "box": "produkt-geschenkkiste-piccola-sicilia.html"};  /* eigene Seite je Erzeugnis, sofern vorhanden */
 const IMG  = {"olio-noc": "assets/img/produkte/olio-noc", "olio-bia": "assets/img/produkte/olio-bia", "aceto": "assets/img/produkte/aceto", "marm-lim": "assets/img/produkte/marm-lim", "marm-ora": "assets/img/produkte/marm-ora", "pistacchio": "assets/img/produkte/pistacchio", "miele": "assets/img/produkte/miele", "mandorle": "assets/img/produkte/mandorle", "olive-verdi": "assets/img/produkte/olive-verdi", "capperi": "assets/img/produkte/capperi", "pomodori": "assets/img/produkte/pomodori", "pesto": "assets/img/produkte/pesto", "sale": "assets/img/produkte/sale", "origano": "assets/img/produkte/origano", "box": "assets/img/produkte/box"};
-const REISE = {"pantelleria": {"pfad": "assets/img/reise/pantelleria", "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBACdASoYAA4APwFqrU8rJaQiMAgBYCAJYwDFEUB1f4DaBATDERYvOAD+tf43CrA16apKw5vrEg+I8FPe+4TSQhcJQFfAjCdxX/Jr6+SA7zTQ9/GLfPrSVmCXYg1D5KKI0BtGDjk45W10mTWcU8cAAAA="}, "salinen": {"pfad": "assets/img/reise/salinen", "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAADwAwCdASoYAA4APwFsrk+rJiQiMAgBYCAJbACdMoACKo/Y1gDxBMvAAP6DLVoleko8ZEczIevvdgBXsv+0uoAtvyc2tLh5Fm/iub1Bk1DEBfqf6PeFdIWNO3JFYH6dpNEKgGHMO8JsNkNR3NLSJ81wh6XdVnxn0BOwyQCt7iWkdkomijQSBgAA"}, "aetna": {"pfad": "assets/img/reise/aetna", "lqip": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAwCdASoYAA4APwFsrk8rJaQiMAgBYCAJQBOgA8NhYUaMvjHL13ZgAP6DxMG7/WQMpE+ytCEIOEsa+RObDyHGVSoeds5DpWSOPpeb9brwGSD4RbtUcoLjX7CvSja+oAA="}, "hain": {"pfad": "assets/img/reise/hain", "lqip": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAAAQBACdASoYAA4APwFqrU8rJiQiMAgBYCAJZACdMoABnYYwN9PFX+FggAD+0avCLzzzZYv5Si7yeEOtkSKvpz0BO4VYTUQdG+X8/+bcPHLGTz/7IIpGFvj+nuZ9K3K6NUX8fV3KORNycF1mFkgRVLI7yGA985YR0ecvX0fXdJaXZUEHEyvj7kFI/qAAAA=="}, "muehle": {"pfad": "assets/img/reise/muehle", "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAwBACdASoYAA4APwFsrU8rJiQiMAgBYCAJYgCdABb4imf584UKjoVH2AAA/ulGRdjO2/ctQ7bNFxO7pR6aknG4Kc/LM395giwj99DXfpG54Yn4nS6Rvb82osrt+PRCRl2illmyBS9OfG6NWuLr+GQraQTtLKMIqynb8cCnSxFTEjL4ZgqlNjQA"}, "versand": {"pfad": "assets/img/reise/versand", "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBACdASoYAA4APwFsrU8rJiQiMAgBYCAJZgCdACH6r6D2tXi/jLXoAAD+415lS8/F5uE1UlG8sRPq6MeVjm1TOnhUjhoiKXRQcCaIGh0Mk5Lxfg4Y8cP/QMxjmSYMobHM/dnmJsjiSPska6VC6qYMIwC00g9c3Pg6LbvRMs24AAAA"}};   /* Kapitelbilder, auch von der großen Navigation genutzt */
+const REISE = {"pantelleria": {"pfad": "assets/img/reise/pantelleria", "lqip": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBACdASoYAA4APwFqrU8rJaQiMAgBYCAJYwDFEUB1f4DaBATDERYvOAD+tf43CrA16apKw5vrEg+I8FPe+4TSQhcJQFfAjCdxX/Jr6+SA7zTQ9/GLfPrSVmCXYg1D5KKI0BtGDjk45W10mTWcU8cAAAA=", "tiefe": "assets/img/tiefe/pantelleria.webp"}, "salinen": {"pfad": "assets/img/reise/salinen", "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAADwAwCdASoYAA4APwFsrk+rJiQiMAgBYCAJbACdMoACKo/Y1gDxBMvAAP6DLVoleko8ZEczIevvdgBXsv+0uoAtvyc2tLh5Fm/iub1Bk1DEBfqf6PeFdIWNO3JFYH6dpNEKgGHMO8JsNkNR3NLSJ81wh6XdVnxn0BOwyQCt7iWkdkomijQSBgAA", "tiefe": "assets/img/tiefe/salinen.webp"}, "aetna": {"pfad": "assets/img/reise/aetna", "lqip": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAwCdASoYAA4APwFsrk8rJaQiMAgBYCAJQBOgA8NhYUaMvjHL13ZgAP6DxMG7/WQMpE+ytCEIOEsa+RObDyHGVSoeds5DpWSOPpeb9brwGSD4RbtUcoLjX7CvSja+oAA=", "tiefe": "assets/img/tiefe/aetna.webp"}, "hain": {"pfad": "assets/img/reise/hain", "lqip": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAAAQBACdASoYAA4APwFqrU8rJiQiMAgBYCAJZACdMoABnYYwN9PFX+FggAD+0avCLzzzZYv5Si7yeEOtkSKvpz0BO4VYTUQdG+X8/+bcPHLGTz/7IIpGFvj+nuZ9K3K6NUX8fV3KORNycF1mFkgRVLI7yGA985YR0ecvX0fXdJaXZUEHEyvj7kFI/qAAAA==", "tiefe": "assets/img/tiefe/hain.webp"}, "muehle": {"pfad": "assets/img/reise/muehle", "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAwBACdASoYAA4APwFsrU8rJiQiMAgBYCAJYgCdABb4imf584UKjoVH2AAA/ulGRdjO2/ctQ7bNFxO7pR6aknG4Kc/LM395giwj99DXfpG54Yn4nS6Rvb82osrt+PRCRl2illmyBS9OfG6NWuLr+GQraQTtLKMIqynb8cCnSxFTEjL4ZgqlNjQA", "tiefe": "assets/img/tiefe/muehle.webp"}, "versand": {"pfad": "assets/img/reise/versand", "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBACdASoYAA4APwFsrU8rJiQiMAgBYCAJZgCdACH6r6D2tXi/jLXoAAD+415lS8/F5uE1UlG8sRPq6MeVjm1TOnhUjhoiKXRQcCaIGh0Mk5Lxfg4Y8cP/QMxjmSYMobHM/dnmJsjiSPska6VC6qYMIwC00g9c3Pg6LbvRMs24AAAA", "tiefe": "assets/img/tiefe/versand.webp"}};   /* Kapitelbilder, auch von der großen Navigation genutzt */
 const SUCHE = [{"t": "Natives Olivenöl Extra – Nocellara", "s": "Valle del Belice", "a": "ware", "id": "olio-noc", "u": "produkt-natives-olivenoel-extra-nocellara.html", "b": "assets/img/produkte/olio-noc-680.webp"}, {"t": "Natives Olivenöl Extra – Biancolilla", "s": "Agrigento", "a": "ware", "id": "olio-bia", "u": "produkt-natives-olivenoel-extra-biancolilla.html", "b": "assets/img/produkte/olio-bia-680.webp"}, {"t": "Weinessig aus Nero d’Avola", "s": "Val di Noto", "a": "ware", "id": "aceto", "u": "produkt-weinessig-aus-nero-davola.html", "b": "assets/img/produkte/aceto-680.webp"}, {"t": "Zitronenmarmelade Femminello", "s": "Syrakus", "a": "ware", "id": "marm-lim", "u": "produkt-zitronenmarmelade-femminello.html", "b": "assets/img/produkte/marm-lim-680.webp"}, {"t": "Blutorangen-Konfitüre Tarocco", "s": "Ebene von Catania", "a": "ware", "id": "marm-ora", "u": "produkt-blutorangen-konfituere-tarocco.html", "b": "assets/img/produkte/marm-ora-680.webp"}, {"t": "Pistaziencreme aus Bronte", "s": "Bronte, Ätna-Westhang", "a": "ware", "id": "pistacchio", "u": "produkt-pistaziencreme-aus-bronte.html", "b": "assets/img/produkte/pistacchio-680.webp"}, {"t": "Zagara-Honig, Orangenblüte", "s": "Ribera", "a": "ware", "id": "miele", "u": "produkt-zagara-honig-orangenbluete.html", "b": "assets/img/produkte/miele-680.webp"}, {"t": "Mandeln aus Avola, naturbelassen", "s": "Avola", "a": "ware", "id": "mandorle", "u": "produkt-mandeln-aus-avola-naturbelassen.html", "b": "assets/img/produkte/mandorle-680.webp"}, {"t": "Grüne Oliven Nocellara del Belice", "s": "Castelvetrano", "a": "ware", "id": "olive-verdi", "u": "produkt-gruene-oliven-nocellara-del-belice.html", "b": "assets/img/produkte/olive-verdi-680.webp"}, {"t": "Kapern aus Pantelleria in Meersalz", "s": "Pantelleria", "a": "ware", "id": "capperi", "u": "produkt-kapern-aus-pantelleria-in-meersalz.html", "b": "assets/img/produkte/capperi-680.webp"}, {"t": "Getrocknete Tomaten in Olivenöl", "s": "Pachino", "a": "ware", "id": "pomodori", "u": "produkt-getrocknete-tomaten-in-olivenoel.html", "b": "assets/img/produkte/pomodori-680.webp"}, {"t": "Pesto Siciliano mit Pistazie", "s": "Bronte / Catania", "a": "ware", "id": "pesto", "u": "produkt-pesto-siciliano-mit-pistazie.html", "b": "assets/img/produkte/pesto-680.webp"}, {"t": "Meersalz aus den Salinen von Trapani", "s": "Trapani", "a": "ware", "id": "sale", "u": "produkt-meersalz-aus-den-salinen-von-trapani.html", "b": "assets/img/produkte/sale-680.webp"}, {"t": "Oregano vom Ätna-Hang", "s": "Zafferana Etnea", "a": "ware", "id": "origano", "u": "produkt-oregano-vom-aetna-hang.html", "b": "assets/img/produkte/origano-680.webp"}, {"t": "Geschenkkiste „Piccola Sicilia“", "s": "Fünf Erzeugnisse", "a": "ware", "id": "box", "u": "produkt-geschenkkiste-piccola-sicilia.html", "b": "assets/img/produkte/box-680.webp"}, {"t": "Caponata", "s": "Das süßsaure Auberginengemüse, an dem sich jede sizilianische Küche messen lässt.", "a": "rezept", "u": "rezept-caponata.html", "b": "assets/img/produkte/aceto-b-680.webp"}, {"t": "Bruschetta mit getrockneten Tomaten", "s": "Fünf Minuten Arbeit, und trotzdem der Teller, nach dem alle greifen.", "a": "rezept", "u": "rezept-bruschetta-mit-getrockneten-tomaten.html", "b": "assets/img/produkte/pomodori-c-680.webp"}, {"t": "Pasta mit Pistazienpesto", "s": "Bronte auf dem Teller. Zehn Minuten, solange die Nudeln kochen.", "a": "rezept", "u": "rezept-pasta-mit-pistazienpesto.html", "b": "assets/img/produkte/pesto-b-680.webp"}, {"t": "Spaghetti mit Kapern und Tomaten", "s": "Vorratsküche im besten Sinn: alles kommt aus dem Schrank, nichts schmeckt danach.", "a": "rezept", "u": "rezept-spaghetti-mit-kapern-und-tomaten.html", "b": "assets/img/produkte/capperi-c-680.webp"}, {"t": "Tomatensalat mit Oregano", "s": "Vier Zutaten. Deshalb entscheidet jede einzelne.", "a": "rezept", "u": "rezept-tomatensalat-mit-oregano.html", "b": "assets/img/produkte/origano-c-680.webp"}, {"t": "Süßsaure Zwiebeln", "s": "Die Beilage, die kaltes Fleisch, Käse und geröstetes Brot rettet.", "a": "rezept", "u": "rezept-suesssaure-zwiebeln.html", "b": "assets/img/produkte/aceto-c-680.webp"}, {"t": "Brioche mit Pistaziencreme", "s": "Das sizilianische Frühstück. Mehr Anleitung braucht es kaum.", "a": "rezept", "u": "rezept-brioche-mit-pistaziencreme.html", "b": "assets/img/produkte/pistacchio-b-680.webp"}, {"t": "Pecorino mit Zagara-Honig", "s": "Der einfachste Nachtisch der Insel — und der, an den man sich erinnert.", "a": "rezept", "u": "rezept-pecorino-mit-zagara-honig.html", "b": "assets/img/produkte/miele-b-680.webp"}, {"t": "Az. Agr. Lo Bue", "s": "Castelvetrano · seit 1961", "a": "erzeuger", "u": "erzeuger-az-agr-lo-bue.html", "b": "assets/img/produkte/olio-noc-680.webp"}, {"t": "Frantoio Sciacca", "s": "Sciacca, Provinz Agrigento · seit 1978", "a": "erzeuger", "u": "erzeuger-frantoio-sciacca.html", "b": "assets/img/produkte/olio-bia-680.webp"}, {"t": "Cantina Buccheri", "s": "Buccheri bei Noto · seit 1994", "a": "erzeuger", "u": "erzeuger-cantina-buccheri.html", "b": "assets/img/produkte/aceto-680.webp"}, {"t": "Conserve Aretusa", "s": "Syrakus · seit 1986", "a": "erzeuger", "u": "erzeuger-conserve-aretusa.html", "b": "assets/img/produkte/marm-lim-680.webp"}, {"t": "Az. Agr. Grasso", "s": "Paternò · seit 1952", "a": "erzeuger", "u": "erzeuger-az-agr-grasso.html", "b": "assets/img/produkte/marm-ora-680.webp"}, {"t": "Coop. Etnea", "s": "Bronte · seit 1974", "a": "erzeuger", "u": "erzeuger-coop-etnea.html", "b": "assets/img/produkte/pistacchio-680.webp"}, {"t": "Apicoltura Riberella", "s": "Ribera · seit 2003", "a": "erzeuger", "u": "erzeuger-apicoltura-riberella.html", "b": "assets/img/produkte/miele-680.webp"}, {"t": "Consorzio Avola", "s": "Avola · seit 1969", "a": "erzeuger", "u": "erzeuger-consorzio-avola.html", "b": "assets/img/produkte/mandorle-680.webp"}, {"t": "Coop. Pantesca", "s": "Pantelleria · seit 1971", "a": "erzeuger", "u": "erzeuger-coop-pantesca.html", "b": "assets/img/produkte/capperi-680.webp"}, {"t": "Conserve Pachino", "s": "Pachino · seit 1988", "a": "erzeuger", "u": "erzeuger-conserve-pachino.html", "b": "assets/img/produkte/pomodori-680.webp"}, {"t": "Saline Ettore", "s": "Trapani · seit 1830", "a": "erzeuger", "u": "erzeuger-saline-ettore.html", "b": "assets/img/produkte/sale-680.webp"}, {"t": "Sammlung Zafferana Etnea", "s": "Zafferana Etnea · seit 1999", "a": "erzeuger", "u": "erzeuger-sammlung-zafferana-etnea.html", "b": "assets/img/produkte/origano-680.webp"}, {"t": "Olivenöl & Essig", "s": "Sizilianisches Olivenöl und Weinessig, sortenrein und kalt gepresst", "a": "gruppe", "u": "kategorie-olivenoel-essig.html"}, {"t": "Süßes & Konfitüren", "s": "Sizilianische Konfitüren, Pistaziencreme, Honig und Mandeln", "a": "gruppe", "u": "kategorie-suesses-konfitueren.html"}, {"t": "Antipasti", "s": "Oliven, Kapern, getrocknete Tomaten und Pesto aus Sizilien", "a": "gruppe", "u": "kategorie-antipasti.html"}, {"t": "Gewürze & Salz", "s": "Meersalz aus Trapani und wilder Oregano vom Ätna", "a": "gruppe", "u": "kategorie-gewuerze-salz.html"}, {"t": "Geschenkkisten", "s": "Sizilianische Geschenkkiste mit fünf Erzeugnissen", "a": "gruppe", "u": "kategorie-geschenkkisten.html"}];   /* Erzeugnisse, Rezepte, Erzeuger, Warengruppen */
 const ANSICHTEN = {"olio-noc": ["", "b", "c"], "olio-bia": ["", "b", "c"], "aceto": ["", "b", "c"], "marm-lim": ["", "b", "c"], "marm-ora": ["", "b", "c"], "pistacchio": ["", "b", "c"], "miele": ["", "b", "c"], "mandorle": ["", "b", "c"], "olive-verdi": ["", "b", "c"], "capperi": ["", "b", "c"], "pomodori": ["", "b", "c"], "pesto": ["", "b", "c"], "sale": ["", "b", "c"], "origano": ["", "b", "c"], "box": ["", "b", "c"]};   /* weitere Ansichten je Erzeugnis, leer in der Einzeldatei */
 const ANSICHT_NAME = {"":"Produktansicht", b:"Detailaufnahme", c:"Auf dem Tisch"};   /* Pfad oder Daten-URI je Erzeugnis */
@@ -1034,8 +1034,8 @@ $$(".rv").forEach(el=>io.observe(el));
     const i   = Math.min(Math.floor(roh), n - 1);
     const t   = Math.min(Math.max(roh - i, 0), 1);   /* Anteil im Kapitel */
 
-    /* Kamera: jedes Kapitel fährt heran und kippt minimal, der Schnitt läuft als
-       Blende von unten herein — kein weiches Ineinander, sondern ein Wechsel. */
+    /* Bildebene: läuft der Renderer, sind diese Ebenen unsichtbar und
+       dienen nur noch als Bildquelle. Sonst übernehmen sie selbst. */
     bilder.forEach((f, k) => {
       const d = k - roh + 0.5;
       const sicht = Math.min(Math.max(1 - Math.abs(d) * 1.9, 0), 1);
@@ -1066,10 +1066,6 @@ $$(".rv").forEach(el=>io.observe(el));
   zeichnen();
 })();
 
-
-/* ============================================================
-   15 — Suche über die ganze Seite
-   ============================================================ */
 const ART_NAME = {ware:"Erzeugnisse", rezept:"Rezepte", erzeuger:"Erzeuger", gruppe:"Warengruppen"};
 const glatt = s => s.toLowerCase()
   .replace(/ä/g,"a").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ß/g,"ss")
@@ -1204,22 +1200,8 @@ document.addEventListener("keydown", e => {
   hoeheSetzen();
   if(window.ResizeObserver) new ResizeObserver(hoeheSetzen).observe(kopf);
 
-  /* Die Kopfzeile bleibt durchsichtig, solange ein dunkler Abschnitt
-     hinter ihr liegt — Hero, Reise, Zwischenbild. Sonst bricht die Welt auf. */
-  const dunkel = $$("[data-dunkel]");
-  function pruefen(){
-    laeuft = false;
-    const linie = kopf.offsetHeight * 0.6;
-    const drauf = dunkel.some(e => {
-      const r = e.getBoundingClientRect();
-      return r.top <= linie && r.bottom >= linie;
-    });
-    kopf.classList.toggle("ueber-hero", drauf);
-  }
-  addEventListener("scroll", () => { if(!laeuft){ laeuft = true; requestAnimationFrame(pruefen); } }, {passive:true});
-  addEventListener("resize", pruefen);
-  pruefen();
 })();
+
 
 
 /* ============================================================
@@ -1337,6 +1319,322 @@ function kartenAuftritt(){
   }, {rootMargin: "0px 0px -8% 0px", threshold: .05});
   karten.forEach(k => beob.observe(k));
 }
+
+
+/* --- Kopfzeile folgt den dunklen Abschnitten, auf jeder Seite --- */
+(function kopfzeile(){
+  const kopf = $("#head");
+  const dunkel = $$("[data-dunkel]");
+  if(!kopf) return;
+  function hoeheSetzen(){
+    document.documentElement.style.setProperty("--kopfhoehe", kopf.offsetHeight + "px");
+  }
+  hoeheSetzen();
+  if(window.ResizeObserver) new ResizeObserver(hoeheSetzen).observe(kopf);
+  if(!dunkel.length) return;
+
+  let laeuft = false;
+  function pruefen(){
+    laeuft = false;
+    const linie = kopf.offsetHeight * 0.6;
+    kopf.classList.toggle("ueber-hero", dunkel.some(e => {
+      const r = e.getBoundingClientRect();
+      return r.top <= linie && r.bottom >= linie;
+    }));
+  }
+  addEventListener("scroll", () => { if(!laeuft){ laeuft = true; requestAnimationFrame(pruefen); } }, {passive:true});
+  addEventListener("resize", pruefen);
+  pruefen();
+})();
+
+
+/* ============================================================
+   18 — Reise-Renderer (WebGL2)
+
+   Was hier passiert und warum es keine 3D-Bibliothek braucht:
+   Die Reise zeigt sechs fotografische Kapitel. Kein Modell, kein Licht,
+   keine Physik — also auch kein Szenengraph. Gebraucht wird genau eines:
+   zwei Texturen pro Bild, eine Kamerafahrt im Texturraum und ein
+   filmischer Ausklang, den CSS nicht leisten kann.
+
+   Deshalb: ein Vollbild-Dreieck, ein Shader, kein Fremdcode.
+   Fällt irgendetwas aus — kein WebGL2, gedrosselte Bildrate,
+   Bewegungsreduktion — übernimmt lautlos wieder die CSS-Fassung.
+   ============================================================ */
+(function reiseGL(){
+  const spur   = document.querySelector(".reise__spur");
+  const buehne = document.querySelector(".reise__buehne");
+  const felder = Array.from(document.querySelectorAll(".reise__bild"));
+  if(!spur || !buehne || felder.length < 2) return;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const leinwand = document.createElement("canvas");
+  leinwand.className = "reise__gl";
+  leinwand.setAttribute("aria-hidden", "true");
+  const gl = leinwand.getContext("webgl2", {
+    alpha: false, antialias: false, depth: false, stencil: false,
+    powerPreference: "high-performance", preserveDrawingBuffer: false
+  });
+  if(!gl) return;   /* Kein WebGL2: die CSS-Fassung bleibt einfach stehen */
+
+  /* Software-Rasterizer erkennen. Ein Shader, den die CPU zeichnet, ist
+     langsamer als jede CSS-Lösung — dann gar nicht erst anfangen. */
+  const info = gl.getExtension("WEBGL_debug_renderer_info");
+  const karte = (info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL)
+                      : gl.getParameter(gl.RENDERER)) || "";
+  if(/swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte)) return;
+  /* Sehr kleine Geräte bekommen die ruhige Fassung */
+  if(innerWidth < 700) return;
+
+  /* ---------- Shader ---------- */
+  const VERT = `#version 300 es
+  void main(){
+    /* Ein Dreieck deckt den Bildschirm ab — günstiger als zwei */
+    vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+    gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+  }`;
+
+  const FRAG = `#version 300 es
+  precision highp float;
+  out vec4 farbe;
+
+  uniform sampler2D uA, uB;
+  uniform vec2  uRes;          /* Zeichenfläche in Pixeln            */
+  uniform vec2  uBildA, uBildB;/* Seitenverhältnisse der Texturen    */
+  uniform float uMisch;        /* 0..1 Übergang von A nach B         */
+  uniform float uFahrtA, uFahrtB; /* Kamerafortschritt je Kapitel    */
+  uniform float uZeit;
+  uniform float uPost;         /* 0 = nur Bild, 1 = voller Ausklang  */
+
+  /* --- Rauschen für Auflösung und Korn --- */
+  /* Streuung ohne Sinus: bei großen Bildkoordinaten erzeugt sin() auf vielen
+     Grafiktreibern senkrechte Streifen statt Rauschen. */
+  float hash(vec2 p){
+    vec3 q = fract(vec3(p.xyx) * 0.1031);
+    q += dot(q, q.yzx + 33.33);
+    return fract((q.x + q.y) * q.z);
+  }
+  float rauschen(vec2 p){
+    vec2 i = floor(p), f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1,0)), f.x),
+               mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), f.x), f.y);
+  }
+  float fbm(vec2 p){
+    float s = 0.0, a = 0.5;
+    for(int i = 0; i < 3; i++){ s += a * rauschen(p); p *= 2.07; a *= 0.5; }
+    return s;
+  }
+
+  /* Bild einpassen wie object-fit: cover, plus Kamerafahrt */
+  vec2 kamera(vec2 uv, vec2 bild, float fahrt){
+    float za = uRes.x / uRes.y;
+    vec2 s = za > bild.x / bild.y
+           ? vec2(1.0, (bild.y / bild.x) * za)
+           : vec2((bild.x / bild.y) / za, 1.0);
+    uv = (uv - 0.5) / s + 0.5;
+    /* Heranfahren und leichter Versatz — die Bewegung einer echten Kamera */
+    float z = 1.14 - fahrt * 0.14;
+    vec2  v = vec2((fahrt - 0.5) * 0.018, (fahrt - 0.5) * -0.032);
+    return (uv - 0.5) * z + 0.5 + v;
+  }
+
+  vec3 hole(sampler2D t, vec2 uv, vec2 bild, float fahrt, float ab){
+    vec2 p = kamera(uv, bild, fahrt);
+    /* Farbquerfehler: nur am Rand, wie bei einem echten Objektiv */
+    float r = length(uv - 0.5);
+    vec2 d = normalize(uv - 0.5 + 1e-6) * (r * r) * ab;
+    vec3 c;
+    c.r = texture(t, clamp(p + d, 0.0, 1.0)).r;
+    c.g = texture(t, clamp(p,     0.0, 1.0)).g;
+    c.b = texture(t, clamp(p - d, 0.0, 1.0)).b;
+    return c;
+  }
+
+  void main(){
+    vec2 uv = gl_FragCoord.xy / uRes;
+    uv.y = 1.0 - uv.y;
+
+    /* Tonnenverzeichnung, sehr sanft */
+    vec2 m = uv - 0.5;
+    uv = 0.5 + m * (1.0 + 0.055 * dot(m, m) * uPost);
+
+    float ab = 0.0035 * uPost;
+    vec3 a = hole(uA, uv, uBildA, uFahrtA, ab);
+    /* Die zweite Textur nur anfassen, wenn sie sichtbar wird */
+    vec3 b = uMisch > 0.001 ? hole(uB, uv, uBildB, uFahrtB, ab) : a;
+
+    /* Auflösung statt Blende: eine Rauschschwelle wandert durchs Bild.
+       Das ist der Schnitt, den eine CSS-Überblendung nicht kann. */
+    float n = fbm(uv * 3.2 + vec2(0.0, uZeit * 0.02));
+    float kante = smoothstep(0.0, 1.0, (uMisch * 1.34 - 0.17) * 1.0);
+    float w = smoothstep(kante - 0.16, kante + 0.16, 1.0 - (uv.y * 0.55 + n * 0.45));
+    vec3 c = mix(a, b, clamp(w, 0.0, 1.0));
+
+    /* Lichthof: helle Stellen strahlen in die Umgebung ab */
+    float hell = smoothstep(0.62, 1.0, dot(c, vec3(0.2126, 0.7152, 0.0722)));
+    c += vec3(1.0, 0.86, 0.62) * hell * 0.16 * uPost;
+
+    /* Abstimmung: warme Lichter, kühle Schatten, leichte Anhebung */
+    c = pow(max(c, 0.0), vec3(0.98, 1.0, 1.045));
+    c = mix(vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), c, 1.07);
+    c *= vec3(1.02, 1.0, 0.965);
+
+    /* Randabdunklung */
+    float vig = smoothstep(1.02, 0.32, length((uv - 0.5) * vec2(uRes.x / uRes.y, 1.0)));
+    c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
+
+    /* Korn, an die Helligkeit gekoppelt — in Lichtern feiner als in Schatten */
+    float korn = (hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5);
+    c += korn * 0.045 * uPost * (1.0 - hell * 0.6);
+
+    farbe = vec4(clamp(c, 0.0, 1.0), 1.0);
+  }`;
+
+  function baue(art, quelle){
+    const s = gl.createShader(art);
+    gl.shaderSource(s, quelle); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+      console.warn("Shader:", gl.getShaderInfoLog(s)); return null;
+    }
+    return s;
+  }
+  const vs = baue(gl.VERTEX_SHADER, VERT), fs = baue(gl.FRAGMENT_SHADER, FRAG);
+  if(!vs || !fs) return;
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+    console.warn("Programm:", gl.getProgramInfoLog(prog)); return;
+  }
+  gl.useProgram(prog);
+
+  const u = {};
+  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost"]
+    .forEach(n => u[n] = gl.getUniformLocation(prog, n));
+  gl.uniform1i(u.uA, 0); gl.uniform1i(u.uB, 1);
+
+  /* ---------- Texturen ---------- */
+  const texturen = felder.map(() => null);
+  const masse    = felder.map(() => [16, 9]);
+  const platzhalter = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, platzhalter);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                new Uint8Array([32, 38, 10, 255]));
+
+  function hochladen(i){
+    const bild = felder[i].querySelector("img");
+    if(!bild || !bild.complete || !bild.naturalWidth || texturen[i]) return;
+    const t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bild);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    texturen[i] = t;
+    masse[i] = [bild.naturalWidth, bild.naturalHeight];
+  }
+  felder.forEach((f, i) => {
+    const bild = f.querySelector("img");
+    if(!bild) return;
+    if(bild.complete && bild.naturalWidth) hochladen(i);
+    else bild.addEventListener("load", () => hochladen(i), {once:true});
+  });
+
+  /* ---------- Adaptive Qualität ---------- */
+  const grenzeDpr = Math.min(devicePixelRatio || 1, 2);
+  let dpr = grenzeDpr;
+  let post = 1.0;
+  let fenster = 0, bilder = 0, gut = 0, aus = false;
+
+  function groesse(){
+    const b = buehne.getBoundingClientRect();
+    const w = Math.max(1, Math.round(b.width  * dpr));
+    const h = Math.max(1, Math.round(b.height * dpr));
+    if(leinwand.width !== w || leinwand.height !== h){
+      leinwand.width = w; leinwand.height = h;
+      gl.viewport(0, 0, w, h);
+      gl.uniform2f(u.uRes, w, h);
+    }
+  }
+
+  /* ---------- Zeichnen ---------- */
+  const n = felder.length;
+  let letzte = performance.now();
+
+  function zeichnen(jetzt){
+    if(aus) return;
+    requestAnimationFrame(zeichnen);
+
+    const r = spur.getBoundingClientRect();
+    if(r.bottom < -100 || r.top > innerHeight + 100) { letzte = jetzt; return; }
+
+    /* Bildrate über ein Zeitfenster mitteln — nicht über eine Bildzahl.
+       Bei 2 fps wären 45 Bilder zwanzig Sekunden, das merkt jeder. */
+    const dt = jetzt - letzte; letzte = jetzt;
+    fenster += dt; bilder++;
+    if(fenster > 800){
+      const mittel = fenster / bilder;
+      fenster = 0; bilder = 0;
+      if(mittel > 26){
+        if(dpr > 1)      { dpr = Math.max(1, dpr - 0.5); groesse(); }
+        else if(post > 0){ post = 0; }
+        else             { abschalten(); return; }
+      } else if(mittel < 15){
+        gut++;
+        if(gut > 6 && dpr < grenzeDpr){ gut = 0; dpr = grenzeDpr; groesse(); }
+      }
+    }
+
+    groesse();
+
+    const weg = r.height - innerHeight;
+    const p   = weg > 0 ? Math.min(Math.max(-r.top / weg, 0), 1) : 0;
+    const roh = p * n;
+    const i   = Math.min(Math.floor(roh), n - 1);
+    const j   = Math.min(i + 1, n - 1);
+    const t   = Math.min(Math.max(roh - i, 0), 1);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texturen[i] || platzhalter);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, texturen[j] || texturen[i] || platzhalter);
+
+    gl.uniform2f(u.uBildA, masse[i][0], masse[i][1]);
+    gl.uniform2f(u.uBildB, masse[j][0], masse[j][1]);
+    gl.uniform1f(u.uMisch, i === j ? 0.0 : t);
+    gl.uniform1f(u.uFahrtA, t);
+    gl.uniform1f(u.uFahrtB, Math.max(t - 1.0, 0.0) + t * 0.0);
+    gl.uniform1f(u.uZeit, jetzt * 0.001);
+    gl.uniform1f(u.uPost, post);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  function abschalten(){
+    aus = true;
+    leinwand.remove();
+    buehne.classList.remove("gl-an");
+  }
+
+  /* Erst starten, wenn wenigstens das erste Bild steht */
+  function start(){
+    if(!texturen[0]) return false;
+    buehne.insertBefore(leinwand, buehne.firstChild);
+    buehne.classList.add("gl-an");
+    groesse();
+    addEventListener("resize", groesse);
+    document.addEventListener("visibilitychange", () => {
+      if(!document.hidden && !aus){ letzte = performance.now(); }
+    });
+    requestAnimationFrame(zeichnen);
+    return true;
+  }
+  const wartet = setInterval(() => { if(start()) clearInterval(wartet); }, 120);
+  setTimeout(() => clearInterval(wartet), 15000);
+})();
 
 /* ============================================================
    13 — Start

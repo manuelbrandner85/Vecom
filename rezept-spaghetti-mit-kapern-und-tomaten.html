@@ -101,13 +101,22 @@
 </header>
 
 <main id="main">
-  <div class="wrap">
-    <nav class="krumen" aria-label="Sie sind hier">
-      <a href="index.html">Startseite</a><span aria-hidden="true">·</span>
-      <a href="rezepte.html">Rezepte</a><span aria-hidden="true">·</span>
-      <span aria-current="page">Spaghetti mit Kapern und Tomaten</span>
-    </nav>
+  <header class="szene" data-dunkel>
+    <div class="szene__bild" aria-hidden="true">
+      <img src="assets/img/produkte/capperi-c-1024.webp" srcset="assets/img/produkte/capperi-c-680.webp 680w, assets/img/produkte/capperi-c-1024.webp 1024w"
+           sizes="100vw" alt="" width="1024" height="1024" fetchpriority="high" decoding="async">
+    </div>
+    <div class="szene__schleier" aria-hidden="true"></div>
+    <div class="szene__innen">
+      <nav class="krumen" aria-label="Sie sind hier"><a href="index.html">Startseite</a><span aria-hidden="true">·</span><a href="rezepte.html">Rezepte</a><span aria-hidden="true">·</span><span aria-current="page">Spaghetti mit Kapern und Tomaten</span></nav>
+      <p class="stamp">Hauptgericht · Sizilien</p>
+      <h1 class="raised--film">Spaghetti mit Kapern und Tomaten</h1>
+      <p class="szene__lede">Vorratsküche im besten Sinn: alles kommt aus dem Schrank, nichts schmeckt danach.</p>
+      <p class="szene__eck"><span><b>20 Min.</b> gesamt</span><span>15 Min. aktiv</span><span>2 Portionen</span><span>einfach</span></p>
+    </div>
+  </header>
 
+  <div class="wrap">
     <article class="rezept">
       <div class="rezept__bild">
         <img src="assets/img/produkte/capperi-c-680.webp"
@@ -117,10 +126,6 @@
       </div>
 
       <div class="rezept__text">
-        <p class="stamp" style="color:var(--bark-soft)">Hauptgericht · Sizilien</p>
-        <h1 class="raised">Spaghetti mit Kapern und Tomaten</h1>
-        <p class="lede">Vorratsküche im besten Sinn: alles kommt aus dem Schrank, nichts schmeckt danach.</p>
-
         <dl class="rezept__eck">
           <div><dt>Gesamt</dt><dd>20 Min.</dd></div>
           <div><dt>Davon aktiv</dt><dd>15 Min.</dd></div>

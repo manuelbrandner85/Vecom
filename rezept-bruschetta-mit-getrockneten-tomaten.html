@@ -101,13 +101,22 @@
 </header>
 
 <main id="main">
-  <div class="wrap">
-    <nav class="krumen" aria-label="Sie sind hier">
-      <a href="index.html">Startseite</a><span aria-hidden="true">·</span>
-      <a href="rezepte.html">Rezepte</a><span aria-hidden="true">·</span>
-      <span aria-current="page">Bruschetta mit getrockneten Tomaten</span>
-    </nav>
+  <header class="szene" data-dunkel>
+    <div class="szene__bild" aria-hidden="true">
+      <img src="assets/img/produkte/pomodori-c-1024.webp" srcset="assets/img/produkte/pomodori-c-680.webp 680w, assets/img/produkte/pomodori-c-1024.webp 1024w"
+           sizes="100vw" alt="" width="1024" height="1024" fetchpriority="high" decoding="async">
+    </div>
+    <div class="szene__schleier" aria-hidden="true"></div>
+    <div class="szene__innen">
+      <nav class="krumen" aria-label="Sie sind hier"><a href="index.html">Startseite</a><span aria-hidden="true">·</span><a href="rezepte.html">Rezepte</a><span aria-hidden="true">·</span><span aria-current="page">Bruschetta mit getrockneten Tomaten</span></nav>
+      <p class="stamp">Vorspeise · Sizilien</p>
+      <h1 class="raised--film">Bruschetta mit getrockneten Tomaten</h1>
+      <p class="szene__lede">Fünf Minuten Arbeit, und trotzdem der Teller, nach dem alle greifen.</p>
+      <p class="szene__eck"><span><b>12 Min.</b> gesamt</span><span>12 Min. aktiv</span><span>4 Portionen</span><span>sehr einfach</span></p>
+    </div>
+  </header>
 
+  <div class="wrap">
     <article class="rezept">
       <div class="rezept__bild">
         <img src="assets/img/produkte/pomodori-c-680.webp"
@@ -117,10 +126,6 @@
       </div>
 
       <div class="rezept__text">
-        <p class="stamp" style="color:var(--bark-soft)">Vorspeise · Sizilien</p>
-        <h1 class="raised">Bruschetta mit getrockneten Tomaten</h1>
-        <p class="lede">Fünf Minuten Arbeit, und trotzdem der Teller, nach dem alle greifen.</p>
-
         <dl class="rezept__eck">
           <div><dt>Gesamt</dt><dd>12 Min.</dd></div>
           <div><dt>Davon aktiv</dt><dd>12 Min.</dd></div>
