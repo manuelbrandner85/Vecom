@@ -83,8 +83,8 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16l-1.4 11.2a2 2 0 0 1-2 1.8H7.4a2 2 0 0 1-2-1.8L4 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>
         <span class="cartbtn__n" id="cartCount" aria-hidden="true">0</span>
       </button>
-      <button class="iconbtn burger" id="navToggle" aria-expanded="false" aria-controls="mnav" aria-label="Menü öffnen">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <button class="iconbtn burger" id="navToggle" aria-expanded="false" aria-controls="welt" aria-label="Menü öffnen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
       </button>
     </div>
   </div>
@@ -97,18 +97,7 @@
     <div class="wrap"><div class="treffer" id="treffer" role="listbox" aria-label="Suchergebnisse" hidden></div></div>
   </div>
 
-  <nav class="mnav" id="mnav" aria-label="Mobile Navigation">
-    <ul class="wrap">
-      <li><a href="#sortiment">Sortiment</a></li>
-      <li><a href="kategorie-olivenoel-essig.html">Olivenöl &amp; Essig</a></li>
-      <li><a href="kategorie-suesses-konfitueren.html">Süßes aus Sizilien</a></li>
-      <li><a href="kategorie-antipasti.html">Antipasti</a></li>
-      <li><a href="#herkunft">Herkunft</a></li>
-      <li><a href="erzeuger.html">Erzeuger</a></li>
-      <li><a href="rezepte.html">Rezepte</a></li>
-      <li><a href="#service">Versand &amp; Zahlung</a></li>
-    </ul>
-  </nav>
+
 </header>
 
 <main id="main">
@@ -315,6 +304,53 @@
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ GROSSE NAVIGATION ============ -->
+<nav class="welt" id="welt" aria-label="Hauptnavigation" aria-hidden="true">
+  <div class="welt__bild" aria-hidden="true">
+    <img data-welt-bild alt="" width="1376" height="774" decoding="async">
+    <span class="welt__schleier"></span>
+  </div>
+
+  <div class="welt__innen wrap">
+    <div class="welt__kopf">
+      <p class="stamp">Sizilien in fünfzehn Erzeugnissen</p>
+      <button class="iconbtn welt__zu" data-close aria-label="Menü schließen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="welt__spalten">
+      <ol class="welt__gross">
+        <li><a href="kategorie-olivenoel-essig.html" data-bild="muehle"><span class="welt__nr">01</span>Olivenöl &amp; Essig</a></li>
+        <li><a href="kategorie-suesses-konfitueren.html" data-bild="aetna"><span class="welt__nr">02</span>Süßes &amp; Konfitüren</a></li>
+        <li><a href="kategorie-antipasti.html" data-bild="pantelleria"><span class="welt__nr">03</span>Antipasti</a></li>
+        <li><a href="kategorie-gewuerze-salz.html" data-bild="salinen"><span class="welt__nr">04</span>Gewürze &amp; Salz</a></li>
+        <li><a href="kategorie-geschenkkisten.html" data-bild="versand"><span class="welt__nr">05</span>Geschenkkisten</a></li>
+      </ol>
+
+      <div class="welt__neben">
+        <p class="stamp welt__titel">Die Welt dahinter</p>
+        <ul class="welt__klein">
+          <li><a href="erzeuger.html" data-bild="hain">Zwölf Erzeuger</a></li>
+          <li><a href="rezepte.html" data-bild="muehle">Acht Rezepte</a></li>
+          <li><a href="index.html#reise" data-bild="hain">Ein Jahr in Sizilien</a></li>
+          <li><a href="index.html#herkunft" data-bild="salinen">Herkunft &amp; Karte</a></li>
+          <li><a href="index.html#service" data-bild="versand">Versand &amp; Zahlung</a></li>
+        </ul>
+        <p class="stamp welt__titel">Rechtliches</p>
+        <ul class="welt__klein welt__klein--fein">
+          <li><button type="button" data-legal="impressum">Impressum</button></li>
+          <li><button type="button" data-legal="datenschutz">Datenschutz</button></li>
+          <li><button type="button" data-legal="agb">AGB</button></li>
+          <li><button type="button" data-legal="widerruf">Widerruf</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="welt__fuss stamp">Versandkostenfrei ab 59 € · Lieferung in 1–2 Werktagen</p>
+  </div>
+</nav>
 <script src="assets/js/vecom.js" defer></script>
 </body>
 </html>

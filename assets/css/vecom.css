@@ -202,12 +202,6 @@ body.is-locked{overflow:hidden}
 .search input{flex:1;min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:2px;padding:.75rem .9rem;font-family:var(--ui);font-size:.95rem}
 .search input::placeholder{color:#605535}
 
-/* Mobile Navigation */
-.mnav{display:none;border-bottom:1px solid var(--line);background:var(--paper-warm)}
-.mnav.on{display:block}
-.mnav a{display:block;padding:.85rem .2rem;border-bottom:1px solid rgba(203,184,143,.5);text-decoration:none;font-family:var(--ui);font-size:.95rem}
-.mnav li:last-child a{border-bottom:0}
-
 /* ============================================================
    Hero — die Nische (Signature)
    ============================================================ */
@@ -681,6 +675,83 @@ section[id],main [id]{scroll-margin-top:96px}
   transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),
              box-shadow .45s var(--ease-out),border-color .3s}
 @media (prefers-reduced-motion:reduce){.card{opacity:1;transform:none}}
+
+
+/* ============================================================
+   Große Navigation — die Welt klappt auf
+   ============================================================ */
+.welt{position:fixed;inset:0;z-index:150;background:#12160A;color:#F6EEDB;
+  display:grid;overflow-y:auto;
+  opacity:0;visibility:hidden;
+  clip-path:inset(0 0 100% 0);
+  transition:clip-path .78s cubic-bezier(.7,0,.16,1),opacity .35s var(--ease),visibility .78s}
+.welt.on{opacity:1;visibility:visible;clip-path:inset(0 0 0 0)}
+
+.welt__bild{position:absolute;inset:0;z-index:0}
+.welt__bild img{width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);
+  transition:opacity .9s var(--ease),transform 3.4s var(--ease-out)}
+.welt__bild img.da{opacity:.5;transform:scale(1.02)}
+.welt__schleier{position:absolute;inset:0;
+  background:linear-gradient(100deg,rgba(12,16,2,.95) 0%,rgba(12,16,2,.82) 42%,rgba(12,16,2,.5) 100%),
+             linear-gradient(180deg,rgba(12,16,2,.7),transparent 26%,transparent 70%,rgba(12,16,2,.8))}
+
+.welt__innen{position:relative;z-index:1;display:flex;flex-direction:column;
+  padding-block:clamp(1rem,3vh,1.6rem) clamp(1.6rem,5vh,3rem);min-height:100svh}
+.welt__kopf{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding-bottom:clamp(1.5rem,5vh,3rem)}
+.welt__kopf .stamp{color:var(--citron)}
+.welt__zu{color:#F6EEDB;border:1px solid rgba(246,238,219,.28)}
+.welt__zu:hover{background:rgba(246,238,219,.14)}
+
+.welt__spalten{display:grid;gap:clamp(2rem,5vw,4rem);flex:1;align-content:center}
+@media(min-width:900px){.welt__spalten{grid-template-columns:1.35fr .65fr;align-items:center}}
+.welt__spalten>*{min-width:0}
+
+.welt__gross{list-style:none;margin:0;padding:0;counter-reset:w}
+.welt__gross li{border-bottom:1px solid rgba(246,238,219,.14)}
+.welt__gross li:first-child{border-top:1px solid rgba(246,238,219,.14)}
+.welt__gross a{display:flex;align-items:baseline;gap:clamp(.9rem,2.5vw,1.8rem);
+  padding-block:clamp(.6rem,1.9vh,1.05rem);text-decoration:none;color:#F6EEDB;
+  font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,5.2vw,3.4rem);line-height:1.06;
+  letter-spacing:-.024em;transition:color .3s,padding-left .45s var(--ease-out)}
+.welt__gross a:hover,.welt__gross a:focus-visible{color:var(--citron);padding-left:.8rem}
+.welt__nr{font-family:var(--ui);font-size:.62rem;font-weight:650;letter-spacing:.2em;
+  color:rgba(246,238,219,.42);flex:0 0 auto;transition:color .3s}
+.welt__gross a:hover .welt__nr{color:var(--citron)}
+
+.welt__neben{display:grid;gap:.4rem;align-content:start}
+.welt__titel{color:var(--citron-soft);margin-top:1.4rem;margin-bottom:.5rem}
+.welt__titel:first-child{margin-top:0}
+.welt__klein{list-style:none;margin:0;padding:0}
+.welt__klein a,.welt__klein button{display:block;width:100%;text-align:left;background:none;border:0;
+  padding:.5rem 0;color:rgba(246,238,219,.86);text-decoration:none;
+  font-family:var(--body);font-size:1.02rem;transition:color .25s,padding-left .35s var(--ease-out)}
+.welt__klein a:hover,.welt__klein button:hover,
+.welt__klein a:focus-visible,.welt__klein button:focus-visible{color:var(--citron);padding-left:.4rem}
+.welt__klein--fein a,.welt__klein--fein button{font-size:.88rem;color:rgba(246,238,219,.6)}
+
+.welt__fuss{color:rgba(246,238,219,.5);padding-top:clamp(1.4rem,4vh,2.4rem);
+  border-top:1px solid rgba(246,238,219,.14);margin-top:clamp(1.4rem,4vh,2.4rem)}
+
+/* Die Zeilen treten nacheinander ein */
+.welt__gross li,.welt__neben>*{opacity:0;transform:translateY(16px)}
+.welt.on .welt__gross li,.welt.on .welt__neben>*{opacity:1;transform:none;
+  transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+.welt.on .welt__gross li:nth-child(1){transition-delay:.30s}
+.welt.on .welt__gross li:nth-child(2){transition-delay:.36s}
+.welt.on .welt__gross li:nth-child(3){transition-delay:.42s}
+.welt.on .welt__gross li:nth-child(4){transition-delay:.48s}
+.welt.on .welt__gross li:nth-child(5){transition-delay:.54s}
+.welt.on .welt__neben>*:nth-child(n+1){transition-delay:.52s}
+.welt.on .welt__neben>*:nth-child(n+3){transition-delay:.60s}
+
+/* Der Schalter ist jetzt auf allen Breiten da */
+.burger{display:grid}
+@media (prefers-reduced-motion:reduce){
+  .welt{transition:opacity .2s;clip-path:none}
+  .welt__gross li,.welt__neben>*{opacity:1;transform:none;transition:none}
+  .welt__bild img{transition:opacity .2s}
+}
 
 /* ---------- Weitere Ansichten ---------- */
 .galerie{display:flex;gap:.5rem;padding:.6rem;background:var(--paper-warm);border-top:1px solid var(--line)}
