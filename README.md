@@ -71,6 +71,20 @@ nicht bei aktiviertem Datensparmodus, nicht bei 2G/3G, nicht unter 760 px Breite
 Gestartet wird erst nach dem `load`-Ereignis über `requestIdleCallback` — gemessen bei
 443 ms, also nach dem Standbild. Außerhalb des Sichtfelds pausiert er.
 
+## Dramaturgie der Startseite
+
+Die Seite ist kein Laden mit Kopfbild, sondern ein Weg:
+
+1. **Auftakt** — Vollbildfilm, Vorhang, Klangkulisse
+2. **Reise** — sechs Kapitel durch das sizilianische Erntejahr, dunkel, bildschirmfüllend
+3. **Ankommen** — ein Satz auf Vollbild: „Alles, was hier steht, hat einen Ort und einen Namen."
+4. **Sortiment** — erst jetzt der Laden, hell
+5. **Herkunft, Versand, Erntebrief**
+
+Die Kopfzeile bleibt über allen dunklen Abschnitten durchsichtig und wird erst fest,
+wenn heller Grund dahinter liegt. Dafür tragen Hero, Reise und Zwischenbild ein
+`data-dunkel`; ein Scroll-Beobachter prüft, was hinter der Kopfzeile liegt.
+
 ## Ein Jahr in Sizilien
 
 Sechs Kapitel zwischen Sortiment und Herkunft, an den Bildlauf gekoppelt: Juni auf

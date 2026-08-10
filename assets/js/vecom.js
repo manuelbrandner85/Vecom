@@ -1034,14 +1034,21 @@ $$(".rv").forEach(el=>io.observe(el));
     const i   = Math.min(Math.floor(roh), n - 1);
     const t   = Math.min(Math.max(roh - i, 0), 1);   /* Anteil im Kapitel */
 
-    /* Bild: langsames Heranfahren über das ganze Kapitel, weiches Überblenden am Rand */
+    /* Kamera: jedes Kapitel fährt heran und kippt minimal, der Schnitt läuft als
+       Blende von unten herein — kein weiches Ineinander, sondern ein Wechsel. */
     bilder.forEach((f, k) => {
-      const d = k - roh + 0.5;               /* Abstand zur Mitte des Kapitels */
-      const sicht = Math.min(Math.max(1 - Math.abs(d) * 1.55, 0), 1);
-      f.style.opacity = sicht.toFixed(3);
+      const d = k - roh + 0.5;
+      const sicht = Math.min(Math.max(1 - Math.abs(d) * 1.9, 0), 1);
       const eigen = Math.min(Math.max(roh - k, 0), 1);
-      f.style.transform = "scale(" + (1.085 - eigen * 0.085).toFixed(4) +
-                          ") translate3d(0," + ((eigen - .5) * -2.2).toFixed(2) + "%,0)";
+      const rein  = Math.min(Math.max((roh - k) * 3.2, 0), 1);   /* Einlaufblende */
+      const raus  = Math.min(Math.max((roh - k - 1) * 3.2, 0), 1);
+      f.style.opacity = sicht.toFixed(3);
+      f.style.clipPath = "inset(" + (raus * 100).toFixed(1) + "% 0 " + ((1 - rein) * 100).toFixed(1) + "% 0)";
+      f.style.transform =
+        "scale(" + (1.14 - eigen * 0.14).toFixed(4) + ")" +
+        " translate3d(" + ((eigen - .5) * -1.8).toFixed(2) + "%," + ((eigen - .5) * -3.2).toFixed(2) + "%,0)" +
+        " rotateY(" + ((eigen - .5) * 2.4).toFixed(2) + "deg)" +
+        " rotateX(" + ((.5 - eigen) * 1.2).toFixed(2) + "deg)";
       f.style.visibility = sicht > 0.004 ? "visible" : "hidden";
     });
 
@@ -1197,10 +1204,17 @@ document.addEventListener("keydown", e => {
   hoeheSetzen();
   if(window.ResizeObserver) new ResizeObserver(hoeheSetzen).observe(kopf);
 
+  /* Die Kopfzeile bleibt durchsichtig, solange ein dunkler Abschnitt
+     hinter ihr liegt — Hero, Reise, Zwischenbild. Sonst bricht die Welt auf. */
+  const dunkel = $$("[data-dunkel]");
   function pruefen(){
     laeuft = false;
-    const grenze = buehne.offsetHeight - kopf.offsetHeight - 8;
-    kopf.classList.toggle("ueber-hero", scrollY < grenze);
+    const linie = kopf.offsetHeight * 0.6;
+    const drauf = dunkel.some(e => {
+      const r = e.getBoundingClientRect();
+      return r.top <= linie && r.bottom >= linie;
+    });
+    kopf.classList.toggle("ueber-hero", drauf);
   }
   addEventListener("scroll", () => { if(!laeuft){ laeuft = true; requestAnimationFrame(pruefen); } }, {passive:true});
   addEventListener("resize", pruefen);

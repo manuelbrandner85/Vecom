@@ -178,7 +178,7 @@ body.is-locked{overflow:hidden}
 @media(max-width:340px){.brand__sub{display:none}}
 
 .nav{display:none;margin-inline:auto;gap:.3rem}
-@media(min-width:900px){.nav{display:flex}}
+@media(min-width:1180px){.nav{display:flex}}
 .nav a{font-family:var(--ui);font-size:.82rem;letter-spacing:.06em;text-decoration:none;padding:.55rem .8rem;border-radius:3px;color:#3C341D;position:relative}
 .nav a::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:.34rem;height:1.5px;background:var(--citron);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease-out)}
 .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
@@ -193,7 +193,7 @@ body.is-locked{overflow:hidden}
 .cartbtn__n.bump{animation:bump .45s var(--ease-out)}
 @keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.45)}100%{transform:scale(1)}}
 .burger{display:grid}
-@media(min-width:900px){.burger{display:none}}
+
 
 /* Suchleiste */
 .search{border-bottom:1px solid var(--line);background:var(--paper-warm);display:none}
@@ -407,6 +407,11 @@ body.is-locked{overflow:hidden}
 .btn[disabled]{opacity:.5;pointer-events:none}
 .btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
+/* Der Hero endet nicht, er sinkt in die Reise */
+.uebergang{height:0}
+.hero--film::after{content:"";position:absolute;left:0;right:0;bottom:0;height:26vh;z-index:1;
+  pointer-events:none;background:linear-gradient(180deg,transparent,#1B2003)}
+
 /* ---------- Maiolika-Fries ---------- */
 .frieze{height:22px;margin-top:clamp(2.6rem,7vw,5rem);border-block:1px solid var(--line);
   background-color:var(--paper-warm);
@@ -522,39 +527,53 @@ section[id],main [id]{scroll-margin-top:96px}
    Reise — sechs Kapitel, an den Bildlauf gekoppelt
    ============================================================ */
 .reise{position:relative;background:#1B2003;color:#F3E9D6}
-.reise__spur{height:calc(var(--n) * 88vh + 60vh)}
+.reise__spur{height:calc(var(--n) * 118vh + 70vh)}
 .reise__buehne{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden;
   display:grid;grid-template-rows:1fr}
 
-.reise__bilder{position:absolute;inset:0}
-.reise__bild{position:absolute;inset:0;margin:0;opacity:0;background-color:#20250A;filter:saturate(1.06) contrast(1.03);
+.reise__bilder{position:absolute;inset:0;perspective:1200px;perspective-origin:50% 50%}
+.reise__bild{position:absolute;inset:0;margin:0;opacity:0;background-color:#20250A;
+  filter:saturate(1.08) contrast(1.05);
   background-size:cover;background-position:center;
-  will-change:opacity,transform}
+  transform-style:preserve-3d;
+  will-change:opacity,transform,clip-path}
 .reise__bild[data-aktiv]{opacity:1}
 .reise__bild img{width:100%;height:100%;object-fit:cover;display:block}
 .reise__schleier{position:absolute;inset:0;pointer-events:none;
   background:
-    linear-gradient(98deg,rgba(20,24,3,.88) 0%,rgba(20,24,3,.62) 30%,rgba(20,24,3,.10) 56%,rgba(20,24,3,.20) 100%),
-    radial-gradient(130% 78% at 50% 122%,rgba(20,24,3,.62),transparent 60%),
-    radial-gradient(120% 70% at 50% -25%,rgba(20,24,3,.42),transparent 58%)}
+    linear-gradient(97deg,rgba(16,20,2,.93) 0%,rgba(16,20,2,.74) 30%,rgba(16,20,2,.16) 58%,rgba(16,20,2,.26) 100%),
+    radial-gradient(130% 78% at 50% 122%,rgba(16,20,2,.66),transparent 58%),
+    radial-gradient(120% 74% at 50% -22%,rgba(16,20,2,.62),transparent 56%)}
 
+/* Eigener Grund hinter der Textspalte: die Schrift muss auch dann lesbar sein,
+   wenn im Bild an dieser Stelle eine Lampe brennt. */
+.reise__vordergrund::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+  top:-14%;bottom:-14%;left:-50vw;right:22%;
+  background:linear-gradient(96deg,rgba(11,14,2,.90) 0%,rgba(11,14,2,.86) 62%,rgba(11,14,2,0) 100%)}
+@media(max-width:719px){
+  .reise__vordergrund::before{left:-50vw;right:-50vw;top:-8%;
+    background:linear-gradient(180deg,rgba(11,14,2,0) 0%,rgba(11,14,2,.82) 22%,rgba(11,14,2,.92) 100%)}
+}
 .reise__vordergrund{position:relative;z-index:2;align-self:center;width:min(100% - 2*var(--gut),var(--wrap));
   margin-inline:auto;padding-block:clamp(2rem,6vh,4rem)}
 .reise__auftakt{display:flex;align-items:center;gap:.7rem;color:var(--citron-soft);margin-bottom:1.2rem}
 .reise__auftakt::before{content:"";width:44px;height:1.5px;background:var(--citron)}
 
-.reise__kapitel-stapel{position:relative;max-width:37rem;min-height:clamp(19rem,42vh,24rem)}
-.reise__kapitel{position:absolute;inset:0;opacity:0;transform:translateY(26px);
-  transition:opacity .55s var(--ease),transform .55s var(--ease-out);pointer-events:none}
+.reise__kapitel-stapel{position:relative;max-width:44rem;min-height:clamp(21rem,46vh,27rem)}
+.reise__geist{position:absolute;left:-.06em;top:-.42em;z-index:-1;pointer-events:none;
+  font-family:var(--display);font-weight:600;font-size:clamp(9rem,26vw,20rem);line-height:.8;
+  color:rgba(246,238,219,.055);letter-spacing:-.05em}
+.reise__kapitel{position:absolute;inset:0;opacity:0;transform:translateY(38px);
+  transition:opacity .5s var(--ease),transform .68s cubic-bezier(.2,.8,.2,1);pointer-events:none}
 .reise__kapitel[data-aktiv]{opacity:1;transform:none;pointer-events:auto}
-.reise__monat{font-family:var(--ui);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+.reise__monat{font-family:var(--ui);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;
   color:var(--citron-soft)}
 .reise__monat span{color:var(--citron);font-weight:700}
-.reise__titel{font-family:var(--display);font-weight:600;font-size:var(--step-3);line-height:1.02;
+.reise__titel{font-family:var(--display);font-weight:600;font-size:clamp(2.4rem,6.2vw,5rem);line-height:1;
   letter-spacing:-.024em;color:#FBF3DF;margin-block:.5rem .9rem;
   text-shadow:0 -.012em 0 rgba(255,252,242,.16),.012em .016em 0 rgba(0,0,0,.5),
               .022em .03em .05em rgba(0,0,0,.45),.04em .07em .12em rgba(0,0,0,.4)}
-.reise__text{font-size:var(--step-1);line-height:1.5;color:rgba(245,237,220,.9);max-width:34rem}
+.reise__text{font-size:clamp(1.02rem,1.35vw,1.24rem);line-height:1.55;color:rgba(245,237,220,.92);max-width:36rem}
 .reise__ziel{margin-top:1.6rem}
 
 .reise__leiste{position:absolute;z-index:3;right:clamp(1rem,3vw,2.6rem);top:50%;transform:translateY(-50%);
