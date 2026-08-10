@@ -31,6 +31,14 @@
 <body>
 <a class="skip" href="#main">Zum Inhalt springen</a>
 
+<!-- Eintritt: einmal je Sitzung, hebt sich nach dem ersten Bild -->
+<div class="vorhang" id="vorhang" aria-hidden="true">
+  <div class="vorhang__mitte">
+    <img class="vorhang__siegel" src="assets/img/logo-176.webp" alt="" width="176" height="176">
+    <span class="vorhang__linie"><span></span></span>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="wrap topbar__in">
     <p>Versandkostenfrei ab 59 €</p>
@@ -61,6 +69,15 @@
     <div class="tools">
       <button class="iconbtn" id="searchToggle" aria-expanded="false" aria-controls="searchBar" aria-label="Suche öffnen">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+      <button class="iconbtn klangbtn" id="klangToggle" aria-pressed="false" hidden
+              aria-label="Klangkulisse einschalten" title="Klangkulisse">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="klang__horn" d="M4 9v6h3.5L12 19V5L7.5 9H4Z"/>
+          <path class="klang__welle klang__welle--1" d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/>
+          <path class="klang__welle klang__welle--2" d="M18 7a7 7 0 0 1 0 10"/>
+          <path class="klang__aus" d="M15.5 9.5l5 5m0-5l-5 5"/>
+        </svg>
       </button>
       <button class="iconbtn cartbtn" id="cartToggle" aria-label="Warenkorb öffnen">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16l-1.4 11.2a2 2 0 0 1-2 1.8H7.4a2 2 0 0 1-2-1.8L4 7Z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>

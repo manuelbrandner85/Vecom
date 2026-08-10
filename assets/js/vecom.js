@@ -711,7 +711,7 @@ document.addEventListener("click", e => {
   }
 
   const chip = t.closest("[data-cat]");
-  if(chip){ state.cat = chip.dataset.cat; renderFilters(); renderGrid(); return; }
+  if(chip){ state.cat = chip.dataset.cat; renderFilters(); renderGrid(); kartenAuftritt(); return; }
 
   const ans = t.closest("[data-ansicht]");
   if(ans){
@@ -829,7 +829,7 @@ function sucheSchliessen(fokus){
   const feld = $("#searchInput");
   if(feld) feld.value = "";
   state.q = "";
-  if($("#grid")) renderGrid();
+  if($("#grid")){ renderGrid(); kartenAuftritt(); }
   trefferZeigen("");
   const knopf = $("#searchToggle");
   if(knopf){
@@ -858,13 +858,13 @@ an("#searchInput", "input", e => {
   clearTimeout(searchT);
   searchT = setTimeout(()=>{
     state.q = e.target.value;
-    if($("#grid")) renderGrid();
+    if($("#grid")){ renderGrid(); kartenAuftritt(); }
     trefferZeigen(e.target.value);
   }, 140);
 });
 an("#searchClear", "click", ()=>{
   $("#searchInput").value = ""; state.q = "";
-  if($("#grid")) renderGrid();
+  if($("#grid")){ renderGrid(); kartenAuftritt(); }
   trefferZeigen("");
   $("#searchInput").focus();
 });
@@ -966,6 +966,17 @@ $$(".rv").forEach(el=>io.observe(el));
     es.forEach(e => { if(e.isIntersecting){ bilderLaden(); sicht.disconnect(); } });
   }, {rootMargin: "1600px 0px"});
   sicht.observe(spur);
+
+  /* Das Zwischenbild teilt sich die Quelle mit dem Auftaktkapitel */
+  const zw = document.querySelector("[data-zwischen]");
+  if(zw){
+    const q = REISE["hain"];
+    if(q && q.pfad){
+      zw.src = q.pfad + "-1000.webp";
+      zw.srcset = q.pfad + "-1000.webp 1000w, " + q.pfad + "-1376.webp 1376w";
+      zw.sizes = "100vw";
+    } else if(q) zw.src = q.bild;
+  }
 
   if(ruhig){
     bilderLaden();
@@ -1162,12 +1173,129 @@ document.addEventListener("keydown", e => {
   pruefen();
 })();
 
+
+/* ============================================================
+   17 — Eintritt, Klang, Tiefe
+   ============================================================ */
+const ruhigeBewegung = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* --- Vorhang: einmal je Sitzung --- */
+(function vorhang(){
+  const v = $("#vorhang");
+  if(!v) return;
+  let gesehen = false;
+  try{ gesehen = sessionStorage.getItem("vecom.eintritt") === "1"; }catch(e){}
+  if(gesehen || ruhigeBewegung){ v.hidden = true; return; }
+  try{ sessionStorage.setItem("vecom.eintritt","1"); }catch(e){}
+  document.body.classList.add("is-locked");
+  const heben = () => {
+    v.classList.add("hebt");
+    document.body.classList.remove("is-locked");
+    setTimeout(() => { v.hidden = true; }, 1200);
+  };
+  const bild = document.querySelector(".hero__bild");
+  const bereit = bild && bild.complete ? Promise.resolve()
+               : new Promise(r => { if(!bild) return r();
+                   bild.addEventListener("load", r, {once:true});
+                   bild.addEventListener("error", r, {once:true}); });
+  /* Frühestens nach 900 ms, spätestens nach 2600 ms — niemand wartet länger */
+  const mindestens = new Promise(r => setTimeout(r, 900));
+  Promise.race([Promise.all([bereit, mindestens]), new Promise(r => setTimeout(r, 2600))]).then(heben);
+})();
+
+/* --- Klangkulisse: aus, bis jemand sie einschaltet --- */
+(function klang(){
+  const knopf = $("#klangToggle");
+  const KLANG = [{"datei": "assets/audio/ambiente.m4a", "typ": "audio/mp4"}, {"datei": "assets/audio/ambiente.ogg", "typ": "audio/ogg"}];
+  if(!knopf || !KLANG.length) return;
+  knopf.hidden = false;
+
+  let ton = null, ziel = 0, band = null;
+  function anlegen(){
+    if(ton) return ton;
+    ton = document.createElement("audio");
+    ton.loop = true; ton.preload = "none"; ton.volume = 0;
+    KLANG.forEach(q => { const s = document.createElement("source"); s.src = q.datei; s.type = q.typ; ton.appendChild(s); });
+    ton.id = "klangbett";
+    document.body.appendChild(ton);
+    return ton;
+  }
+  function blende(nach){
+    ziel = nach;
+    clearInterval(band);
+    band = setInterval(() => {
+      if(!ton) return clearInterval(band);
+      const d = ziel - ton.volume;
+      if(Math.abs(d) < 0.012){ ton.volume = ziel; clearInterval(band); if(ziel === 0) ton.pause(); return; }
+      ton.volume = Math.max(0, Math.min(1, ton.volume + Math.sign(d) * 0.012));
+    }, 45);
+  }
+  function setzen(an){
+    knopf.setAttribute("aria-pressed", String(an));
+    knopf.setAttribute("aria-label", an ? "Klangkulisse ausschalten" : "Klangkulisse einschalten");
+    try{ localStorage.setItem("vecom.klang", an ? "1" : "0"); }catch(e){}
+    if(an){ anlegen(); ton.play().then(() => blende(0.32)).catch(() => setzen(false)); }
+    else blende(0);
+  }
+  knopf.addEventListener("click", () => setzen(knopf.getAttribute("aria-pressed") !== "true"));
+  /* Im Hintergrundtab still */
+  document.addEventListener("visibilitychange", () => {
+    if(!ton) return;
+    if(document.hidden) ton.pause();
+    else if(knopf.getAttribute("aria-pressed") === "true") ton.play().catch(()=>{});
+  });
+  /* Wer den Ton schon einmal wollte, bekommt ihn wieder — aber erst nach einer Geste,
+     Browser lassen automatische Wiedergabe mit Ton sonst nicht zu. */
+  let wollte = false;
+  try{ wollte = localStorage.getItem("vecom.klang") === "1"; }catch(e){}
+  if(wollte && !ruhigeBewegung){
+    const wecken = () => setzen(true);
+    ["pointerdown","keydown"].forEach(e => addEventListener(e, wecken, {once:true, passive:true}));
+  }
+})();
+
+/* --- Tiefe: Bildebenen laufen langsamer als die Seite --- */
+(function tiefe(){
+  const ebenen = $$("[data-parallax]");
+  if(!ebenen.length || ruhigeBewegung) return;
+  let laeuft = false;
+  function zeichnen(){
+    laeuft = false;
+    ebenen.forEach(e => {
+      const r = e.parentElement.getBoundingClientRect();
+      if(r.bottom < -200 || r.top > innerHeight + 200) return;
+      const mitte = (r.top + r.height/2 - innerHeight/2) / innerHeight;
+      e.style.transform = "translate3d(0," + (mitte * parseFloat(e.dataset.parallax) * 100).toFixed(2) + "px,0)";
+    });
+  }
+  addEventListener("scroll", () => { if(!laeuft){ laeuft = true; requestAnimationFrame(zeichnen); } }, {passive:true});
+  addEventListener("resize", zeichnen);
+  zeichnen();
+})();
+
+/* --- Warenkarten treten gestaffelt auf --- */
+function kartenAuftritt(){
+  const karten = $$("#grid .card:not(.da)");
+  if(!karten.length) return;
+  if(ruhigeBewegung){ karten.forEach(k => k.classList.add("da")); return; }
+  const beob = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if(!e.isIntersecting) return;
+      const reihe = $$("#grid .card").indexOf(e.target);
+      e.target.style.transitionDelay = (Math.min(reihe % 8, 5) * 70) + "ms";
+      e.target.classList.add("da");
+      beob.unobserve(e.target);
+    });
+  }, {rootMargin: "0px 0px -8% 0px", threshold: .05});
+  karten.forEach(k => beob.observe(k));
+}
+
 /* ============================================================
    13 — Start
    ============================================================ */
 warenkorbLaden();
 if($("#filters")) renderFilters();
-if($("#grid")) renderGrid();
+if($("#grid")){ renderGrid(); kartenAuftritt(); }
 renderCart();
 
 /* Auf einer Produktseite: Menge und Warenkorbknopf verdrahten */

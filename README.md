@@ -1,13 +1,4 @@
-# VECOM Onlineshop — Vorschau
-
-> **Live:** https://manuelbrandner85.github.io/Vecom/
->
-> Diese Fassung ist eine Vorschau und steht auf `noindex,nofollow`, `robots.txt`
-> sperrt zusätzlich alle Suchmaschinen aus. Grund: Impressum, AGB und Widerruf
-> enthalten noch Platzhalter, Preise und Erzeuger sind erfunden. Vor dem Livegang
-> auf der eigenen Domain die Adresse in `shop/build_projekt.py` (`BASE`) umstellen
-> und ohne `VECOM_VORSCHAU=1` bauen.
-
+# VECOM Onlineshop
 
 Sizilianische Spezialitäten. Statisch ausgeliefert, ohne Build-Schritt, ohne Framework,
 ohne externe Anfragen. Ordner hochladen, fertig — läuft auf jedem Webspace, auch auf Strato.
