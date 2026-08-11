@@ -63,10 +63,21 @@ async function aufnehmen(a) {
   /* Gleichmaessige Uhr: sonst greift unter Software-Rasterisierung die
      Notbremse und jede Aufnahme zeigt einen anderen Abbaustand. */
   await seite.addInitScript(() => {
-    let t = 0;
+    let t = 0, bilder = 0, eingefroren = false;
     const rAF = window.requestAnimationFrame;
     performance.now = () => (t += 16);
-    window.requestAnimationFrame = cb => rAF(() => cb(t += 16));
+    window.requestAnimationFrame = cb => rAF(() => {
+      if (eingefroren) return;
+      bilder++;
+      cb(t += 16);
+    });
+    /* Die gestellte Uhr haengt an der Bildzahl, gewartet wurde aber nach
+       Wanduhr — und die Bildzahl schwankte dabei zwischen 114 und 139, also
+       um 400 ms gestellter Zeit. Alles, was ueber rAF laeuft (Traegheit,
+       Atmosphaere, Buehne), stand deshalb je Aufnahme woanders. Darum wird
+       auf eine FESTE Bildzahl gewartet und danach angehalten. */
+    window.__bilder = () => bilder;
+    window.__einfrieren = () => { eingefroren = true; };
     /* Zufall festnageln, damit Rauschen und Streuung reproduzierbar sind */
     let s = 1;
     Math.random = () => (s = (s * 16807) % 2147483647) / 2147483647;
@@ -90,12 +101,47 @@ async function aufnehmen(a) {
      Fehlalarme gibt, wird nach dem dritten ignoriert.
 
      Der Heldenfilm laeuft und zeigt je Aufnahme ein anderes Einzelbild.
-     Er wird angehalten und auf eine feste Stelle gesetzt.
+     Er wird angehalten und ausgeblendet — Begruendung unten.
 
      Nachgeladene Bilder sind je nach Zeitpunkt da oder nicht. Es wird
      gewartet, bis alle sichtbaren fertig sind. */
   await seite.evaluate(async () => {
-    document.querySelectorAll('video').forEach(v => { try { v.pause(); v.currentTime = 0.5; } catch (e) { } });
+    /* Der Heldenfilm wird angehalten UND ausgeblendet, das Standbild darunter
+       wieder eingeblendet.
+
+       Warum nicht einfach auf ein festes Einzelbild setzen? Weil das nicht
+       haelt. Nachgemessen: v.currentTime = 0.5 klemmt der Browser auf 0, und
+       gemalt wird trotzdem der zuletzt dekodierte Frame — auch nach "seeked"
+       und requestVideoFrameCallback. Drei Aufnahmen desselben unveraenderten
+       Standes ergaben zwei verschiedene Bilder, Abweichungen bis 23 %. Ein
+       Werkzeug, das bei unveraendertem Code Alarm gibt, wird ignoriert.
+
+       Verloren geht dadurch nichts: Dieser Vergleich prueft Gestaltung —
+       Satz, Abstaende, Staffelung, Ueberblendfelder. OB der Film ueberhaupt
+       laeuft und wann, misst quelle/budget.mjs direkt und in Millisekunden,
+       und zwar zuverlaessiger als ein Bildvergleich das je koennte.
+
+       Die Kapitelfilme der Reise bleiben unangetastet: sie werden als Textur
+       in die WebGL-Buehne geladen, dort wuerde Ausblenden die Buehne aendern. */
+    const held = document.querySelector('.hero__film');
+    if (held) {
+      try { held.pause(); } catch (e) { }
+      held.style.display = 'none';
+      const buehne = document.querySelector('.hero--film');
+      if (buehne) buehne.classList.remove('film-laeuft');
+      /* Damit faengt die langsame Kamerafahrt des Standbilds wieder an zu
+         laufen — sie war unter .film-laeuft angehalten. Sie haengt an der
+         Wanduhr, nicht an der gestellten, und stand deshalb je Aufnahme
+         woanders. Hier wird derselbe Endstand eingestellt, den die Seite
+         auch bei "prefers-reduced-motion" zeigt. */
+      const stand = document.querySelector('.hero__bild');
+      if (stand) {
+        stand.style.animation = 'none';
+        stand.style.transform = 'scale(1.02)';
+        stand.style.opacity = '1';
+      }
+    }
+
     const offen = [...document.images].filter(i => !i.complete);
     await Promise.all(offen.map(i => new Promise(r => {
       i.addEventListener('load', r, { once: true });
@@ -103,7 +149,19 @@ async function aufnehmen(a) {
       setTimeout(r, 4000);
     })));
   });
-  await seite.waitForTimeout(700);
+  /* Warten, bis das Netz ruhig ist. Nach dem Scrollen faengt der Beobachter
+     an, Bilder nachzuladen; ohne diese Zeile entscheidet der Zufall, welche
+     Karte schon ein Bild hat. Danach noch einen Moment fuer die letzten
+     Auftritte. */
+  await seite.waitForLoadState('networkidle').catch(() => { });
+  await seite.waitForTimeout(900);
+
+  /* Auf eine feste Bildzahl warten und dann anhalten — siehe oben. 200 liegt
+     ueber allem, was hier je gemessen wurde (114 bis 139), und bleibt damit
+     auch auf einer schnelleren Maschine der bindende Wert. */
+  await seite.waitForFunction(() => window.__bilder() >= 200, null, { timeout: 30000 }).catch(() => { });
+  await seite.evaluate(() => window.__einfrieren());
+  await seite.waitForTimeout(200);
   const bild = await seite.screenshot();
   await seite.close();
   return bild;
