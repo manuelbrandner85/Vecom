@@ -848,6 +848,40 @@ section[id],main [id]{scroll-margin-top:96px}
 .objekt.objekt-an .objekt__ersatz{display:none}
 
 
+/* ---------- Auftritt aller Karten, seitenweit ---------- */
+.weiter__karte,.betrieb__link,.rezept__karte,.betriebe li,.rezepte li{
+  opacity:0;transform:translateY(20px) scale(.99)}
+.weiter__karte.da,.betrieb__link.da,.rezept__karte.da,.betriebe li.da,.rezepte li.da{
+  opacity:1;transform:none;
+  transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),
+             box-shadow .45s var(--ease-out),border-color .3s}
+@media (prefers-reduced-motion:reduce){
+  .weiter__karte,.betrieb__link,.rezept__karte,.betriebe li,.rezepte li{opacity:1;transform:none}
+}
+
+/* Karte zur Seite: das Bild wandert, statt hart zu wechseln */
+@media (prefers-reduced-motion:no-preference){
+  .szene__bild img{view-transition-name:ware}
+  ::view-transition-group(ware){animation-duration:.62s}
+  ::view-transition-old(ware),::view-transition-new(ware){
+    animation-timing-function:cubic-bezier(.62,.03,.22,1);mix-blend-mode:normal}
+}
+
+/* Feine Unterstreichung statt Standardlinie */
+.krumen a,.zutaten a,.spec a,.foot a{
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;
+  text-decoration-color:rgba(74,78,10,.32);transition:text-decoration-color .25s,color .25s}
+.krumen a:hover,.zutaten a:hover,.spec a:hover,.foot a:hover{text-decoration-color:currentColor}
+
+/* Pfeile in Schaltflächen wandern beim Überfahren mit */
+.btn svg{transition:transform .35s var(--ease-out)}
+.btn:hover svg{transform:translateX(3px)}
+
+/* Karte der Erzeugerübersicht neben dem Text */
+.erz__kopf--karte{padding-block:clamp(2rem,5vw,3rem) 0}
+@media(min-width:900px){.erz__kopf--karte{grid-template-columns:1.15fr .85fr;align-items:center}}
+.erz__kopf--karte .lede{color:var(--ink-soft)}
+
 /* ---------- Leitkarte: bricht die Gleichförmigkeit des Rasters ---------- */
 @media(min-width:680px){
   .card--gross{grid-column:span 2}

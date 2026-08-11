@@ -1317,13 +1317,14 @@ const ruhigeBewegung = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* --- Warenkarten treten gestaffelt auf --- */
 function kartenAuftritt(){
-  const karten = $$("#grid .card:not(.da)");
+  const karten = $$("#grid .card:not(.da), .weiter__karte:not(.da), .betrieb__link:not(.da), .rezept__karte:not(.da)");
   if(!karten.length) return;
   if(ruhigeBewegung){ karten.forEach(k => k.classList.add("da")); return; }
   const beob = new IntersectionObserver(es => {
     es.forEach(e => {
       if(!e.isIntersecting) return;
-      const reihe = $$("#grid .card").indexOf(e.target);
+      const geschwister = Array.from(e.target.parentElement.parentElement.children);
+      const reihe = Math.max(geschwister.indexOf(e.target.parentElement), geschwister.indexOf(e.target), 0);
       e.target.style.transitionDelay = (Math.min(reihe % 8, 5) * 70) + "ms";
       e.target.classList.add("da");
       beob.unobserve(e.target);
@@ -2187,7 +2188,8 @@ void main(){
    ============================================================ */
 warenkorbLaden();
 if($("#filters")) renderFilters();
-if($("#grid")){ renderGrid(); kartenAuftritt(); }
+if($("#grid")){ renderGrid(); }
+kartenAuftritt();
 renderCart();
 
 /* Auf einer Produktseite: Menge und Warenkorbknopf verdrahten */
