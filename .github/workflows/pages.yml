@@ -10,9 +10,17 @@ permissions:
   pages: write
   id-token: write
 
+# Nur ein Deployment gleichzeitig — aber ein wartendes NICHT abraeumen.
+#
+# Mit cancel-in-progress: true hat sich die Warteschlange selbst zerlegt:
+# Lauf 31499500202 wartete 22 Minuten auf den Pages-Platz und wurde dann
+# abgebrochen mit "Canceling since a higher priority waiting request for
+# pages exists". Bei einer Veroeffentlichung ist Abbrechen die falsche
+# Antwort auf Andrang — man will, dass der wartende Lauf fertig wird.
+# GitHubs eigene Pages-Vorlage setzt hier aus demselben Grund false.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
