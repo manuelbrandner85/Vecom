@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Ein Jahr in Sizilien — sechs Kapitel, chronologisch durch die Erntesaison."""
+"""Ein Jahr in Sizilien — sieben Kapitel, chronologisch durch das Jahr."""
 
 KAPITEL = [
+ dict(id="agrigento", monat="Februar", ort="Agrigento",
+      titel="Weiß, bevor irgendetwas reift",
+      text="Im Februar blüht der Mandelbaum, bevor auf der Insel sonst irgendetwas treibt. Zwischen den Tempeln von Agrigento wird daraus ein ganzes Tal aus Weiß — zwei Wochen lang, dann ist es vorbei. Geerntet wird erst im Spätsommer, und an der anderen Küste. Das Jahr fängt hier an.",
+      ware="mandorle", betrieb=None),
  dict(id="pantelleria", monat="Juni", ort="Pantelleria",
       titel="Die Knospe, bevor sie aufgeht",
       text="Auf der Vulkaninsel wachsen die Kapernsträucher im Windschatten niedriger "

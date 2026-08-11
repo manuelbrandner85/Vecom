@@ -296,7 +296,10 @@ void main(){
     if(tiefen[i] !== null) return;
     const bild = felder[i].querySelector("img");
     const schluessel = bild && bild.dataset.reise;
-    if(!schluessel){ tiefen[i] = false; return; }
+    /* data-tiefe="nein" sagt: zu diesem Kapitel gibt es (noch) keine Karte.
+       Ohne die Abmeldung holte der Lader eine Datei, von der wir wissen, dass
+       sie fehlt — ein 404 in der Konsole und eine Anfrage fuer nichts. */
+    if(!schluessel || felder[i].dataset.tiefe === "nein"){ tiefen[i] = false; return; }
     tiefen[i] = false;                                  /* bis sie wirklich da ist */
     const k = new Image();
     k.decoding = "async";
