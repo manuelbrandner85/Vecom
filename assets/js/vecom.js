@@ -1907,6 +1907,7 @@ void main(){
   /* ---------------- Adaptive Qualität ---------------- */
   const maxDpr = geraet.dpr;
   let dpr = maxDpr, post = 1.0, relief = 1.0, tempoGlatt = 0;
+  let kamRoh = 0, kamTempo = 0;            /* Kameraort und -geschwindigkeit */
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 
   function groesse(){
@@ -1988,6 +1989,24 @@ void main(){
     const j   = Math.min(i + 1, n - 1);
     const t   = Math.min(Math.max(roh - i, 0), 1);
 
+    /* Kamera mit Masse. Bisher sass sie starr auf dem Bildlauf: Rad steht,
+       Bild steht. Eine echte Kamera wird beschleunigt, laeuft nach und
+       schwingt aus — Feder zum Ziel, Daempfung dagegen.
+
+       Wichtig ist, was NICHT nachlaeuft: Kapitelwahl und Ueberblendung
+       bleiben am rohen Bildlauf, sonst zeigte das Bild noch das vorige
+       Kapitel, waehrend der Text schon das naechste behauptet. Nur die
+       Fahrt innerhalb des Kapitels bekommt Traegheit — genau dort faellt
+       sie auf und stoert nirgends.
+
+       Der Schritt ist auf drei Bilder gedeckelt: nach einem Tabwechsel
+       darf die Feder nicht mit einem halben Sekunde grossen dt losschnellen. */
+    const schritt = Math.min(dt / 16.667, 3);
+    kamTempo += (roh - kamRoh) * 0.075 * schritt;
+    kamTempo *= Math.pow(0.85, schritt);
+    kamRoh   += kamTempo * schritt;
+    const fahrt = Math.min(Math.max(kamRoh - i, 0), 1);
+
     /* Laufendes und nächstes Kapitel bewegt halten, den Rest anhalten */
     for(let k = 0; k < n; k++){
       const v = filme[k];
@@ -2014,8 +2033,9 @@ void main(){
     gl.clearColor(0.11, 0.13, 0.03, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    /* Laufendes Kapitel: die Fahrt geht über den ganzen Abschnitt hinein */
-    kapitel(i, t, t - 0.5, 0.0, 0.0);
+    /* Laufendes Kapitel: die Fahrt geht über den ganzen Abschnitt hinein —
+       nachlaufend, waehrend die Ueberblendung am Bildlauf haengt. */
+    kapitel(i, fahrt, fahrt - 0.5, 0.0, 0.0);
 
     /* Das nächste Kapitel setzt am Anfang seiner eigenen Fahrt an und
        schiebt sich als Kante darüber. Eigener Tiefenpuffer, damit es
@@ -2046,7 +2066,8 @@ void main(){
     texturen: texturen.map(x => !!x),
     tiefen: tiefen.map(x => x === null ? null : !!x),
     bilder: felder.map(f => { const i = f.querySelector("img"); return i ? i.naturalWidth : -1; }),
-    aus, dpr, post, relief, gitter: gitterX + "x" + gitterY, dreiecke: indexAnzahl / 3
+    aus, dpr, post, relief, gitter: gitterX + "x" + gitterY, dreiecke: indexAnzahl / 3,
+    kamRoh, kamTempo
   });
   const warten = setInterval(() => { if(start()) clearInterval(warten); }, 120);
   setTimeout(() => clearInterval(warten), 20000);
