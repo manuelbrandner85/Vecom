@@ -92,9 +92,16 @@ Steht die Kamera im Ausgangspunkt, deckt sich die Projektion darum wieder exakt
 mit dem Originalbild — unabhaengig von der Tiefe. Erst die Bewegung erzeugt die
 Verschiebung.
 
-Nachgemessen in einem Ring gleichen Abstands zur Bildmitte, damit der Radius die
-Ursache nicht sein kann: nahe Bildbereiche aendern sich um 187,3, ferne um 71,8 —
-Verhaeltnis 2,61. Bei einem Zoom waeren beide gleich.
+Die Karten dieses Bestands sind so angelegt, dass **hell fern bedeutet** — ueber
+alle sieben nachgemessen: der Dunst am oberen Bildrand liegt bei 151…246, der
+nahe Bewuchs am unteren bei 11…109. Andersherum liefe die Parallaxe verkehrt.
+
+Gemessen wird der Versatz direkt: Der Shader gibt die Bildkoordinate als Farbe
+aus, dann ist die Differenz zwischen zwei Kamerastaenden exakt der Versatz —
+unabhaengig davon, wie viel Kontrast an der Stelle liegt. Mittlere Pixeldifferenz
+taugt dafuer nicht, sie misst Verschiebung mal Kontrast. Nahe Bereiche
+verschieben sich um 137,3 Bildpunkte, ferne um 89,2; Verhaeltnis 1,54. Bei einem
+Zoom waeren beide gleich.
 
 Wo die Tiefe springt, wird das Gitter gedehnt; hinter der Kaper liegt keine
 Bildinformation. Statt Loecher zu stopfen, dunkelt der Shader diese Flanken ab —

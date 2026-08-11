@@ -76,7 +76,11 @@ vec2 deckung(vec2 ndc){
 }
 
 float tiefeBei(vec2 uv){
-  /* Hell heißt nah. Ohne Karte bleibt das Kapitel eine ebene Fläche. */
+  /* Hell heißt FERN — so sind die Karten dieses Bestands angelegt, ueber alle
+     sieben nachgemessen: der Dunst am oberen Rand liegt bei 151…246, der nahe
+     Bewuchs am unteren bei 11…109. Andersherum liefe die Parallaxe verkehrt,
+     der Horizont zoege schneller als der Vordergrund.
+     Ohne Karte bleibt das Kapitel eine ebene Flaeche. */
   return uHatTiefe > 0.5 ? texture(uTiefe, clamp(uv, 0.0, 1.0)).r : 0.5;
 }
 
@@ -100,11 +104,14 @@ void main(){
   vec3 strahl = vec3(aNdc.x * tanH * za, aNdc.y * tanH, -1.0);
 
   float nah = 1.0, fern = 1.0 + 1.15 * uRelief;
-  vec3  welt = strahl * mix(fern, nah, t);
+  vec3  welt = strahl * mix(nah, fern, t);      /* dunkel = nah, hell = fern */
 
-  /* Die Fahrt: hinein und ein Hauch zur Seite, damit die Parallaxe
-     nicht nur radial aus der Bildmitte läuft. */
-  welt -= vec3(uSeitlich * 0.045 * uRelief, 0.0, uFahrt * 0.30 * uRelief);
+  /* Die Fahrt: hinein und ein Hauch zur Seite, damit die Parallaxe nicht nur
+     radial aus der Bildmitte laeuft. Die Kamera schaut nach -z, hinein heisst
+     also, ihren Standort nach -z zu ruecken — und der Standort wird vom Punkt
+     abgezogen, nicht addiert. Andersherum entfernt sich das Bild. */
+  vec3 kamera = vec3(uSeitlich * 0.045 * uRelief, 0.0, -uFahrt * 0.30 * uRelief);
+  welt -= kamera;
 
   float n = 0.05, f = 12.0;
   float p = 1.0 / tanH;
