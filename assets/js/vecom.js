@@ -1484,21 +1484,35 @@ function kartenAuftritt(){
 
 
 /* ============================================================
-   18 — Reise-Renderer (WebGL2)
+   18 — Reise-Renderer (WebGL2): Tiefenrelief
 
-   Sechs fotografische Kapitel, teils als Bewegtbild. Kein Modell,
-   kein Licht, keine Physik — also kein Szenengraph und keine
-   Bibliothek. Ein Vollbild-Dreieck, ein Programm, zwei Texturen.
+   Sechs fotografische Kapitel, teils als Bewegtbild. Bisher lag
+   jedes Bild flach auf einem Vollbild-Dreieck, und die „Kamerafahrt"
+   war ein Hineinskalieren — dieselbe Bewegung für Vordergrund und
+   Horizont. Das ist kein Hineinfahren, das ist Zoom.
 
-   Was er leistet und CSS nicht leisten kann:
-     · Auflösung statt Blende — eine Rauschschwelle wandert durchs Bild
-     · Farbquerfehler nur am Rand, wie bei einem echten Objektiv
-     · Lichthof auf hellen Stellen
-     · Tonnenverzeichnung, Randabdunklung, helligkeitsgekoppeltes Korn
+   Jetzt ist jedes Kapitel Geometrie. Zu jedem Bild liegt eine
+   Tiefenkarte im Bestand (512 × 288, rund 3 KB); sie verschiebt ein
+   Gitter aus rund 35 000 Dreiecken entlang der Blickstrahlen. Eine
+   echte Kamera fährt hinein. Die Kaper im Vordergrund wandert dann
+   schneller aus dem Bild als der Hang dahinter — Parallaxe, die aus
+   der Aufnahme selbst stammt und nicht aus einer Zahl.
 
-   Fällt etwas aus — kein WebGL2, Software-Rasterizer, kleine Anzeige,
-   Bewegungsreduktion, zu wenig Bildrate — übernimmt lautlos die
-   CSS-Fassung, die dieselbe Kamerafahrt beherrscht.
+   Der Kniff, damit nichts verrutscht: Jeder Gitterpunkt sitzt auf
+   dem Blickstrahl, der durch seinen eigenen Bildpunkt geht. Steht
+   die Kamera im Ausgangspunkt, deckt sich die Projektion darum
+   wieder exakt mit dem Originalbild — unabhängig von der Tiefe.
+   Erst die Bewegung erzeugt die Verschiebung.
+
+   Wo die Tiefe springt, wird das Gitter gedehnt; hinter der Kaper
+   liegt keine Bildinformation. Statt Löcher zu stopfen, dunkelt der
+   Shader diese Flanken ab — eine gedehnte Kante liest sich so als
+   Eigenschatten statt als Fehler.
+
+   Fällt etwas aus — kein WebGL2, Software-Rasterizer, kleine
+   Anzeige, Bewegungsreduktion, zu wenig Bildrate — übernimmt
+   lautlos die CSS-Fassung. Fehlt nur die Tiefenkarte, bleibt das
+   Kapitel flach und alles andere läuft weiter.
    ============================================================ */
 (function reiseRenderer(){
   const spur   = document.querySelector(".reise__spur");
@@ -1514,7 +1528,7 @@ function kartenAuftritt(){
   leinwand.className = "reise__gl";
   leinwand.setAttribute("aria-hidden", "true");
   const gl = leinwand.getContext("webgl2", {
-    alpha: false, antialias: false, depth: false, stencil: false,
+    alpha: false, antialias: false, depth: true, stencil: false,
     powerPreference: "high-performance"
   });
   if(!gl) return;
@@ -1527,18 +1541,72 @@ function kartenAuftritt(){
 
   /* ---------------- Shader ---------------- */
   const VERT = `#version 300 es
+layout(location=0) in vec2 aNdc;          /* Gitterpunkt im Bildschirmraum, -1 … 1 */
+
+uniform sampler2D uTiefe;
+uniform vec2  uRes, uBild, uTexel;
+uniform float uFahrt, uRelief, uHatTiefe, uSeitlich;
+
+out vec2  vUV;
+out float vStreck;
+
+/* Bildschirmpunkt auf Bildkoordinate: das Bild deckt die Bühne,
+   der Überstand wird beschnitten — wie object-fit: cover. */
+vec2 deckung(vec2 ndc){
+  float za = uRes.x / uRes.y;
+  float zb = uBild.x / uBild.y;
+  vec2  s  = za > zb ? vec2(1.0, zb / za) : vec2(za / zb, 1.0);
+  vec2  uv = ndc * 0.5 + 0.5;
+  return (uv - 0.5) / s + 0.5;
+}
+
+float tiefeBei(vec2 uv){
+  /* Hell heißt nah. Ohne Karte bleibt das Kapitel eine ebene Fläche. */
+  return uHatTiefe > 0.5 ? texture(uTiefe, clamp(uv, 0.0, 1.0)).r : 0.5;
+}
+
 void main(){
-  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
-  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+  vec2 uv = deckung(aNdc);
+  vUV = uv;
+
+  float t = tiefeBei(uv);
+
+  /* Wie stark springt die Tiefe hier? Daraus wird später der
+     Eigenschatten an gedehnten Flanken. */
+  float dx = abs(tiefeBei(uv + vec2(uTexel.x, 0.0)) - t);
+  float dy = abs(tiefeBei(uv + vec2(0.0, uTexel.y)) - t);
+  vStreck = clamp((dx + dy) * 7.0, 0.0, 1.0);
+
+  /* Blickstrahl durch genau diesen Bildpunkt. Weil der Punkt auf
+     seinem eigenen Strahl sitzt, deckt sich die Projektion im
+     Ausgangspunkt der Kamera wieder mit dem Originalbild. */
+  float tanH = 0.4142;                       /* tan(45°/2) — 45 Grad Bildwinkel */
+  float za   = uRes.x / uRes.y;
+  vec3 strahl = vec3(aNdc.x * tanH * za, aNdc.y * tanH, -1.0);
+
+  float nah = 1.0, fern = 1.0 + 1.15 * uRelief;
+  vec3  welt = strahl * mix(fern, nah, t);
+
+  /* Die Fahrt: hinein und ein Hauch zur Seite, damit die Parallaxe
+     nicht nur radial aus der Bildmitte läuft. */
+  welt -= vec3(uSeitlich * 0.045 * uRelief, 0.0, uFahrt * 0.30 * uRelief);
+
+  float n = 0.05, f = 12.0;
+  float p = 1.0 / tanH;
+  gl_Position = vec4(welt.x * p / za, welt.y * p,
+                     (welt.z * (f + n) + 2.0 * f * n) / (n - f),
+                     -welt.z);
 }`;
 
   const FRAG = `#version 300 es
 precision highp float;
+in vec2  vUV;
+in float vStreck;
 out vec4 farbe;
 
-uniform sampler2D uA, uB;
-uniform vec2  uRes, uBildA, uBildB;
-uniform float uMisch, uFahrtA, uFahrtB, uZeit, uPost, uTempo;
+uniform sampler2D uBildT;
+uniform vec2  uRes;
+uniform float uZeit, uPost, uTempo, uMisch, uIstB;
 
 float hash(vec2 p){
   vec3 q = fract(vec3(p.xyx) * 0.1031);
@@ -1557,44 +1625,21 @@ float fbm(vec2 p){
   return s;
 }
 
-vec2 kamera(vec2 uv, vec2 bild, float fahrt){
-  float za = uRes.x / uRes.y;
-  float zb = bild.x / bild.y;
-  vec2 s = za > zb ? vec2(1.0, zb / za) : vec2(za / zb, 1.0);
-  uv = (uv - 0.5) / s + 0.5;
-  float z = 1.14 - fahrt * 0.14;
-  vec2  v = vec2((fahrt - 0.5) * 0.018, (fahrt - 0.5) * -0.032);
-  return (uv - 0.5) * z + 0.5 + v;
-}
-
-vec3 hole(sampler2D t, vec2 uv, vec2 bild, float fahrt, float ab){
-  vec2 p = kamera(uv, bild, fahrt);
-  float r = length(uv - 0.5);
-  vec2 d = normalize(uv - 0.5 + 1e-6) * (r * r) * ab;
-  return vec3(texture(t, clamp(p + d, 0.0, 1.0)).r,
-              texture(t, clamp(p,     0.0, 1.0)).g,
-              texture(t, clamp(p - d, 0.0, 1.0)).b);
-}
-
 void main(){
-  vec2 uv = gl_FragCoord.xy / uRes;
-  uv.y = 1.0 - uv.y;
-  vec2 m = uv - 0.5;
-  uv = 0.5 + m * (1.0 + 0.055 * dot(m, m) * uPost);
+  vec2 s = gl_FragCoord.xy / uRes;
 
   /* Das Objektiv reagiert auf die Fahrt: ein harter Schwenk treibt den
      Farbquerfehler an den Rand, so wie eine echte Optik unter Tempo leidet. */
   float ab = (0.0035 + uTempo * 0.0075) * uPost;
-  vec3 a = hole(uA, uv, uBildA, uFahrtA, ab);
-  vec3 c = a;
+  float r  = length(s - 0.5);
+  vec2  d  = normalize(s - 0.5 + 1e-6) * (r * r) * ab;
 
-  if(uMisch > 0.001){
-    vec3 b = hole(uB, uv, uBildB, uFahrtB, ab);
-    float nz = fbm(uv * 3.2 + vec2(0.0, uZeit * 0.02));
-    float kante = clamp(uMisch * 1.34 - 0.17, 0.0, 1.0);
-    float w = smoothstep(kante - 0.16, kante + 0.16, 1.0 - (uv.y * 0.55 + nz * 0.45));
-    c = mix(a, b, clamp(w, 0.0, 1.0));
-  }
+  vec3 c = vec3(texture(uBildT, clamp(vUV + d, 0.0, 1.0)).r,
+                texture(uBildT, clamp(vUV,     0.0, 1.0)).g,
+                texture(uBildT, clamp(vUV - d, 0.0, 1.0)).b);
+
+  /* Gedehnte Flanken werden zu Eigenschatten, statt als Loch aufzufallen */
+  c *= 1.0 - vStreck * 0.55;
 
   float hell = smoothstep(0.62, 1.0, dot(c, vec3(0.2126, 0.7152, 0.0722)));
   c += vec3(1.0, 0.86, 0.62) * hell * 0.16 * uPost;
@@ -1603,21 +1648,32 @@ void main(){
   c = mix(vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), c, 1.07);
   c *= vec3(1.02, 1.0, 0.965);
 
-  float vig = smoothstep(1.02, 0.32, length((uv - 0.5) * vec2(uRes.x / uRes.y, 1.0)));
+  float vig = smoothstep(1.02, 0.32, length((s - 0.5) * vec2(uRes.x / uRes.y, 1.0)));
   c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
 
   float korn = hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5;
   c += korn * (0.045 + uTempo * 0.030) * uPost * (1.0 - hell * 0.6);
 
-  farbe = vec4(clamp(c, 0.0, 1.0), 1.0);
+  /* Der Kapitelwechsel läuft als Kante durchs Bild, nicht als Blende.
+     Nur der zweite Durchgang trägt sie. */
+  float a = 1.0;
+  if(uIstB > 0.5){
+    /* Jeder Bildpunkt bekommt eine eigene Schwelle aus Hoehe und Rauschen;
+       der Wechsel schiebt sie als Kante durchs Bild. Entscheidend ist, dass
+       bei uMisch = 0 wirklich nichts und bei uMisch = 1 wirklich alles steht —
+       sonst deckt das naechste Kapitel das laufende sofort zu. */
+    float nz = fbm(s * 3.2 + vec2(0.0, uZeit * 0.02));
+    float schwelle = s.y * 0.45 + nz * 0.55;
+    a = smoothstep(schwelle - 0.18, schwelle + 0.18, uMisch * 1.36 - 0.18);
+  }
+  farbe = vec4(clamp(c, 0.0, 1.0), clamp(a, 0.0, 1.0));
 }`;
 
   function shader(art, quelle){
     const s = gl.createShader(art);
     gl.shaderSource(s, quelle); gl.compileShader(s);
     if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
-      const log = gl.getShaderInfoLog(s);
-      if(erzwingen) window.__shaderFehler = (window.__shaderFehler || []).concat(log);
+      if(erzwingen) window.__shaderFehler = (window.__shaderFehler || []).concat(gl.getShaderInfoLog(s));
       return null;
     }
     return s;
@@ -1633,18 +1689,54 @@ void main(){
   gl.useProgram(prog);
 
   const U = {};
-  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost","uTempo"]
+  ["uTiefe","uBildT","uRes","uBild","uTexel","uFahrt","uRelief","uHatTiefe",
+   "uSeitlich","uZeit","uPost","uTempo","uMisch","uIstB"]
     .forEach(nm => U[nm] = gl.getUniformLocation(prog, nm));
-  gl.uniform1i(U.uA, 0);
-  gl.uniform1i(U.uB, 1);
+  gl.uniform1i(U.uBildT, 0);
+  gl.uniform1i(U.uTiefe, 1);
 
-  const leer = gl.createVertexArray();   /* WebGL2 verlangt ein gebundenes VAO */
-  gl.bindVertexArray(leer);
+  /* ---------------- Gitter ---------------- */
+  /* Nur der Bildschirmort je Punkt; Tiefe und Weltlage rechnet der
+     Vertex-Shader. Ein Puffer, ein Indexpuffer, sonst nichts. */
+  let gitterX = 176, gitterY = 99, indexAnzahl = 0;
+  const vao = gl.createVertexArray();
+  const eckPuffer = gl.createBuffer(), idxPuffer = gl.createBuffer();
+
+  function gitterBauen(nx, ny){
+    const ecken = new Float32Array((nx + 1) * (ny + 1) * 2);
+    let o = 0;
+    for(let y = 0; y <= ny; y++)
+      for(let x = 0; x <= nx; x++){
+        ecken[o++] = (x / nx) * 2 - 1;
+        ecken[o++] = (y / ny) * 2 - 1;
+      }
+    const reihe = nx + 1;
+    const idx = new Uint32Array(nx * ny * 6);
+    let k = 0;
+    for(let y = 0; y < ny; y++)
+      for(let x = 0; x < nx; x++){
+        const a = y * reihe + x, b = a + 1, c = a + reihe, d = c + 1;
+        idx[k++] = a; idx[k++] = c; idx[k++] = b;
+        idx[k++] = b; idx[k++] = c; idx[k++] = d;
+      }
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, eckPuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, ecken, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxPuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+    gl.bindVertexArray(null);
+    indexAnzahl = idx.length;
+  }
+  gitterBauen(gitterX, gitterY);
 
   /* ---------------- Texturen ---------------- */
   const n        = felder.length;
   const texturen = new Array(n).fill(null);
+  const tiefen   = new Array(n).fill(null);
   const masse    = felder.map(() => [16, 9]);
+  const tMasse   = felder.map(() => [512, 288]);
   const filme    = new Array(n).fill(null);
   const bewegt   = new Array(n).fill(false);
 
@@ -1675,6 +1767,28 @@ void main(){
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bild);
     masse[i] = [bild.naturalWidth, bild.naturalHeight];
   }
+
+  /* Die Tiefenkarte trägt denselben Schlüssel wie das Kapitelbild —
+     im Markup steht er ohnehin schon. */
+  function tiefeHolen(i){
+    if(tiefen[i] !== null) return;
+    const bild = felder[i].querySelector("img");
+    const schluessel = bild && bild.dataset.reise;
+    if(!schluessel){ tiefen[i] = false; return; }
+    tiefen[i] = false;                                  /* bis sie wirklich da ist */
+    const k = new Image();
+    k.decoding = "async";
+    k.onload = () => {
+      const t = neueTextur();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, k);
+      tiefen[i] = t;
+      tMasse[i] = [k.naturalWidth || 512, k.naturalHeight || 288];
+    };
+    k.onerror = () => { tiefen[i] = false; };            /* flach ist besser als gar nicht */
+    k.src = "assets/img/tiefe/" + schluessel + ".webp";
+  }
+
   felder.forEach((f, i) => {
     const bild = f.querySelector("img");
     if(!bild) return;
@@ -1716,7 +1830,7 @@ void main(){
 
   /* ---------------- Adaptive Qualität ---------------- */
   const maxDpr = Math.min(devicePixelRatio || 1, 2);
-  let dpr = maxDpr, post = 1.0, tempoGlatt = 0;
+  let dpr = maxDpr, post = 1.0, relief = 1.0, tempoGlatt = 0;
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 
   function groesse(){
@@ -1739,6 +1853,28 @@ void main(){
 
   let letzte = performance.now();
 
+  /* Ein Kapitel zeichnen: Bild, Tiefe, Fahrt, Rolle im Wechsel */
+  function kapitel(i, fahrt, seitlich, istB, misch){
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texturen[i] || platzhalter);
+    gl.activeTexture(gl.TEXTURE1);
+    const tf = tiefen[i];
+    gl.bindTexture(gl.TEXTURE_2D, tf || platzhalter);
+
+    gl.uniform2f(U.uBild, masse[i][0], masse[i][1]);
+    gl.uniform2f(U.uTexel, 1 / tMasse[i][0], 1 / tMasse[i][1]);
+    gl.uniform1f(U.uHatTiefe, tf ? 1 : 0);
+    gl.uniform1f(U.uFahrt, fahrt);
+    gl.uniform1f(U.uSeitlich, seitlich);
+    gl.uniform1f(U.uRelief, relief);
+    gl.uniform1f(U.uIstB, istB);
+    gl.uniform1f(U.uMisch, misch);
+
+    gl.bindVertexArray(vao);
+    gl.drawElements(gl.TRIANGLES, indexAnzahl, gl.UNSIGNED_INT, 0);
+    gl.bindVertexArray(null);
+  }
+
   function zeichnen(jetzt){
     if(aus) return;
     requestAnimationFrame(zeichnen);
@@ -1756,8 +1892,11 @@ void main(){
       const mittel = fenster / bilder;
       fenster = 0; bilder = 0;
       if(mittel > 26){
+        /* Erst feiner rechnen, dann flacher, dann grober, dann fort */
         if(dpr > 1){ dpr = Math.max(1, dpr - 0.5); groesse(); }
         else if(post > 0){ post = 0; }
+        else if(gitterX > 64){ gitterX = 64; gitterY = 36; gitterBauen(gitterX, gitterY); }
+        else if(relief > 0){ relief = 0; }
         else { abschalten(); return; }
       } else if(mittel < 15){
         if(++gut > 6 && dpr < maxDpr){ gut = 0; dpr = maxDpr; groesse(); }
@@ -1777,7 +1916,7 @@ void main(){
     for(let k = 0; k < n; k++){
       const v = filme[k];
       if(k === i || k === j){
-        filmHolen(k);
+        filmHolen(k); tiefeHolen(k);
         const w2 = filme[k];
         if(w2 && w2 !== false && w2.paused) w2.play().catch(() => {});
       } else if(v && v !== false && !v.paused){
@@ -1787,26 +1926,31 @@ void main(){
     filmHochladen(i);
     if(j !== i) filmHochladen(j);
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texturen[i] || platzhalter);
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, texturen[j] || texturen[i] || platzhalter);
-
-    gl.uniform2f(U.uBildA, masse[i][0], masse[i][1]);
-    gl.uniform2f(U.uBildB, masse[j][0], masse[j][1]);
-    gl.uniform1f(U.uMisch, i === j ? 0.0 : t);
-    gl.uniform1f(U.uFahrtA, t);
-    gl.uniform1f(U.uFahrtB, 0.0);
-    gl.uniform1f(U.uZeit, jetzt * 0.001);
-    gl.uniform1f(U.uPost, post);
-    /* Geschwindigkeit aus der Traegheit; geglaettet, damit das Objektiv
-       nicht zuckt, sondern nachgibt. */
     const rohTempo = (window.VECOM && VECOM.bildlauf)
                    ? Math.min(Math.abs(VECOM.bildlauf().tempo) / 55, 1) : 0;
     tempoGlatt += (rohTempo - tempoGlatt) * 0.12;
+
+    gl.uniform1f(U.uZeit, jetzt * 0.001);
+    gl.uniform1f(U.uPost, post);
     gl.uniform1f(U.uTempo, tempoGlatt);
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.enable(gl.DEPTH_TEST);
+    gl.clearColor(0.11, 0.13, 0.03, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    /* Laufendes Kapitel: die Fahrt geht über den ganzen Abschnitt hinein */
+    kapitel(i, t, t - 0.5, 0.0, 0.0);
+
+    /* Das nächste Kapitel setzt am Anfang seiner eigenen Fahrt an und
+       schiebt sich als Kante darüber. Eigener Tiefenpuffer, damit es
+       nicht mit dem vorigen Relief ringt. */
+    if(j !== i && t > 0.001){
+      gl.clear(gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      kapitel(j, 0.0, -0.5, 1.0, t);
+      gl.disable(gl.BLEND);
+    }
   }
 
   function start(){
@@ -1824,8 +1968,9 @@ void main(){
   }
   if(erzwingen) window.__rendererStand = () => ({
     texturen: texturen.map(x => !!x),
+    tiefen: tiefen.map(x => x === null ? null : !!x),
     bilder: felder.map(f => { const i = f.querySelector("img"); return i ? i.naturalWidth : -1; }),
-    aus, dpr, post
+    aus, dpr, post, relief, gitter: gitterX + "x" + gitterY, dreiecke: indexAnzahl / 3
   });
   const warten = setInterval(() => { if(start()) clearInterval(warten); }, 120);
   setTimeout(() => clearInterval(warten), 20000);

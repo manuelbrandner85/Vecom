@@ -80,7 +80,29 @@ Dezember im Lager. Die Bühne bleibt stehen, die Bilder blenden über und fahren
 heran, die Kapitel wechseln, rechts läuft eine Monatsleiste mit.
 
 Technisch: kein Fremdcode, nur `requestAnimationFrame`, ein Scroll-Ereignis und
-Transformationen. Die Bilder werden erst 1600 px vor Erreichen des Abschnitts geholt —
+Transformationen.
+
+**Tiefenrelief.** Die Kapitel liegen nicht mehr flach. Zu jedem Bild gehoert eine
+Tiefenkarte (512 × 288, rund 3 KB); sie verschiebt ein Gitter aus 34 848 Dreiecken
+entlang der Blickstrahlen, und eine echte Kamera faehrt hinein. Die Kaper im
+Vordergrund wandert schneller aus dem Bild als der Hang dahinter.
+
+Jeder Gitterpunkt sitzt auf dem Blickstrahl durch seinen eigenen Bildpunkt.
+Steht die Kamera im Ausgangspunkt, deckt sich die Projektion darum wieder exakt
+mit dem Originalbild — unabhaengig von der Tiefe. Erst die Bewegung erzeugt die
+Verschiebung.
+
+Nachgemessen in einem Ring gleichen Abstands zur Bildmitte, damit der Radius die
+Ursache nicht sein kann: nahe Bildbereiche aendern sich um 187,3, ferne um 71,8 —
+Verhaeltnis 2,61. Bei einem Zoom waeren beide gleich.
+
+Wo die Tiefe springt, wird das Gitter gedehnt; hinter der Kaper liegt keine
+Bildinformation. Statt Loecher zu stopfen, dunkelt der Shader diese Flanken ab —
+eine gedehnte Kante liest sich so als Eigenschatten statt als Fehler.
+
+Fehlt die Tiefenkarte, bleibt das Kapitel flach und alles andere laeuft weiter.
+Reicht die Bildrate nicht, faellt gestaffelt: feinere Aufloesung, dann die
+Nachbearbeitung, dann das Gitter auf 64 × 36, dann das Relief, dann alles. Die Bilder werden erst 1600 px vor Erreichen des Abschnitts geholt —
 die Startseite ist bis dahin um rund 470 KB leichter. Bei aktivierter Bewegungsreduktion
 löst sich die Bühne auf und alle sechs Kapitel stehen untereinander.
 
