@@ -2495,6 +2495,76 @@ void main(){
 
 
 /* ============================================================
+   21 — Weltübergang: der Seitenwechsel als Kamerafahrt
+
+   Bisher blendete die Seite. Eine Blende sagt „anderes Dokument";
+   eine Kamerafahrt sagt „anderer Ort". Zwei Dinge machen den
+   Unterschied:
+
+   Erstens die Richtung. Wer in ein Erzeugnis geht, fährt hinein —
+   die verlassene Seite wächst über den Rand und verliert die
+   Schärfe, die neue kommt aus der Tiefe entgegen. Zurück läuft
+   dieselbe Bewegung rückwärts. Gemeldet wird das als Übergangsart,
+   die Bewegung selbst steht in der Stilvorgabe.
+
+   Zweitens das Bild. Der Szenenkopf der Zielseite trug den Namen
+   für den Bildwechsel schon; auf den Karten war er ausdrücklich
+   abgeschaltet. Der Morph hatte also nur eine Seite und blieb eine
+   Blende. Jetzt bekommt die angeklickte Karte denselben Namen —
+   das Bild wandert von der Karte an seinen Platz im Kopf.
+
+   Ein Name darf dabei nur einmal vorkommen: sind es zwei, bricht
+   der Browser den ganzen Übergang ab. Auf einer Seite, die selbst
+   einen Szenenkopf hat, wird dessen Name deshalb vorher freigegeben.
+
+   Kennt der Browser das alles nicht, passiert schlicht nichts und
+   die einfache Blende von vorher greift weiter.
+   ============================================================ */
+(function weltuebergang(){
+  if(!document.startViewTransition) return;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const NAME = "ware";
+  let richtung = "tiefer";
+
+  /* Die angeklickte Karte gibt ihr Bild an den Szenenkopf der Zielseite ab */
+  document.addEventListener("click", e => {
+    const verweis = e.target.closest("a[href]");
+    if(!verweis || verweis.target || verweis.hasAttribute("download")) return;
+    if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    let ziel;
+    try { ziel = new URL(verweis.href, location.href); } catch(f){ return; }
+    if(ziel.origin !== location.origin) return;
+    if(ziel.pathname === location.pathname) return;          /* Anker, kein Ortswechsel */
+
+    const karte = verweis.closest(".card, .weiter__karte, .rezept__karte, .betrieb__link")
+               || verweis;
+    const bild = karte.querySelector("img");
+    if(!bild) return;
+
+    /* Platz machen: derselbe Name darf nur einmal vergeben sein */
+    const kopf = document.querySelector(".szene__bild img");
+    if(kopf && kopf !== bild) kopf.style.viewTransitionName = "none";
+    bild.style.viewTransitionName = NAME;
+  }, true);
+
+  /* Richtung bestimmen: zurück ist zurück, alles andere geht hinein */
+  addEventListener("pageswap", e => {
+    const art = e.activation && e.activation.navigationType;
+    richtung = art === "traverse" ? "zurueck" : "tiefer";
+    if(e.viewTransition) e.viewTransition.types.add(richtung);
+  });
+
+  addEventListener("pagereveal", e => {
+    if(!e.viewTransition) return;
+    const art = navigation && navigation.activation && navigation.activation.navigationType;
+    e.viewTransition.types.add(art === "traverse" ? "zurueck" : "tiefer");
+  });
+})();
+
+
+/* ============================================================
    13 — Start
    ============================================================ */
 warenkorbLaden();

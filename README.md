@@ -102,9 +102,12 @@ eine gedehnte Kante liest sich so als Eigenschatten statt als Fehler.
 
 Fehlt die Tiefenkarte, bleibt das Kapitel flach und alles andere laeuft weiter.
 Reicht die Bildrate nicht, faellt gestaffelt: feinere Aufloesung, dann die
-Nachbearbeitung, dann das Gitter auf 64 × 36, dann das Relief, dann alles. Die Bilder werden erst 1600 px vor Erreichen des Abschnitts geholt —
-die Startseite ist bis dahin um rund 470 KB leichter. Bei aktivierter Bewegungsreduktion
-löst sich die Bühne auf und alle sechs Kapitel stehen untereinander.
+Nachbearbeitung, dann das Gitter auf 64 × 36, dann das Relief, dann alles.
+
+Die Bilder werden erst 1600 px vor Erreichen des Abschnitts geholt — die
+Startseite ist bis dahin um rund 470 KB leichter. Bei aktivierter
+Bewegungsreduktion löst sich die Bühne auf und alle sechs Kapitel stehen
+untereinander.
 
 Die Aufnahmen sind mit Higgsfield erzeugt, in einer durchgehenden Bildsprache:
 Goldstunde, anamorphotisch, flache Schärfe, Filmkorn.

@@ -656,6 +656,30 @@ section[id],main [id]{scroll-margin-top:96px}
 @keyframes vtRein{from{opacity:0;transform:scale(1.006)}}
 .ware__bild img,.card__media img{view-transition-name:none}
 
+/* ---------- Weltübergang ----------
+   Ein Seitenwechsel ist keine Blende, sondern eine Kamerafahrt. Wer in ein
+   Erzeugnis geht, fährt hinein: die verlassene Seite wächst über den Rand
+   hinaus und verliert die Schärfe, die neue kommt aus der Tiefe entgegen.
+   Zurück läuft dieselbe Bewegung rückwärts.
+
+   Die Richtung meldet das Skript als Übergangsart an; kennt der Browser sie
+   nicht, greift schlicht die einfache Blende darüber. */
+@media (prefers-reduced-motion:no-preference){
+  :root:active-view-transition-type(tiefer)::view-transition-old(root){
+    animation:weltHinein .46s cubic-bezier(.7,.02,.24,1) both}
+  :root:active-view-transition-type(tiefer)::view-transition-new(root){
+    animation:weltAn .6s cubic-bezier(.16,1,.3,1) both}
+
+  :root:active-view-transition-type(zurueck)::view-transition-old(root){
+    animation:weltHeraus .42s cubic-bezier(.7,.02,.24,1) both}
+  :root:active-view-transition-type(zurueck)::view-transition-new(root){
+    animation:weltZurueck .58s cubic-bezier(.16,1,.3,1) both}
+}
+@keyframes weltHinein {to  {opacity:0;transform:scale(1.07);filter:blur(4px)}}
+@keyframes weltAn     {from{opacity:0;transform:scale(.955)}}
+@keyframes weltHeraus {to  {opacity:0;transform:scale(.945);filter:blur(3px)}}
+@keyframes weltZurueck{from{opacity:0;transform:scale(1.05)}}
+
 /* ---------- Vorhang ---------- */
 .vorhang{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:#12160A;
   pointer-events:none}
