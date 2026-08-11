@@ -24,6 +24,12 @@ diese Datei stimmen. Das Werkzeug macht drei Dinge:
      uint32 lohnt erst ab 65536 Ecken. Darunter ist die Haelfte
      der Indexdaten Verpackung.
 
+  4. TEXTUR ERSETZEN  (optional)
+     Erzeugte Netze bringen oft eine 2048er Textur mit, die mehr
+     wiegt als die ganze uebrige Datei. Mit --textur wird eine
+     kleinere eingesetzt; verkleinert wird ausserhalb, hier wird
+     nur getauscht.
+
 Der Wiederhersteller-Knoten bekommt Massstab und Verschiebung
 zurueck, damit die Datei in jedem normgerechten Betrachter
 weiterhin in Originalgroesse steht — nicht nur in unserem
@@ -31,6 +37,7 @@ eigenen Lader.
 
 Aufruf:
     python3 quelle/modell.py assets/modelle/pistacchio.glb
+    python3 quelle/modell.py modell.glb --textur klein.jpg
 ============================================================
 """
 
@@ -173,7 +180,7 @@ def glb_schreiben(pfad, js, binaer):
     return gesamt
 
 
-def herrichten(pfad):
+def herrichten(pfad, ersatz_textur=None):
     js, binaer = glb_lesen(pfad)
     prim = js["meshes"][0]["primitives"][0]
     attribute = prim["attributes"]
@@ -224,12 +231,18 @@ def herrichten(pfad):
     i_nrm = ablegen(q_nrm, "h", 34962)
     i_uv = ablegen(q_uv, "H", 34962) if q_uv else None
 
-    # Textur unveraendert uebernehmen — JPEG neu zu kodieren bringt hier nichts
+    # Textur uebernehmen — oder gegen eine kleinere tauschen
     bild_ansicht = None
     for bild in js.get("images", []):
         if "bufferView" in bild:
-            alt = js["bufferViews"][bild["bufferView"]]
-            roh = binaer[alt["byteOffset"]: alt["byteOffset"] + alt["byteLength"]]
+            if ersatz_textur:
+                roh = Path(ersatz_textur).read_bytes()
+                bild["mimeType"] = ("image/png" if roh[:4] == b"\x89PNG"
+                                    else "image/webp" if roh[8:12] == b"WEBP"
+                                    else "image/jpeg")
+            else:
+                alt = js["bufferViews"][bild["bufferView"]]
+                roh = binaer[alt["byteOffset"]: alt["byteOffset"] + alt["byteLength"]]
             while len(neu_bin) % 4:
                 neu_bin.append(0)
             start = len(neu_bin)
@@ -274,11 +287,19 @@ def herrichten(pfad):
     print(f"  Ecken      {anzahl}   Dreiecke {len(idx) // 3}")
     print(f"  Normalen   {quelle}")
     print(f"  Indizes    {'uint16' if kurz else 'uint32'}")
+    if ersatz_textur:
+        print(f"  Textur     ersetzt durch {ersatz_textur}")
+    # Vorzeichen wie eine Groessenaenderung lesen: minus heisst kleiner
     print(f"  Groesse    {vorher / 1024:.0f} KB  ->  {nachher / 1024:.0f} KB"
-          f"   ({100 * (vorher - nachher) / vorher:+.0f} %)")
+          f"   ({100 * (nachher - vorher) / vorher:+.0f} %)")
 
 
 if __name__ == "__main__":
-    ziele = sys.argv[1:] or ["assets/modelle/pistacchio.glb"]
-    for ziel in ziele:
-        herrichten(ziel)
+    argumente = sys.argv[1:]
+    textur = None
+    if "--textur" in argumente:
+        i = argumente.index("--textur")
+        textur = argumente[i + 1]
+        del argumente[i:i + 2]
+    for ziel in argumente or ["assets/modelle/pistacchio.glb"]:
+        herrichten(ziel, textur)
