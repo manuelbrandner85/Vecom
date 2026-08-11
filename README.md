@@ -134,6 +134,27 @@ Zwischenspeicher kommt.
 In der Einzeldatei-Fassung gibt es nur die Produktansicht; 45 eingebettete Bilder wären
 dort nicht vertretbar.
 
+## Ladebudget
+
+Gemessen wird ausdrücklich **bis zum `load`-Ereignis**, nicht länger. Alles danach
+ist bewusst verzögert — Heldenfilm, Kapitelbilder, Geometrie — und gehört nicht in
+dieselbe Zahl.
+
+| Seite | bis `load` | Budget |
+|---|---|---|
+| `index.html` | 720 KB | 900 KB |
+| `index.html` (Telefon) | 574 KB | 600 KB |
+| Warengruppe · Produkt · Rezepte | 320–367 KB | 700 KB |
+
+Der Reiseabschnitt beginnt knapp unterhalb des Faltrands und gilt damit schon bei
+Bildlauf null als sichtbar — der Vorlaufrand des Beobachters ändert daran nichts.
+Dadurch kamen zwei Kapitelbilder (217 KB) vor `load` herein. Der Beobachter
+entscheidet weiterhin **ob** geladen wird, das `load`-Ereignis entscheidet **wann**.
+Wer nie so weit scrollt, lädt weiterhin nichts.
+
+`node quelle/budget.mjs` rechnet nach und **schlägt fehl**, wenn ein Budget reißt —
+ein Budget, das niemand nachrechnet, ist ein Vorsatz.
+
 ## Trägheit
 
 Der Bildlauf hat Masse. Das Rad setzt ein Ziel, das Bild zieht mit Nachlauf

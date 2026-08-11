@@ -998,8 +998,24 @@ $$(".rv").forEach(el=>io.observe(el));
     });
   }
 
+  /* Der Reiseabschnitt beginnt knapp unterhalb des Faltrands und gilt damit
+     schon bei Bildlauf null als sichtbar — der Vorlaufrand aendert daran
+     nichts. Gemessen kamen dadurch zwei Kapitelbilder (217 KB) vor dem
+     load-Ereignis herein und verzoegerten die groesste Inhaltsdarstellung.
+
+     Der Beobachter entscheidet weiterhin OB geladen wird; WANN, entscheidet
+     jetzt das load-Ereignis. Wer nie so weit scrollt, laedt weiterhin nichts. */
+  let angefordert = false;
+  function jetztOderNachLoad(){
+    if(angefordert) return;
+    angefordert = true;
+    const spaeter = () => (window.requestIdleCallback || (f => setTimeout(f, 300)))(
+                            bilderLaden, {timeout: 1500});
+    if(document.readyState === "complete") spaeter();
+    else addEventListener("load", spaeter, {once:true});
+  }
   const sicht = new IntersectionObserver(es => {
-    es.forEach(e => { if(e.isIntersecting){ bilderLaden(); sicht.disconnect(); } });
+    es.forEach(e => { if(e.isIntersecting){ jetztOderNachLoad(); sicht.disconnect(); } });
   }, {rootMargin: "1600px 0px"});
   sicht.observe(spur);
 
