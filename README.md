@@ -107,6 +107,11 @@ Wo die Tiefe springt, wird das Gitter gedehnt; hinter der Kaper liegt keine
 Bildinformation. Statt Loecher zu stopfen, dunkelt der Shader diese Flanken ab —
 eine gedehnte Kante liest sich so als Eigenschatten statt als Fehler.
 
+**Luftperspektive.** Entferntes verliert Kontrast und nimmt die Farbe des Lichts
+an — quadratisch mit der Tiefe, damit der Vordergrund unangetastet bleibt und
+erst der Horizont weich wird. Das trägt die Tiefe weiter als Korn, weil es aus
+der Tiefenkarte stammt statt gleichmäßig über dem Bild zu liegen.
+
 Fehlt die Tiefenkarte, bleibt das Kapitel flach und alles andere laeuft weiter.
 Reicht die Bildrate nicht, faellt gestaffelt: feinere Aufloesung, dann die
 Nachbearbeitung, dann das Gitter auf 64 × 36, dann das Relief, dann alles.
@@ -156,8 +161,10 @@ nichts mehr zieht.
 ## Atmosphäre
 
 Dreiundvierzig Adressen fühlen sich erst dann wie ein Ort an, wenn über allen
-dasselbe Licht liegt: Gegenlicht, das mit dem Bildlauf wandert, eine warme
-Randabdunklung, Filmkorn.
+dasselbe Licht liegt: Gegenlicht, das mit dem Bildlauf wandert, und eine warme
+Randabdunklung. **Kein Filmkorn** — es legt einen gleichmäßigen Schleier über
+alles und nimmt der Fotografie genau die Ruhe, die sie teuer aussehen lässt.
+Die Fahrt treibt stattdessen das Gegenlicht auf.
 
 Der Ausschlag liegt darin, wo nichts davon liegt. Korn über einer hellen
 Warenliste ist kein Film, sondern Schmutz — das sähe nach Fotofilter aus, nicht
@@ -170,9 +177,6 @@ trägt also überall.
 Das ist Bildregie, nicht Physik: ein echtes Objektiv vignettiert gleichmäßig.
 Hier verschwindet die Abdunklung über dem Papier, weil sie dort dem Erzeugnis
 schadet statt zu nutzen.
-
-Die Kornkachel wird zur Laufzeit gezeichnet — null Bytes über die Leitung, und
-zufälliges Rauschen hat keine Struktur, an der sich die Kachelfuge zeigen könnte.
 
 **Was die Kosten diktiert hat.** Zwei Entwürfe sind an der Messung gescheitert:
 
@@ -187,9 +191,7 @@ verschoben wird deshalb per `transform`. Und eine Mischbetriebsart zwingt den
 Compositor, den Untergrund zurückzulesen — das Korn bringt sein Alpha jetzt
 selbst mit. Übrig bleiben rund +6 ms Median unter reiner CPU-Rasterisierung.
 
-Reicht die Bildrate dennoch nicht, fällt zuerst das Korn, dann die ganze
-Schicht — dieselbe Staffelung wie beim Reise-Renderer, geprüft: `voll → ohne
-Korn → entfernt`.
+Reicht die Bildrate nicht, fällt die Schicht — sie ist Zugabe.
 
 Keine Atmosphäre im Kontrastmodus, in der Druckfassung und über offenen
 Dialogen.

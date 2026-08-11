@@ -1156,10 +1156,10 @@ document.addEventListener("keydown", e => {
    scrollt, wird bemerkt und übernommen, statt bekämpft.
 
    Aus derselben Schleife fällt die Geschwindigkeit ab, und die ist
-   der eigentliche Gewinn: daran hängt das Objektiv. Schnelle Fahrt
-   heißt mehr Farbquerfehler und mehr Korn, so wie eine echte
-   Optik unter einem harten Schwenk leidet. Bewegung, die etwas
-   bedeutet, statt Bewegung als Zierrat.
+   der eigentliche Gewinn: daran hängen das Objektiv und das
+   Gegenlicht. Schnelle Fahrt heißt mehr Farbquerfehler am Rand,
+   so wie eine echte Optik unter einem harten Schwenk leidet.
+   Bewegung, die etwas bedeutet, statt Bewegung als Zierrat.
 
    Drei Fälle bekommen keine Trägheit: Fingergeräte, weil der
    Schwung des Betriebssystems besser ist als jeder Nachbau;
@@ -1548,7 +1548,7 @@ uniform vec2  uRes, uBild, uTexel;
 uniform float uFahrt, uRelief, uHatTiefe, uSeitlich;
 
 out vec2  vUV;
-out float vStreck;
+out float vStreck, vFerne;
 
 /* Bildschirmpunkt auf Bildkoordinate: das Bild deckt die Bühne,
    der Überstand wird beschnitten — wie object-fit: cover. */
@@ -1574,6 +1574,7 @@ void main(){
   vUV = uv;
 
   float t = tiefeBei(uv);
+  vFerne = t;                                /* 0 = nah, 1 = fern */
 
   /* Wie stark springt die Tiefe hier? Daraus wird später der
      Eigenschatten an gedehnten Flanken. */
@@ -1595,7 +1596,7 @@ void main(){
      radial aus der Bildmitte laeuft. Die Kamera schaut nach -z, hinein heisst
      also, ihren Standort nach -z zu ruecken — und der Standort wird vom Punkt
      abgezogen, nicht addiert. Andersherum entfernt sich das Bild. */
-  vec3 kamera = vec3(uSeitlich * 0.045 * uRelief, 0.0, -uFahrt * 0.30 * uRelief);
+  vec3 kamera = vec3(uSeitlich * 0.055 * uRelief, 0.0, -uFahrt * 0.42 * uRelief);
   welt -= kamera;
 
   float n = 0.05, f = 12.0;
@@ -1608,7 +1609,7 @@ void main(){
   const FRAG = `#version 300 es
 precision highp float;
 in vec2  vUV;
-in float vStreck;
+in float vStreck, vFerne;
 out vec4 farbe;
 
 uniform sampler2D uBildT;
@@ -1651,6 +1652,14 @@ void main(){
   float hell = smoothstep(0.62, 1.0, dot(c, vec3(0.2126, 0.7152, 0.0722)));
   c += vec3(1.0, 0.86, 0.62) * hell * 0.16 * uPost;
 
+  /* Luftperspektive: Entferntes verliert Kontrast und nimmt die Farbe des
+     Lichts an. Das ist die Tiefenwirkung, die eine echte Weite hat — und sie
+     traegt weiter als Korn, weil sie aus der Tiefenkarte stammt und nicht
+     gleichmaessig ueber dem Bild liegt. Quadratisch, damit der Vordergrund
+     unangetastet bleibt und erst der Horizont weich wird. */
+  vec3 dunst = vec3(0.87, 0.81, 0.67);
+  c = mix(c, dunst, vFerne * vFerne * 0.20 * uPost);
+
   c = pow(max(c, 0.0), vec3(0.98, 1.0, 1.045));
   c = mix(vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), c, 1.07);
   c *= vec3(1.02, 1.0, 0.965);
@@ -1658,8 +1667,6 @@ void main(){
   float vig = smoothstep(1.02, 0.32, length((s - 0.5) * vec2(uRes.x / uRes.y, 1.0)));
   c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
 
-  float korn = hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5;
-  c += korn * (0.045 + uTempo * 0.030) * uPost * (1.0 - hell * 0.6);
 
   /* Der Kapitelwechsel läuft als Kante durchs Bild, nicht als Blende.
      Nur der zweite Durchgang trägt sie. */
@@ -2405,13 +2412,12 @@ void main(){
    20 — Atmosphäre: dieselbe Luft auf allen Seiten
 
    Dreiundvierzig Adressen fühlen sich erst dann wie ein Ort an,
-   wenn über allen dasselbe Licht liegt. Drei Dinge tun das:
-   Gegenlicht, das mit dem Bildlauf wandert, eine warme
-   Randabdunklung und Filmkorn.
+   wenn über allen dasselbe Licht liegt: Gegenlicht, das mit dem
+   Bildlauf wandert, und eine warme Randabdunklung.
 
-   Der Ausschlag liegt darin, wo nichts davon liegt. Korn über
-   einer hellen Warenliste ist kein Film, sondern Schmutz — das
-   sähe nach Fotofilter aus, nicht nach Kamera. Die Schicht misst
+   Der Ausschlag liegt darin, wo nichts davon liegt. Ein Schleier
+   über einer hellen Warenliste sähe nach Fotofilter aus, nicht
+   nach Kamera. Die Schicht misst
    deshalb je Bild, wie viel des Sichtfelds gerade der Fotografie
    gehört: Szenenkopf, Hero, Reise, Fries. Füllt Bild das Fenster,
    ist sie da; liegt Papier darunter, ist sie fort. Jede Seite hat
@@ -2421,9 +2427,9 @@ void main(){
    Stilvorgabe. Dadurch bleibt der Übergang weich, auch wenn die
    Bildlaufschleife zwischendurch einschläft.
 
-   Die Kornkachel wird zur Laufzeit gezeichnet: null Bytes über
-   die Leitung, und zufälliges Rauschen hat keine Struktur, an der
-   sich die Kachelfuge zeigen könnte.
+   Kein Filmkorn: es legt einen gleichmäßigen Schleier über alles
+   und nimmt der Fotografie die Ruhe, die sie teuer aussehen lässt.
+   Die Fahrt treibt stattdessen das Gegenlicht auf.
    ============================================================ */
 (function atmosphaere(){
   /* Im Kontrastmodus hat eine Schleierschicht nichts zu suchen */
@@ -2432,35 +2438,16 @@ void main(){
   const bild = Array.from(document.querySelectorAll(".hero,.reise,.szene,.zwischen,.frieze"));
   if(!bild.length) return;
 
-  function kornKachel(kante){
-    const c = document.createElement("canvas");
-    c.width = c.height = kante;
-    const g = c.getContext("2d");
-    const feld = g.createImageData(kante, kante), d = feld.data;
-    for(let i = 0; i < d.length; i += 4){
-      /* Salz und Pfeffer mit eigenem Alphakanal statt Mittelgrau: dadurch
-         genuegt normales Ueberlagern. Eine Mischbetriebsart muesste den
-         Untergrund je Bild zurueckreichen — gemessen kostet das auf der
-         Startseite das Dreifache an Bildzeit. */
-      const hell = Math.random() < 0.5 ? 0 : 255;
-      d[i] = d[i+1] = d[i+2] = hell;
-      d[i+3] = Math.random() * 46;
-    }
-    g.putImageData(feld, 0, 0);
-    return c.toDataURL("image/png");
-  }
 
   const schicht = document.createElement("div");
   schicht.className = "atmo";
   schicht.setAttribute("aria-hidden", "true");
-  schicht.innerHTML = '<div class="atmo__rand"></div><div class="atmo__licht"></div>'
-                    + '<div class="atmo__korn"></div>';
-  schicht.style.setProperty("--atmo-kachel", "url(" + kornKachel(128) + ")");
+  schicht.innerHTML = '<div class="atmo__rand"></div><div class="atmo__licht"></div>';
   document.body.appendChild(schicht);
 
-  /* Dieselbe Staffelung wie beim Reise-Renderer: reicht die Bildrate nicht,
-     fällt zuerst das Korn, dann die ganze Schicht. Gemessen wird nur, während
-     wirklich gezogen wird — im Stillstand sagt eine Bildrate nichts aus. */
+  /* Reicht die Bildrate nicht, fällt die Schicht — sie ist Zugabe. Gemessen
+     wird nur, während wirklich gezogen wird; im Stillstand sagt eine Bildrate
+     nichts aus. */
   const stand = {};
   function setzen(name, wert, schwelle){
     if(stand[name] !== undefined && Math.abs(stand[name] - wert) < schwelle) return;
@@ -2476,10 +2463,7 @@ void main(){
     fenster += dt; bilder++;
     if(fenster < 900) return;
     const mittel = fenster / bilder; fenster = 0; bilder = 0;
-    if(mittel > 26){
-      if(stufe === 2){ stufe = 1; schicht.classList.add("ohne-korn"); }
-      else if(stufe === 1){ stufe = 0; schicht.remove(); if(abmelden) abmelden(); }
-    }
+    if(mittel > 26 && stufe){ stufe = 0; schicht.remove(); if(abmelden) abmelden(); }
   }
 
   abmelden = VECOM.takt((ort, tempo) => {

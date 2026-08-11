@@ -227,8 +227,6 @@ body.is-locked{overflow:hidden}
   background:
     linear-gradient(96deg,rgba(14,17,2,.90) 0%,rgba(14,17,2,.72) 26%,rgba(14,17,2,.24) 54%,rgba(14,17,2,.34) 100%),
     linear-gradient(180deg,rgba(14,17,2,.55) 0%,rgba(14,17,2,0) 24%,rgba(14,17,2,0) 58%,rgba(14,17,2,.72) 100%)}
-.hero__korn{position:absolute;inset:0;opacity:.16;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 .hero__grid{position:relative;z-index:1;display:grid;gap:clamp(2rem,5vw,3.5rem);align-items:center;
   padding-block:clamp(6rem,14vh,9rem) clamp(5rem,12vh,7rem)}
@@ -974,7 +972,7 @@ html{scrollbar-color:var(--olive-soft) var(--paper-warm);scrollbar-width:thin}
   .hero__schleier,.reise__schleier,.szene__schleier,.zwischen__schleier{filter:brightness(.72)}
   .chip{border-width:2px}
   .card__base,.krumen,.foot__bar{color:#3E361F}
-  .reise__geist,.hero__korn{display:none}
+  .reise__geist{display:none}
 }
 
 /* --- Druckfassung: Rezepte und Bestellungen sollen auf Papier taugen --- */
@@ -1354,20 +1352,20 @@ body.is-locked .toast.on{transform:translate(-50%,0)}
    Atmosphäre — eine Lichtstimmung über allen Seiten
 
    Damit sich 43 Adressen wie ein Ort anfühlen, braucht es etwas,
-   das über allen liegt: Gegenlicht, Randabdunklung, Filmkorn.
+   das über allen liegt: Gegenlicht und eine warme Randabdunklung.
 
-   Entscheidend ist, wo es NICHT liegt. Korn über einer hellen
-   Warenliste ist kein Film, sondern Schmutz — es sähe nach
-   Fotofilter aus, nicht nach Kamera. Die Schicht hängt deshalb
+   Entscheidend ist, wo es NICHT liegt. Ein Schleier über einer
+   hellen Warenliste sähe nach Fotofilter aus, nicht nach Kamera.
+   Die Schicht hängt deshalb
    an der Fotografie: Sie wird stark, wenn Szenenkopf, Hero,
    Reise oder Fries das Sichtfeld füllen, und geht auf null,
    sobald Papier darunter liegt. Gerechnet wird das im Skript,
    überblendet hier — dadurch bleibt der Übergang weich, auch
    wenn die Bildlaufschleife zwischendurch schläft.
 
-   Die Kachel für das Korn wird zur Laufzeit gezeichnet: null
-   Bytes über die Leitung, und zufälliges Rauschen hat keine
-   Struktur, an der man die Kachelfuge erkennen könnte.
+   Kein Filmkorn: es legt einen gleichmäßigen Schleier über alles
+   und nimmt der Fotografie genau die Ruhe, die sie teuer aussehen
+   lässt. Die Tiefenwirkung kommt stattdessen aus dem Licht selbst.
    ============================================================ */
 /* Nichts hier darf je Bild neu aufgebaut werden. Verschoben wird nur per
    transform, geregelt nur über opacity — beides erledigt der Compositor,
@@ -1376,48 +1374,31 @@ body.is-locked .toast.on{transform:translate(-50%,0)}
 .atmo{position:fixed;inset:0;z-index:80;pointer-events:none;
   opacity:var(--atmo-kraft,0);transition:opacity .55s var(--ease);
   contain:strict}
-.atmo__rand,.atmo__licht,.atmo__korn{position:absolute;inset:0}
+.atmo__rand,.atmo__licht{position:absolute;inset:0}
 
 /* Warme Randabdunklung — steht fest, wird einmal gezeichnet.
    Braun, nicht grau: auf cremefarbenem Grund wirkt grau schmutzig. */
 .atmo__rand{
-  background:radial-gradient(108% 80% at 50% 50%,
-                             rgba(44,35,13,0) 44%, rgba(44,35,13,.40) 100%)}
+  background:radial-gradient(112% 84% at 50% 46%,
+                             rgba(44,35,13,0) 40%, rgba(44,35,13,.46) 100%)}
 
 /* Gegenlicht: übergroß angelegt und mit dem Bildlauf verschoben */
 .atmo__licht{top:-30%;height:160%;
   background:radial-gradient(120% 52% at 50% 26%,
-                             rgba(250,220,166,.26), rgba(250,220,166,0) 58%);
+                             rgba(250,220,166,.32), rgba(250,220,166,0) 60%);
   transform:translate3d(0,calc(var(--atmo-lauf,0) * 24%),0);
-  will-change:transform}
+  /* Die Fahrt treibt das Gegenlicht auf — dieselbe Kopplung, die vorher am
+     Korn hing, nur an der Stelle, wo sie das Bild nicht verschmutzt. */
+  opacity:calc(.82 + var(--atmo-tempo,0) * .18);
+  transition:opacity .5s var(--ease);
+  will-change:transform,opacity}
 
 /* Ohne Mischbetriebsart: die Kachel bringt ihr Alpha selbst mit. Overlay
    auf voller Flaeche zwingt den Compositor, den Untergrund zurueckzulesen —
    auf der Startseite gemessen das Dreifache an Bildzeit. */
-.atmo__korn{inset:-8%;
-  background-image:var(--atmo-kachel);background-repeat:repeat;
-  opacity:calc(.55 + var(--atmo-tempo,0) * .45);
-  transition:opacity .4s var(--ease);
-  will-change:transform}
 
-/* Reicht die Bildrate nicht, fällt zuerst das Korn, dann die ganze Schicht —
-   dieselbe Staffelung wie beim Reise-Renderer. */
-.atmo.ohne-korn .atmo__korn{display:none}
+/* Reicht die Bildrate nicht, faellt die ganze Schicht — sie ist Zugabe. */
 
-/* Das Korn zuckt, es gleitet nicht — Film bewegt sich in Einzelbildern.
-   Verschoben wird per transform, das kostet keinen Neuaufbau der Seite. */
-@media (prefers-reduced-motion:no-preference){
-  .atmo__korn{animation:kornZuckt .8s steps(1,end) infinite}
-}
-@keyframes kornZuckt{
-  0%  {transform:translate3d(0,0,0)}
-  14% {transform:translate3d(-1.8%,1.2%,0)}
-  28% {transform:translate3d(1.4%,-1.6%,0)}
-  42% {transform:translate3d(-1.1%,-1.3%,0)}
-  57% {transform:translate3d(1.7%,1.5%,0)}
-  71% {transform:translate3d(-1.5%,1.8%,0)}
-  85% {transform:translate3d(1.2%,-1.1%,0)}
-}
 
 /* Über einem offenen Dialog gehört die Aufmerksamkeit dem Dialog */
 body.is-locked .atmo{opacity:0}

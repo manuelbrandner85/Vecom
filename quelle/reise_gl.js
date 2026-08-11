@@ -63,7 +63,7 @@ uniform vec2  uRes, uBild, uTexel;
 uniform float uFahrt, uRelief, uHatTiefe, uSeitlich;
 
 out vec2  vUV;
-out float vStreck;
+out float vStreck, vFerne;
 
 /* Bildschirmpunkt auf Bildkoordinate: das Bild deckt die Bühne,
    der Überstand wird beschnitten — wie object-fit: cover. */
@@ -89,6 +89,7 @@ void main(){
   vUV = uv;
 
   float t = tiefeBei(uv);
+  vFerne = t;                                /* 0 = nah, 1 = fern */
 
   /* Wie stark springt die Tiefe hier? Daraus wird später der
      Eigenschatten an gedehnten Flanken. */
@@ -110,7 +111,7 @@ void main(){
      radial aus der Bildmitte laeuft. Die Kamera schaut nach -z, hinein heisst
      also, ihren Standort nach -z zu ruecken — und der Standort wird vom Punkt
      abgezogen, nicht addiert. Andersherum entfernt sich das Bild. */
-  vec3 kamera = vec3(uSeitlich * 0.045 * uRelief, 0.0, -uFahrt * 0.30 * uRelief);
+  vec3 kamera = vec3(uSeitlich * 0.055 * uRelief, 0.0, -uFahrt * 0.42 * uRelief);
   welt -= kamera;
 
   float n = 0.05, f = 12.0;
@@ -123,7 +124,7 @@ void main(){
   const FRAG = `#version 300 es
 precision highp float;
 in vec2  vUV;
-in float vStreck;
+in float vStreck, vFerne;
 out vec4 farbe;
 
 uniform sampler2D uBildT;
@@ -166,6 +167,14 @@ void main(){
   float hell = smoothstep(0.62, 1.0, dot(c, vec3(0.2126, 0.7152, 0.0722)));
   c += vec3(1.0, 0.86, 0.62) * hell * 0.16 * uPost;
 
+  /* Luftperspektive: Entferntes verliert Kontrast und nimmt die Farbe des
+     Lichts an. Das ist die Tiefenwirkung, die eine echte Weite hat — und sie
+     traegt weiter als Korn, weil sie aus der Tiefenkarte stammt und nicht
+     gleichmaessig ueber dem Bild liegt. Quadratisch, damit der Vordergrund
+     unangetastet bleibt und erst der Horizont weich wird. */
+  vec3 dunst = vec3(0.87, 0.81, 0.67);
+  c = mix(c, dunst, vFerne * vFerne * 0.20 * uPost);
+
   c = pow(max(c, 0.0), vec3(0.98, 1.0, 1.045));
   c = mix(vec3(dot(c, vec3(0.2126, 0.7152, 0.0722))), c, 1.07);
   c *= vec3(1.02, 1.0, 0.965);
@@ -173,8 +182,6 @@ void main(){
   float vig = smoothstep(1.02, 0.32, length((s - 0.5) * vec2(uRes.x / uRes.y, 1.0)));
   c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
 
-  float korn = hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5;
-  c += korn * (0.045 + uTempo * 0.030) * uPost * (1.0 - hell * 0.6);
 
   /* Der Kapitelwechsel läuft als Kante durchs Bild, nicht als Blende.
      Nur der zweite Durchgang trägt sie. */
