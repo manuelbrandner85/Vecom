@@ -1357,11 +1357,19 @@ const VECOM = window.VECOM = window.VECOM || {};
   }
 
   /* Film nur, wenn: Datei vorhanden, keine Bewegungsreduktion, kein Sparmodus,
-     kein schmales Display und keine gedrosselte Verbindung. */
+     keine gedrosselte Verbindung.
+
+     Die Bildschirmbreite ist bewusst KEIN Kriterium mehr. Sie war es — und
+     damit lief der Film auf dem Telefon nie: gemessen bei 390 Punkten Breite
+     war nach zwanzig Sekunden noch nicht eine einzige Quelle angelegt. Das war
+     auch in sich unstimmig, denn die sechs Kapitelfilme der Reise halten sich
+     seit jeher an genau die drei Bedingungen oben und laufen auf dem Telefon.
+     Datenkosten haengen an der Leitung, nicht am Schirm, und die Leitung wird
+     gefragt. Die Aufloesung passt ebenfalls: 1152 x 648 deckt ein Telefon mit
+     390 CSS-Punkten bei dreifacher Pixeldichte ab. */
   const netz = navigator.connection || {};
   const lohnt = HERO.film && HERO.film.length && !ruhig && !netz.saveData
-             && !/(2g|slow-2g|3g)/.test(netz.effectiveType || "")
-             && matchMedia("(min-width: 760px)").matches;
+             && !/(2g|slow-2g|3g)/.test(netz.effectiveType || "");
   function filmStarten(){
     if(!film || film.dataset.los) return;
     film.dataset.los = "1";
@@ -1377,9 +1385,32 @@ const VECOM = window.VECOM = window.VECOM || {};
       buehne.classList.remove("film-blockiert");
     }, {once:true});
     film.load();
+
     /* Manche Browser verweigern die Wiedergabe trotz stumm — etwa Safari im
-       Energiesparmodus. Dann bekommt der Besucher einen Knopf statt gar nichts. */
-    const start = () => film.play().catch(() => buehne.classList.add("film-blockiert"));
+       Energiesparmodus. Bisher blieb es dann beim Knopf, und der Knopf war die
+       einzige Tuer: Der Vorhang hebt sich nach Zeit, nicht nach Klick, also
+       gibt es vor dem Film keine Geste, die die Sperre von sich aus loeste.
+       Jetzt wird sie bei der ersten Beruehrung nachgeholt — Zeigen, Tippen,
+       Taste, oder Rueckkehr in den sichtbaren Tab. Der Knopf bleibt als
+       letzte Stufe, ist aber die Ausnahme statt der Regel. */
+    const HORCHER = ["pointerdown", "touchstart", "keydown"];
+    function nachholen(){
+      if(film.dataset.wartet) return;
+      film.dataset.wartet = "1";
+      const nochmal = () => film.play().then(() => {
+        buehne.classList.remove("film-blockiert");
+        HORCHER.forEach(t => removeEventListener(t, nochmal, true));
+        document.removeEventListener("visibilitychange", beiSicht);
+      }).catch(()=>{});
+      const beiSicht = () => { if(!document.hidden) nochmal(); };
+      HORCHER.forEach(t => addEventListener(t, nochmal, {capture:true, passive:true}));
+      document.addEventListener("visibilitychange", beiSicht);
+    }
+
+    const start = () => film.play().catch(() => {
+      buehne.classList.add("film-blockiert");
+      nachholen();
+    });
     const knopf = buehne.querySelector("[data-filmstart]");
     if(knopf) knopf.addEventListener("click", () => {
       film.play().then(() => buehne.classList.remove("film-blockiert")).catch(()=>{});
@@ -1390,12 +1421,36 @@ const VECOM = window.VECOM = window.VECOM || {};
       {threshold:.01}).observe(buehne);
   }
 
-  /* Erst laden, wenn das Standbild steht und der Browser Luft hat —
-     sonst verzögert der Film die größte Inhaltsdarstellung. */
+  /* Wann wird geladen? Das Standbild ist die größte Inhaltsdarstellung und
+     bereits unterwegs, bevor dieses Skript überhaupt entscheidet — es steht
+     mit fetchpriority="high" im Markup. Der Film darf also früh dazukommen,
+     solange die Leitung ihn trägt.
+
+     Gemessen, Zeit bis das erste Filmbild lief, vorher:
+         ungedrosselt 0,3 s · schnelles 4G 2,1 s · langsames 4G 8,0 s
+     Der Vorhang liegt 0,9 bis 2,6 s über der Bühne. Auf einer ordentlichen
+     Leitung soll der Film dahinter fertig werden und laufen, wenn der Vorhang
+     hebt — dann ist die Ladezeit Teil des Auftritts statt danach sichtbar.
+     Auf einer schwachen Leitung wartet er wie bisher auf "load", dort kostet
+     er nichts mehr.
+
+     Das Leerlauf-Fenster fällt ersatzlos weg. requestIdleCallback mit zwei
+     Sekunden Frist schob den Start um bis zu zwei weitere Sekunden — es kaufte
+     nichts, was "load" nicht schon garantiert. */
   if(lohnt){
-    const spaeter = () => (window.requestIdleCallback || (f => setTimeout(f, 400)))(filmStarten, {timeout: 2000});
-    if(document.readyState === "complete") spaeter();
-    else addEventListener("load", spaeter, {once:true});
+    const traegt = (netz.downlink || 0) >= 5;
+    /* Aber nicht gleichzeitig mit dem Standbild: beide zusammen teilen sich die
+       Leitung, und das Standbild ist die groesste Inhaltsdarstellung. Gemessen
+       bei gleichzeitigem Start stieg sie von 888 auf 1020 ms. Also wartet der
+       Film auf das fertige Standbild — das kostet ihn nichts, denn er hat bis
+       zum Heben des Vorhangs Zeit. */
+    const nachStandbild = () => {
+      if(!bild || bild.complete) return filmStarten();
+      bild.addEventListener("load",  filmStarten, {once:true});
+      bild.addEventListener("error", filmStarten, {once:true});
+    };
+    if(traegt || document.readyState === "complete") nachStandbild();
+    else addEventListener("load", filmStarten, {once:true});
   }
 
   /* Kopfzeile transparent, solange der Hero die Fläche füllt */
