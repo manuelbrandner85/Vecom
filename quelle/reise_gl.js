@@ -384,7 +384,9 @@ void main(){
     aus = true;
     filme.forEach(v => { if(v && v !== false){ v.pause(); v.removeAttribute("src"); v.load(); } });
     leinwand.remove();
-    buehne.classList.remove("gl-an");
+    /* Zurueck auf die Rueckfallebene: die flachen Einzelbilder wieder zeigen. */
+    const reise = buehne.closest(".reise");
+    if(reise) reise.classList.remove("gpu");
   }
 
   let letzte = performance.now();
@@ -511,7 +513,29 @@ void main(){
   function start(){
     if(!texturen[0]) return false;
     buehne.insertBefore(leinwand, buehne.firstChild);
-    buehne.classList.add("gl-an");
+    /* ACHTUNG, hier stimmt etwas nicht — bewusst so belassen.
+
+       Diese Zeile setzte "gl-an" auf die Buehne. Diesen Namen kennt das
+       Stilblatt nirgends. Es kennt zwei andere:
+         .reise__gl.an  blendet die Leinwand ein — sonst bleibt sie bei
+                        Deckkraft 0 und die Buehne rechnet unsichtbar
+         .reise.gpu     nimmt die flachen Einzelbilder darueber weg
+       Beide hat nie jemand gesetzt. Die WebGL-Buehne laeuft seit ihrem Einbau
+       (36831bc) mit, war aber nie zu sehen; sichtbar sind die flachen Bilder
+       mit CSS-Perspektive. Nachgeprueft auch an der veroeffentlichten Fassung.
+
+       Warum nicht einfach umlegen? Weil das Ergebnis auf dieser Maschine ohne
+       GPU nicht zu beurteilen ist: Die Notbremse schaltet die Buehne ab, bevor
+       ein Bild steht. Mit angehaltener Notbremse sah das Salinen-Kapitel
+       filmisch aus, der Kapitelwechsel bei Pantelleria dagegen verschmiert.
+       Einen laufenden Laden auf gut Glueck umzustellen ist keine Option.
+
+       Zum Ansehen auf richtiger Hardware: index.html?buehne=an */
+    if(/[?&]buehne=an/.test(location.search)){
+      leinwand.classList.add("an");
+      const reise = buehne.closest(".reise");
+      if(reise) reise.classList.add("gpu");
+    }
     groesse();
     addEventListener("resize", groesse);
     document.addEventListener("visibilitychange", () => {
