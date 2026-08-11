@@ -134,6 +134,36 @@ Zwischenspeicher kommt.
 In der Einzeldatei-Fassung gibt es nur die Produktansicht; 45 eingebettete Bilder wären
 dort nicht vertretbar.
 
+## Ansichtsvergleich
+
+Alle übrigen Prüfungen fragen „funktioniert es noch". Diese fragt **„sieht es noch
+so aus"** — und genau dort sind in diesem Projekt die Fehler entstanden: eingeebnete
+Staffelabstände, ein Überblendfeld, das das laufende Kapitel sofort zudeckte. Beide
+Male blieben alle Funktionsprüfungen grün.
+
+```bash
+node quelle/ansicht.mjs --merken   # Stand festhalten
+node quelle/ansicht.mjs            # dagegen vergleichen
+```
+
+Acht Ansichten, Desktop und Telefon, jeweils mit `?renderer=erzwingen` — sonst
+prüfte man die Rückfallebene statt der Seite. Rückgabewert 1, wenn eine Ansicht
+über 0,4 % abweicht; die neue Aufnahme liegt dann als `*.neu.png` daneben.
+
+Damit ein Vergleich überhaupt etwas taugt, muss er zweimal dasselbe Bild liefern.
+Zwei Quellen von Unruhe sind stillgestellt: der Heldenfilm wird angehalten und auf
+eine feste Stelle gesetzt, und es wird gewartet, bis alle Bilder geladen sind. Ohne
+das meldete er bei unverändertem Code bis zu 9 % Abweichung — ein Werkzeug mit
+Fehlalarmen wird nach dem dritten ignoriert.
+
+Gegengeprüft: Eine einzelne geänderte CSS-Zahl (Randabdunklung .46 → .72) schlägt
+auf 5 von 8 Ansichten an, mit 6,8–10 %. Wo die Abdunklung kaum sichtbar ist, bleibt
+er still.
+
+Die Aufnahmen liegen unter `.ansichten/` und sind bewusst **nicht** im Repository —
+der Pages-Workflow lädt den Projektstamm als Ganzes hoch, sie wären sonst
+mitveröffentlicht.
+
 ## Ladebudget
 
 Gemessen wird ausdrücklich **bis zum `load`-Ereignis**, nicht länger. Alles danach
