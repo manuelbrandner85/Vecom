@@ -229,8 +229,10 @@ function renderFilters(){
 
 function renderGrid(){
   const list = visible();
-  $("#grid").innerHTML = list.map(p=>`
-    <article class="card">
+  /* Nur im ungefilterten Sortiment führt ein Erzeugnis die Reihe an */
+  const fuehrt = state.cat === "alle" && !state.q.trim();
+  $("#grid").innerHTML = list.map((p, i) => `
+    <article class="card${fuehrt && i === 0 ? ' card--gross' : ''}">
       <div class="card__media"${lqip(p)}>
         ${p.badge ? `<span class="card__flag${p.badgeGold?" card__flag--gold":""}">${p.badge}</span>` : ""}
         ${img(p, "(max-width:679px) 46vw, (max-width:1023px) 30vw, 290px")}

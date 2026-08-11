@@ -1,0 +1,18 @@
+{
+  "name": "VECOM Onlineshop – Sizilianische Produkte",
+  "short_name": "VECOM",
+  "description": "Olivenöl, Konfitüren und Antipasti direkt von zwölf sizilianischen Familienbetrieben.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "lang": "de",
+  "dir": "ltr",
+  "background_color": "#F0E6D2",
+  "theme_color": "#12160A",
+  "categories": ["food", "shopping"],
+  "icons": [
+    { "src": "assets/img/logo-176.webp", "sizes": "176x176", "type": "image/webp", "purpose": "any" },
+    { "src": "assets/img/logo-720.webp", "sizes": "720x720", "type": "image/webp", "purpose": "any" }
+  ]
+}

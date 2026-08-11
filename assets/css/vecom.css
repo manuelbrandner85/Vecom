@@ -45,7 +45,9 @@
 
   --gut: clamp(1.1rem,4vw,2.5rem);
   --wrap: 1240px;
-  --ease: cubic-bezier(.22,.61,.36,1);
+  /* Bewegungsgrammatik: vier Kurven, vier Dauern. Mehr braucht keine Seite,
+     und weniger Einheitlichkeit merkt man sofort. */
+  --ease: cubic-bezier(.2,.8,.2,1);          /* Standard: weich aus     */
   --ease-out: cubic-bezier(.16,1,.3,1);
   /* Relief: Kantenlicht, Auszug, Wurfschatten */
   --emboss-hi:   rgba(255,252,242,.66);
@@ -375,7 +377,7 @@ body.is-locked{overflow:hidden}
 .niche__face::after{content:"";position:absolute;top:-30%;bottom:-30%;left:0;width:46%;
   background:linear-gradient(105deg,rgba(255,250,232,0) 0%,rgba(255,250,232,.42) 45%,rgba(255,250,232,0) 100%);
   transform:translateX(-190%) rotate(9deg);
-  transition:transform 1.05s cubic-bezier(.5,.05,.2,1);
+  transition:transform 1.05s cubic-bezier(.62,.03,.22,1);
   pointer-events:none;mix-blend-mode:soft-light}
 .niche__face--back::after{background:linear-gradient(105deg,rgba(255,240,190,0) 0%,rgba(255,240,190,.55) 45%,rgba(255,240,190,0) 100%);
   mix-blend-mode:screen}
@@ -723,7 +725,7 @@ section[id],main [id]{scroll-margin-top:96px}
   display:grid;overflow-y:auto;
   opacity:0;visibility:hidden;
   clip-path:inset(0 0 100% 0);
-  transition:clip-path .78s cubic-bezier(.7,0,.16,1),opacity .35s var(--ease),visibility .78s}
+  transition:clip-path .78s cubic-bezier(.7,0,.2,1),opacity .35s var(--ease),visibility .78s}
 .welt.on{opacity:1;visibility:visible;clip-path:inset(0 0 0 0)}
 
 .welt__bild{position:absolute;inset:0;z-index:0}
@@ -844,6 +846,90 @@ section[id],main [id]{scroll-margin-top:96px}
 /* Ohne Renderer bleibt das Standbild stehen */
 .objekt__ersatz{width:100%;height:100%;object-fit:contain;display:block}
 .objekt.objekt-an .objekt__ersatz{display:none}
+
+
+/* ---------- Leitkarte: bricht die Gleichförmigkeit des Rasters ---------- */
+@media(min-width:680px){
+  .card--gross{grid-column:span 2}
+  .card--gross .card__media{aspect-ratio:16/10}
+  .card--gross .card__body{padding:1.15rem 1.3rem 1.35rem}
+  .card--gross .card__name{font-size:1.5rem;line-height:1.12}
+  .card--gross .card__desc{font-size:.98rem;-webkit-line-clamp:2;max-width:46ch}
+  .card--gross .card__price{font-size:1.34rem}
+}
+@media(min-width:1024px){
+  .card--gross{grid-column:span 2;grid-row:span 1}
+  .card--gross .card__media{aspect-ratio:2/1}
+  .card--gross .card__name{font-size:1.7rem}
+}
+/* Ziffern laufen in gleicher Breite — Preise stehen dann untereinander bündig */
+.card__price,.card__base,.line__price,.sum b,.rezept__eck dd,.story__facts dt{
+  font-variant-numeric:tabular-nums lining-nums}
+
+
+/* ============================================================
+   Feinschliff
+   ============================================================ */
+:root{
+  --t-kurz:.2s; --t-mittel:.45s; --t-lang:.8s; --t-szene:1.05s;
+  --e-schnitt:cubic-bezier(.62,.03,.22,1);   /* anschieben, durchziehen, ausschwingen */
+  --e-vorhang:cubic-bezier(.7,0,.2,1);       /* Blenden und Vorhänge                  */
+}
+
+/* --- Ziffern --- */
+.card__price,.line__preis,.sum b,.pd__price b,.szene__eck b,.rezept__eck dd,
+.story__facts dt,.zutaten .menge,.foot__bar,.co .review,.done b{
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1}
+
+/* --- Zeilenfall --- */
+h1,h2,h3,.reise__titel,.zwischen__satz,.welt__gross a{text-wrap:balance}
+p,li,dd,.lede,.card__desc{text-wrap:pretty}
+.card__desc,.betrieb__kurz,.rezept__teaser,.portraet__text p,.ware__text p{hyphens:auto}
+
+/* --- Auswahl, Schreibmarke, Bildlaufleiste --- */
+::selection{background:rgba(219,174,66,.34);color:var(--olive-deep)}
+.reise ::selection,.hero ::selection,.zwischen ::selection,.welt ::selection,.szene ::selection{
+  background:rgba(219,174,66,.42);color:#12160A}
+input,textarea{caret-color:var(--olive)}
+html{scrollbar-color:var(--olive-soft) var(--paper-warm);scrollbar-width:thin}
+
+/* --- Stärkerer Kontrast, wenn das System ihn verlangt --- */
+@media (prefers-contrast:more){
+  :root{--line:#8A7A50;--ink-soft:#463D1F;--bark-soft:#5E3413}
+  .card,.weiter__karte,.betrieb__link,.rezept__karte,.f input,.f select{border-width:2px}
+  .hero__schleier,.reise__schleier,.szene__schleier,.zwischen__schleier{filter:brightness(.72)}
+  .chip{border-width:2px}
+  .card__base,.krumen,.foot__bar{color:#3E361F}
+  .reise__geist,.hero__korn{display:none}
+}
+
+/* --- Druckfassung: Rezepte und Bestellungen sollen auf Papier taugen --- */
+@media print{
+  @page{margin:16mm}
+  *{background:#fff !important;color:#000 !important;box-shadow:none !important;
+    text-shadow:none !important;animation:none !important;transition:none !important}
+  .skip,.topbar,.head,.welt,.vorhang,.hero__buehne,.hero__cue,.filmstart,.niche,.reise,.zwischen,
+  .frieze,.news,.foot__grid,.toast,.scrim,.cart,.klangbtn,.objekt__gl,.objekt__hinweis,
+  .galerie,.weiter,.katnav,.filters,.searchbar,.tools{display:none !important}
+  body{font-size:11pt;line-height:1.45}
+  .szene{min-height:0;margin:0}
+  .szene__bild,.szene__schleier{display:none !important}
+  .szene__innen{padding:0}
+  h1{font-size:20pt;margin:0 0 6pt}
+  h2{font-size:13pt;margin:14pt 0 4pt;page-break-after:avoid}
+  .zutaten li,.schritte li,.spec div,.rezept__eck div{page-break-inside:avoid}
+  .schritte li::before{background:#000 !important;color:#fff !important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ware__bild,.rezept__bild{max-width:64mm;border:1px solid #999 !important;position:static}
+  .ware__bild img,.rezept__bild img{max-width:64mm;height:auto}
+  .rezept,.ware,.portraet{display:block}
+  .rezept__text,.ware__text,.portraet__text{margin-top:8pt}
+  /* Adressen sichtbar machen — auf Papier ist ein Link ohne Ziel wertlos */
+  main a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;word-break:break-all}
+  .rezept__tipp{border-left:2pt solid #000;padding-left:6pt}
+  .krumen{font-size:9pt}
+}
 
 /* ---------- Weitere Ansichten ---------- */
 .galerie{display:flex;gap:.5rem;padding:.6rem;background:var(--paper-warm);border-top:1px solid var(--line)}
