@@ -858,6 +858,21 @@ section[id],main [id]{scroll-margin-top:96px}
 .objekt{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:3px;
   overflow:hidden;background:radial-gradient(120% 100% at 50% 12%,#2C3304,#12160A 72%);
   box-shadow:var(--shadow-m);display:grid;place-items:center}
+/* Der Tempel im Agrigento-Kapitel: klein genug, um dem Text nicht die
+   Aufmerksamkeit zu nehmen. Das Kapitelbild zeigt bewusst keine Architektur —
+   sonst staenden zweimal Saeulen im selben Bild und keiner der beiden haette
+   eine eigene Aufgabe. */
+.reise__objekt{width:min(230px,44vw);margin:.2rem 0 1.5rem;border:0;background:none}
+/* Kein Rueckfallbild: eines mit eigenem Hintergrund saehe im dunklen Kapitel
+   wie eine aufgeklebte Kachel aus. Bis die Geometrie laeuft, ist die Flaeche
+   deshalb leer — aber sie bleibt im Fluss stehen. Mit display:none haette das
+   Feld keine Ausdehnung, der Sichtbarkeitsbeobachter loeste nie aus und der
+   Renderer startete nie: er wartet ja gerade darauf, sichtbar zu werden. */
+.reise__objekt:not(.objekt-an){height:0;margin:0;overflow:hidden}
+.reise__objekt{opacity:0;transition:opacity .9s var(--ease)}
+.reise__objekt.objekt-an{opacity:1}
+@media(max-width:899px){.reise__objekt{display:none}}
+
 .objekt__gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
 .objekt__gl:active{cursor:grabbing}
 .objekt:focus-visible{outline:2.5px solid var(--sea);outline-offset:3px}
