@@ -121,6 +121,47 @@ weil der Bildlauf dann ihm gehört. Gemessen wird trotzdem überall.
 Kein Lenis, kein GSAP — rund 90 Zeilen, eine Schleife, die schläft, sobald
 nichts mehr zieht.
 
+## Atmosphäre
+
+Dreiundvierzig Adressen fühlen sich erst dann wie ein Ort an, wenn über allen
+dasselbe Licht liegt: Gegenlicht, das mit dem Bildlauf wandert, eine warme
+Randabdunklung, Filmkorn.
+
+Der Ausschlag liegt darin, wo nichts davon liegt. Korn über einer hellen
+Warenliste ist kein Film, sondern Schmutz — das sähe nach Fotofilter aus, nicht
+nach Kamera. Die Schicht misst deshalb, wie viel des Sichtfelds gerade der
+Fotografie gehört: Szenenkopf, Hero, Reise, Fries. Füllt Bild das Fenster, ist
+sie da; liegt Papier darunter, ist sie fort. Gemessen 0,58 über dem Szenenkopf
+gegen 0,06 über der Warenliste. Jede Seite hat einen Szenenkopf, die Kopplung
+trägt also überall.
+
+Das ist Bildregie, nicht Physik: ein echtes Objektiv vignettiert gleichmäßig.
+Hier verschwindet die Abdunklung über dem Papier, weil sie dort dem Erzeugnis
+schadet statt zu nutzen.
+
+Die Kornkachel wird zur Laufzeit gezeichnet — null Bytes über die Leitung, und
+zufälliges Rauschen hat keine Struktur, an der sich die Kachelfuge zeigen könnte.
+
+**Was die Kosten diktiert hat.** Zwei Entwürfe sind an der Messung gescheitert:
+
+| Entwurf | Median auf `index.html` |
+|---|---|
+| Verlauf je Bild verschoben | Bildlauf brach auf 5 Zwischenstände ein |
+| `mix-blend-mode:overlay` | 164 ms (ohne Schicht: 51 ms) |
+| Kachel mit eigenem Alphakanal | 55 ms |
+
+Ein wandernder Verlaufsmittelpunkt baut die ganze Fläche je Bild neu auf;
+verschoben wird deshalb per `transform`. Und eine Mischbetriebsart zwingt den
+Compositor, den Untergrund zurückzulesen — das Korn bringt sein Alpha jetzt
+selbst mit. Übrig bleiben rund +6 ms Median unter reiner CPU-Rasterisierung.
+
+Reicht die Bildrate dennoch nicht, fällt zuerst das Korn, dann die ganze
+Schicht — dieselbe Staffelung wie beim Reise-Renderer, geprüft: `voll → ohne
+Korn → entfernt`.
+
+Keine Atmosphäre im Kontrastmodus, in der Druckfassung und über offenen
+Dialogen.
+
 ## Das Erzeugnis als Körper
 
 Die Pistaziencreme steht auf ihrer Seite als drehbare Geometrie — ein eigener

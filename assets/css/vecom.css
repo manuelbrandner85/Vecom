@@ -1311,6 +1311,81 @@ html{scrollbar-color:var(--olive-soft) var(--paper-warm);scrollbar-width:thin}
 body.is-locked .toast{bottom:auto;top:5.5rem;transform:translate(-50%,-200%)}
 body.is-locked .toast.on{transform:translate(-50%,0)}
 
+/* ============================================================
+   Atmosphäre — eine Lichtstimmung über allen Seiten
+
+   Damit sich 43 Adressen wie ein Ort anfühlen, braucht es etwas,
+   das über allen liegt: Gegenlicht, Randabdunklung, Filmkorn.
+
+   Entscheidend ist, wo es NICHT liegt. Korn über einer hellen
+   Warenliste ist kein Film, sondern Schmutz — es sähe nach
+   Fotofilter aus, nicht nach Kamera. Die Schicht hängt deshalb
+   an der Fotografie: Sie wird stark, wenn Szenenkopf, Hero,
+   Reise oder Fries das Sichtfeld füllen, und geht auf null,
+   sobald Papier darunter liegt. Gerechnet wird das im Skript,
+   überblendet hier — dadurch bleibt der Übergang weich, auch
+   wenn die Bildlaufschleife zwischendurch schläft.
+
+   Die Kachel für das Korn wird zur Laufzeit gezeichnet: null
+   Bytes über die Leitung, und zufälliges Rauschen hat keine
+   Struktur, an der man die Kachelfuge erkennen könnte.
+   ============================================================ */
+/* Nichts hier darf je Bild neu aufgebaut werden. Verschoben wird nur per
+   transform, geregelt nur über opacity — beides erledigt der Compositor,
+   ohne die Fläche noch einmal zu zeichnen. Ein Verlauf, dessen Mittelpunkt
+   sich bewegt, täte genau das Gegenteil. */
+.atmo{position:fixed;inset:0;z-index:80;pointer-events:none;
+  opacity:var(--atmo-kraft,0);transition:opacity .55s var(--ease);
+  contain:strict}
+.atmo__rand,.atmo__licht,.atmo__korn{position:absolute;inset:0}
+
+/* Warme Randabdunklung — steht fest, wird einmal gezeichnet.
+   Braun, nicht grau: auf cremefarbenem Grund wirkt grau schmutzig. */
+.atmo__rand{
+  background:radial-gradient(108% 80% at 50% 50%,
+                             rgba(44,35,13,0) 44%, rgba(44,35,13,.40) 100%)}
+
+/* Gegenlicht: übergroß angelegt und mit dem Bildlauf verschoben */
+.atmo__licht{top:-30%;height:160%;
+  background:radial-gradient(120% 52% at 50% 26%,
+                             rgba(250,220,166,.26), rgba(250,220,166,0) 58%);
+  transform:translate3d(0,calc(var(--atmo-lauf,0) * 24%),0);
+  will-change:transform}
+
+/* Ohne Mischbetriebsart: die Kachel bringt ihr Alpha selbst mit. Overlay
+   auf voller Flaeche zwingt den Compositor, den Untergrund zurueckzulesen —
+   auf der Startseite gemessen das Dreifache an Bildzeit. */
+.atmo__korn{inset:-8%;
+  background-image:var(--atmo-kachel);background-repeat:repeat;
+  opacity:calc(.55 + var(--atmo-tempo,0) * .45);
+  transition:opacity .4s var(--ease);
+  will-change:transform}
+
+/* Reicht die Bildrate nicht, fällt zuerst das Korn, dann die ganze Schicht —
+   dieselbe Staffelung wie beim Reise-Renderer. */
+.atmo.ohne-korn .atmo__korn{display:none}
+
+/* Das Korn zuckt, es gleitet nicht — Film bewegt sich in Einzelbildern.
+   Verschoben wird per transform, das kostet keinen Neuaufbau der Seite. */
+@media (prefers-reduced-motion:no-preference){
+  .atmo__korn{animation:kornZuckt .8s steps(1,end) infinite}
+}
+@keyframes kornZuckt{
+  0%  {transform:translate3d(0,0,0)}
+  14% {transform:translate3d(-1.8%,1.2%,0)}
+  28% {transform:translate3d(1.4%,-1.6%,0)}
+  42% {transform:translate3d(-1.1%,-1.3%,0)}
+  57% {transform:translate3d(1.7%,1.5%,0)}
+  71% {transform:translate3d(-1.5%,1.8%,0)}
+  85% {transform:translate3d(1.2%,-1.1%,0)}
+}
+
+/* Über einem offenen Dialog gehört die Aufmerksamkeit dem Dialog */
+body.is-locked .atmo{opacity:0}
+
+@media (prefers-contrast:more){.atmo{display:none}}
+@media print{.atmo{display:none !important}}
+
 /* Scroll-Reveal */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
 .rv.in{opacity:1;transform:none}

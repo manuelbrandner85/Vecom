@@ -1181,6 +1181,13 @@ const VECOM = window.VECOM = window.VECOM || {};
      tempo ist in Pixeln je Bild bei 60 Hz — bildratenunabhängig. */
   VECOM.bildlauf = () => ({ort, ziel, tempo});
 
+  /* Ein Takt für alle, die am Bildlauf hängen. Diese Schleife läuft
+     ohnehin, solange etwas zieht — eine zweite danebenzustellen wäre
+     Verschwendung. Der letzte Aufruf vor dem Einschlafen meldet
+     tempo = 0, damit niemand mit stehender Geschwindigkeit zurückbleibt. */
+  const mitfahrer = new Set();
+  VECOM.takt = fn => { mitfahrer.add(fn); wecken(); return () => mitfahrer.delete(fn); };
+
   const grenze  = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
   const klemmen = v => Math.max(0, Math.min(grenze(), v));
 
@@ -1220,9 +1227,9 @@ const VECOM = window.VECOM = window.VECOM || {};
     tempo = (stand - voriger) / dt * 16.667;
     voriger = stand;
 
-    if(Math.abs(tempo) < 0.03 && (!traege || ort === ziel)){
-      tempo = 0; laeuft = false; return;
-    }
+    if(Math.abs(tempo) < 0.03 && (!traege || ort === ziel)) tempo = 0;
+    for(const fn of mitfahrer){ try{ fn(ort, tempo); }catch(e){} }
+    if(tempo === 0 && (!traege || ort === ziel)){ laeuft = false; return; }
     requestAnimationFrame(schritt);
   }
 
@@ -2238,6 +2245,109 @@ void main(){
     });
   }, {rootMargin: "600px 0px"}).observe(halter);
 })();
+
+/* ============================================================
+   20 — Atmosphäre: dieselbe Luft auf allen Seiten
+
+   Dreiundvierzig Adressen fühlen sich erst dann wie ein Ort an,
+   wenn über allen dasselbe Licht liegt. Drei Dinge tun das:
+   Gegenlicht, das mit dem Bildlauf wandert, eine warme
+   Randabdunklung und Filmkorn.
+
+   Der Ausschlag liegt darin, wo nichts davon liegt. Korn über
+   einer hellen Warenliste ist kein Film, sondern Schmutz — das
+   sähe nach Fotofilter aus, nicht nach Kamera. Die Schicht misst
+   deshalb je Bild, wie viel des Sichtfelds gerade der Fotografie
+   gehört: Szenenkopf, Hero, Reise, Fries. Füllt Bild das Fenster,
+   ist sie da; liegt Papier darunter, ist sie fort. Jede Seite hat
+   einen Szenenkopf, die Kopplung trägt also überall.
+
+   Gerechnet wird hier nur das Ziel — die Überblendung macht die
+   Stilvorgabe. Dadurch bleibt der Übergang weich, auch wenn die
+   Bildlaufschleife zwischendurch einschläft.
+
+   Die Kornkachel wird zur Laufzeit gezeichnet: null Bytes über
+   die Leitung, und zufälliges Rauschen hat keine Struktur, an der
+   sich die Kachelfuge zeigen könnte.
+   ============================================================ */
+(function atmosphaere(){
+  /* Im Kontrastmodus hat eine Schleierschicht nichts zu suchen */
+  if(matchMedia("(prefers-contrast: more)").matches) return;
+
+  const bild = Array.from(document.querySelectorAll(".hero,.reise,.szene,.zwischen,.frieze"));
+  if(!bild.length) return;
+
+  function kornKachel(kante){
+    const c = document.createElement("canvas");
+    c.width = c.height = kante;
+    const g = c.getContext("2d");
+    const feld = g.createImageData(kante, kante), d = feld.data;
+    for(let i = 0; i < d.length; i += 4){
+      /* Salz und Pfeffer mit eigenem Alphakanal statt Mittelgrau: dadurch
+         genuegt normales Ueberlagern. Eine Mischbetriebsart muesste den
+         Untergrund je Bild zurueckreichen — gemessen kostet das auf der
+         Startseite das Dreifache an Bildzeit. */
+      const hell = Math.random() < 0.5 ? 0 : 255;
+      d[i] = d[i+1] = d[i+2] = hell;
+      d[i+3] = Math.random() * 46;
+    }
+    g.putImageData(feld, 0, 0);
+    return c.toDataURL("image/png");
+  }
+
+  const schicht = document.createElement("div");
+  schicht.className = "atmo";
+  schicht.setAttribute("aria-hidden", "true");
+  schicht.innerHTML = '<div class="atmo__rand"></div><div class="atmo__licht"></div>'
+                    + '<div class="atmo__korn"></div>';
+  schicht.style.setProperty("--atmo-kachel", "url(" + kornKachel(128) + ")");
+  document.body.appendChild(schicht);
+
+  /* Dieselbe Staffelung wie beim Reise-Renderer: reicht die Bildrate nicht,
+     fällt zuerst das Korn, dann die ganze Schicht. Gemessen wird nur, während
+     wirklich gezogen wird — im Stillstand sagt eine Bildrate nichts aus. */
+  const stand = {};
+  function setzen(name, wert, schwelle){
+    if(stand[name] !== undefined && Math.abs(stand[name] - wert) < schwelle) return;
+    stand[name] = wert;
+    schicht.style.setProperty(name, wert.toFixed(4));
+  }
+
+  let fenster = 0, bilder = 0, stufe = 2, vorige = performance.now(), abmelden = null;
+  function bildrate(tempo){
+    const jetzt = performance.now(), dt = jetzt - vorige;
+    vorige = jetzt;
+    if(Math.abs(tempo) < 1 || dt > 200) return;      /* Stillstand, Tabwechsel */
+    fenster += dt; bilder++;
+    if(fenster < 900) return;
+    const mittel = fenster / bilder; fenster = 0; bilder = 0;
+    if(mittel > 26){
+      if(stufe === 2){ stufe = 1; schicht.classList.add("ohne-korn"); }
+      else if(stufe === 1){ stufe = 0; schicht.remove(); if(abmelden) abmelden(); }
+    }
+  }
+
+  abmelden = VECOM.takt((ort, tempo) => {
+    bildrate(tempo);
+    if(!stufe) return;
+    /* Erst alle Maße lesen, dann schreiben — sonst rechnet der Browser
+       das Seitenlayout mitten in der Schleife neu. */
+    let bedeckt = 0;
+    for(const el of bild){
+      const r = el.getBoundingClientRect();
+      bedeckt += Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
+    }
+    const weg = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+
+    /* Nur schreiben, wenn sich wirklich etwas geändert hat. Jedes Setzen
+       rechnet den Stil neu und startet die laufende Überblendung von vorn —
+       je Bild gemessen kostet das mehr als die Schicht selbst. */
+    setzen("--atmo-kraft", Math.min(bedeckt / innerHeight, 1), 0.02);
+    setzen("--atmo-tempo", Math.min(Math.abs(tempo) / 55, 1),  0.05);
+    setzen("--atmo-lauf",  weg ? ort / weg : 0,                0.004);
+  });
+})();
+
 
 /* ============================================================
    13 — Start
