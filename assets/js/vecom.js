@@ -1142,6 +1142,121 @@ document.addEventListener("keydown", e => {
 
 
 /* ============================================================
+   15 — Trägheit: der Bildlauf bekommt Masse
+
+   Ein nativer Bildlauf folgt dem Finger. Eine Kamera folgt ihm
+   nicht — sie wird beschleunigt, sie läuft nach, sie kommt zur
+   Ruhe. Genau das fehlt einer Seite, die sich wie ein Film
+   anfühlen soll: nicht Weichzeichnung, sondern Masse.
+
+   Der Bildlauf des Browsers bleibt der echte. Das Rad setzt nur
+   noch ein Ziel, und jedes Bild wird ein Stück weit nachgeführt.
+   Dadurch funktionieren Anker, Sprungmarken, Bildlaufleiste,
+   Tastatur und scrollIntoView unverändert weiter — wer sonst noch
+   scrollt, wird bemerkt und übernommen, statt bekämpft.
+
+   Aus derselben Schleife fällt die Geschwindigkeit ab, und die ist
+   der eigentliche Gewinn: daran hängt das Objektiv. Schnelle Fahrt
+   heißt mehr Farbquerfehler und mehr Korn, so wie eine echte
+   Optik unter einem harten Schwenk leidet. Bewegung, die etwas
+   bedeutet, statt Bewegung als Zierrat.
+
+   Drei Fälle bekommen keine Trägheit: Fingergeräte, weil der
+   Schwung des Betriebssystems besser ist als jeder Nachbau;
+   Bewegungsreduktion, weil Trägheit dort nichts zu suchen hat;
+   und ein offener Dialog, weil der Bildlauf dann ihm gehört.
+   Gemessen wird die Geschwindigkeit trotzdem überall.
+   ============================================================ */
+const VECOM = window.VECOM = window.VECOM || {};
+
+(function traegheit(){
+  const ruhig  = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finger = matchMedia("(hover: none), (pointer: coarse)").matches;
+  const traege = !ruhig && !finger;
+
+  let ort = scrollY, ziel = scrollY, tempo = 0, erwartet = -1, laeuft = false, letzte = 0;
+  let voriger = scrollY;
+
+  /* Was die Seite von hier nimmt: wo sie steht und wie schnell sie zieht.
+     tempo ist in Pixeln je Bild bei 60 Hz — bildratenunabhängig. */
+  VECOM.bildlauf = () => ({ort, ziel, tempo});
+
+  const grenze  = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
+  const klemmen = v => Math.max(0, Math.min(grenze(), v));
+
+  function wecken(){
+    if(laeuft) return;
+    laeuft = true; letzte = performance.now();
+    requestAnimationFrame(schritt);
+  }
+
+  function schritt(jetzt){
+    const dt = Math.min(jetzt - letzte || 16.667, 50);
+    letzte = jetzt;
+
+    if(traege){
+      const rest = ziel - ort;
+      if(Math.abs(rest) < 0.08){
+        ort = ziel;
+      } else {
+        /* Nachlauf unabhängig von der Bildrate: bei 60 wie bei 144 Bildern
+           dieselbe Trägheit, nicht dieselbe Schrittweite. */
+        ort += rest * (1 - Math.pow(1 - 0.115, dt / 16.667));
+        erwartet = Math.round(ort);
+        /* Ausdrücklich hart: die Stilvorgabe scroll-behavior:smooth
+           würde sonst jedes Teilstück noch einmal weich anfahren. */
+        scrollTo({top: ort, behavior: "instant"});
+      }
+    } else {
+      /* Ohne Trägheit wird nur gemessen, nicht eingegriffen */
+      ort = ziel = scrollY;
+    }
+
+    /* Die Geschwindigkeit kommt aus der tatsächlich zurückgelegten Strecke,
+       nicht aus dem eigenen Nachlauf. Sonst bliebe das Objektiv stumm, sobald
+       jemand über Sprungmarke, Tastatur oder Bildlaufleiste fährt — und genau
+       das sind die härtesten Schwenks. */
+    const stand = scrollY;
+    tempo = (stand - voriger) / dt * 16.667;
+    voriger = stand;
+
+    if(Math.abs(tempo) < 0.03 && (!traege || ort === ziel)){
+      tempo = 0; laeuft = false; return;
+    }
+    requestAnimationFrame(schritt);
+  }
+
+  /* Elemente mit eigenem Bildlauf — Dialogtafel, Ergebnisliste — behalten ihn */
+  function eigenerBildlauf(el){
+    for(let n = el instanceof Element ? el : null; n && n !== document.body; n = n.parentElement){
+      const s = getComputedStyle(n);
+      if(/(auto|scroll)/.test(s.overflowY) && n.scrollHeight > n.clientHeight + 1) return true;
+    }
+    return false;
+  }
+
+  addEventListener("wheel", e => {
+    if(!traege || e.ctrlKey) return;                       /* Strg+Rad ist Zoom */
+    if(document.body.classList.contains("is-locked")) return;
+    if(eigenerBildlauf(e.target)) return;
+    e.preventDefault();
+    const mass = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
+    ziel = klemmen(ziel + e.deltaY * mass);
+    wecken();
+  }, {passive: false});
+
+  /* Hat jemand anders gescrollt — Anker, Tastatur, Bildlaufleiste,
+     scrollIntoView — dann wird sein Stand übernommen, nicht überschrieben. */
+  addEventListener("scroll", () => {
+    if(traege && Math.abs(scrollY - erwartet) <= 2){ wecken(); return; }
+    ort = ziel = scrollY; erwartet = -1; wecken();
+  }, {passive: true});
+
+  addEventListener("resize", () => { ziel = klemmen(ziel); }, {passive: true});
+})();
+
+
+/* ============================================================
    16 — Hero: Kopfzeile über dem Bild, Film erst wenn es sich lohnt
    ============================================================ */
 (function hero(){
@@ -1416,7 +1531,7 @@ out vec4 farbe;
 
 uniform sampler2D uA, uB;
 uniform vec2  uRes, uBildA, uBildB;
-uniform float uMisch, uFahrtA, uFahrtB, uZeit, uPost;
+uniform float uMisch, uFahrtA, uFahrtB, uZeit, uPost, uTempo;
 
 float hash(vec2 p){
   vec3 q = fract(vec3(p.xyx) * 0.1031);
@@ -1460,7 +1575,9 @@ void main(){
   vec2 m = uv - 0.5;
   uv = 0.5 + m * (1.0 + 0.055 * dot(m, m) * uPost);
 
-  float ab = 0.0035 * uPost;
+  /* Das Objektiv reagiert auf die Fahrt: ein harter Schwenk treibt den
+     Farbquerfehler an den Rand, so wie eine echte Optik unter Tempo leidet. */
+  float ab = (0.0035 + uTempo * 0.0075) * uPost;
   vec3 a = hole(uA, uv, uBildA, uFahrtA, ab);
   vec3 c = a;
 
@@ -1483,7 +1600,7 @@ void main(){
   c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
 
   float korn = hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5;
-  c += korn * 0.045 * uPost * (1.0 - hell * 0.6);
+  c += korn * (0.045 + uTempo * 0.030) * uPost * (1.0 - hell * 0.6);
 
   farbe = vec4(clamp(c, 0.0, 1.0), 1.0);
 }`;
@@ -1509,7 +1626,7 @@ void main(){
   gl.useProgram(prog);
 
   const U = {};
-  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost"]
+  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost","uTempo"]
     .forEach(nm => U[nm] = gl.getUniformLocation(prog, nm));
   gl.uniform1i(U.uA, 0);
   gl.uniform1i(U.uB, 1);
@@ -1592,7 +1709,7 @@ void main(){
 
   /* ---------------- Adaptive Qualität ---------------- */
   const maxDpr = Math.min(devicePixelRatio || 1, 2);
-  let dpr = maxDpr, post = 1.0;
+  let dpr = maxDpr, post = 1.0, tempoGlatt = 0;
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 
   function groesse(){
@@ -1675,6 +1792,12 @@ void main(){
     gl.uniform1f(U.uFahrtB, 0.0);
     gl.uniform1f(U.uZeit, jetzt * 0.001);
     gl.uniform1f(U.uPost, post);
+    /* Geschwindigkeit aus der Traegheit; geglaettet, damit das Objektiv
+       nicht zuckt, sondern nachgibt. */
+    const rohTempo = (window.VECOM && VECOM.bildlauf)
+                   ? Math.min(Math.abs(VECOM.bildlauf().tempo) / 55, 1) : 0;
+    tempoGlatt += (rohTempo - tempoGlatt) * 0.12;
+    gl.uniform1f(U.uTempo, tempoGlatt);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }

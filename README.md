@@ -97,6 +97,30 @@ Zwischenspeicher kommt.
 In der Einzeldatei-Fassung gibt es nur die Produktansicht; 45 eingebettete Bilder wären
 dort nicht vertretbar.
 
+## Trägheit
+
+Der Bildlauf hat Masse. Das Rad setzt ein Ziel, das Bild zieht mit Nachlauf
+hinterher — nicht Weichzeichnung, sondern Beschleunigen und Auslaufen.
+
+Der Bildlauf des Browsers bleibt dabei der echte; es wird nur jedes Bild ein
+Stück weit nachgeführt. Anker, Sprungmarken, Bildlaufleiste, Tastatur und
+`scrollIntoView` funktionieren unverändert: wer sonst noch scrollt, wird
+bemerkt und übernommen statt bekämpft.
+
+Der eigentliche Gewinn ist die Geschwindigkeit, die dabei abfällt. An ihr
+hängt das Objektiv des Reise-Renderers: schnelle Fahrt heißt mehr
+Farbquerfehler am Rand und mehr Korn, so wie eine echte Optik unter einem
+harten Schwenk leidet. Gemessen wird aus der tatsächlich zurückgelegten
+Strecke, nicht aus dem eigenen Nachlauf — sonst bliebe das Objektiv genau
+bei den härtesten Schwenks stumm, den Sprungmarken.
+
+Keine Trägheit bekommen: Fingergeräte, weil der Schwung des Betriebssystems
+besser ist als jeder Nachbau; Bewegungsreduktion; und ein offener Dialog,
+weil der Bildlauf dann ihm gehört. Gemessen wird trotzdem überall.
+
+Kein Lenis, kein GSAP — rund 90 Zeilen, eine Schleife, die schläft, sobald
+nichts mehr zieht.
+
 ## Das Erzeugnis als Körper
 
 Die Pistaziencreme steht auf ihrer Seite als drehbare Geometrie — ein eigener

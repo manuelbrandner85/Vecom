@@ -53,7 +53,7 @@ out vec4 farbe;
 
 uniform sampler2D uA, uB;
 uniform vec2  uRes, uBildA, uBildB;
-uniform float uMisch, uFahrtA, uFahrtB, uZeit, uPost;
+uniform float uMisch, uFahrtA, uFahrtB, uZeit, uPost, uTempo;
 
 float hash(vec2 p){
   vec3 q = fract(vec3(p.xyx) * 0.1031);
@@ -97,7 +97,9 @@ void main(){
   vec2 m = uv - 0.5;
   uv = 0.5 + m * (1.0 + 0.055 * dot(m, m) * uPost);
 
-  float ab = 0.0035 * uPost;
+  /* Das Objektiv reagiert auf die Fahrt: ein harter Schwenk treibt den
+     Farbquerfehler an den Rand, so wie eine echte Optik unter Tempo leidet. */
+  float ab = (0.0035 + uTempo * 0.0075) * uPost;
   vec3 a = hole(uA, uv, uBildA, uFahrtA, ab);
   vec3 c = a;
 
@@ -120,7 +122,7 @@ void main(){
   c *= mix(1.0, 0.52 + 0.48 * vig, uPost);
 
   float korn = hash(gl_FragCoord.xy + fract(uZeit) * 137.0) - 0.5;
-  c += korn * 0.045 * uPost * (1.0 - hell * 0.6);
+  c += korn * (0.045 + uTempo * 0.030) * uPost * (1.0 - hell * 0.6);
 
   farbe = vec4(clamp(c, 0.0, 1.0), 1.0);
 }`;
@@ -146,7 +148,7 @@ void main(){
   gl.useProgram(prog);
 
   const U = {};
-  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost"]
+  ["uA","uB","uRes","uBildA","uBildB","uMisch","uFahrtA","uFahrtB","uZeit","uPost","uTempo"]
     .forEach(nm => U[nm] = gl.getUniformLocation(prog, nm));
   gl.uniform1i(U.uA, 0);
   gl.uniform1i(U.uB, 1);
@@ -229,7 +231,7 @@ void main(){
 
   /* ---------------- Adaptive Qualität ---------------- */
   const maxDpr = Math.min(devicePixelRatio || 1, 2);
-  let dpr = maxDpr, post = 1.0;
+  let dpr = maxDpr, post = 1.0, tempoGlatt = 0;
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 
   function groesse(){
@@ -312,6 +314,12 @@ void main(){
     gl.uniform1f(U.uFahrtB, 0.0);
     gl.uniform1f(U.uZeit, jetzt * 0.001);
     gl.uniform1f(U.uPost, post);
+    /* Geschwindigkeit aus der Traegheit; geglaettet, damit das Objektiv
+       nicht zuckt, sondern nachgibt. */
+    const rohTempo = (window.VECOM && VECOM.bildlauf)
+                   ? Math.min(Math.abs(VECOM.bildlauf().tempo) / 55, 1) : 0;
+    tempoGlatt += (rohTempo - tempoGlatt) * 0.12;
+    gl.uniform1f(U.uTempo, tempoGlatt);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
