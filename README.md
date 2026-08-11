@@ -24,13 +24,14 @@ assets/
 │   ├── playfair.woff2           Variable Schrift 400–900, auf 143 Zeichen reduziert
 │   ├── playfair-italic.woff2
 │   └── OFL-Playfair-Display.txt Lizenz — muss mit ausgeliefert werden
-└── img/
-    ├── logo-720.webp            Markenzeichen, Vorderseite der Scheibe
-    ├── logo-176.webp            Kopfzeile und Fußzeile
-    ├── trinacria-680.webp       Rückseite, wird erst bei Berührung geladen
-    ├── kalkputz-1024.webp       Nahtlose Wandtextur
-    └── produkte/<id>-680.webp   je Erzeugnis zwei Auflösungen
-        produkte/<id>-1024.webp
+├── img/
+│   ├── logo-720.webp            Markenzeichen, Vorderseite der Scheibe
+│   ├── logo-176.webp            Kopfzeile und Fußzeile
+│   ├── trinacria-680.webp       Rückseite, wird erst bei Berührung geladen
+│   ├── kalkputz-1024.webp       Nahtlose Wandtextur
+│   └── produkte/<id>-680.webp   je Erzeugnis zwei Auflösungen
+│       produkte/<id>-1024.webp
+└── modelle/pistacchio.glb       Drehbares Erzeugnis, 736 KB
 ```
 
 ## Wie geladen wird
@@ -95,6 +96,33 @@ Zwischenspeicher kommt.
 
 In der Einzeldatei-Fassung gibt es nur die Produktansicht; 45 eingebettete Bilder wären
 dort nicht vertretbar.
+
+## Das Erzeugnis als Körper
+
+Die Pistaziencreme steht auf ihrer Seite als drehbare Geometrie — ein eigener
+GLB-Lader, ein Materialschritt, drei Lichter. Kein Three.js: für einen Körper,
+eine Kamera und ein Licht wäre ein Szenengraph mehr Gewicht als Nutzen.
+
+Die Datei wird mit `quelle/modell.py` hergerichtet:
+
+| Schritt | Was er tut |
+|---|---|
+| Normalen | flächengewichtet erzeugt, gemittelt über gleiche Positionen |
+| Quantisierung | Position und Normale als int16, Texturkoordinaten als uint16 |
+| Indizes | uint16 statt uint32, solange das Modell unter 65536 Ecken bleibt |
+
+Zusammen 1008 → 736 KB, und das **mit** den zuvor fehlenden Normalen. Der
+Positionsfehler der Quantisierung liegt bei 1,4 · 10⁻⁵ auf ein 1,9 Einheiten
+hohes Modell — rund ein Hunderttausendstel der Bauhöhe.
+
+Ohne Normalen rechnet der Shader `normalize(vec3(0))`: sämtliche Lichtterme
+fallen auf null, und das Glas steht flach im Bild wie ein Aufkleber. Der Fehler
+kracht nicht, er sieht bloß schlecht aus — deshalb erzeugt der Lader die
+Normalen notfalls auch zur Laufzeit, falls einmal ein Modell ohne sie ankommt.
+
+Die Quantisierung ist als `KHR_mesh_quantization` ausgewiesen, Maßstab und
+Verschiebung stehen im Knoten. Die Datei bleibt damit normgerecht und öffnet
+in jedem Betrachter in Originalgröße, nicht nur im eigenen Lader.
 
 ## Warengruppen und Suche
 

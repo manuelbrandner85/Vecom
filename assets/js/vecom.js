@@ -1362,147 +1362,6 @@ function kartenAuftritt(){
 
 
 /* ============================================================
-   19 — Der Protagonist
-
-   Die Reise zeigt Orte. Was fehlte, ist das Ding, um das es geht.
-   Eine Flasche ist ein Rotationskörper — also wird sie gerechnet,
-   nicht modelliert: ein Profil, um die Hochachse gedreht. Das ergibt
-   eine perfekte Silhouette bei null Kilobyte Modelldaten, ist in
-   jeder Auflösung scharf und braucht keine Ladezeit.
-
-   Kein Three.js: für einen Körper, eine Kamera und ein Licht wäre
-   eine Szenengraph-Bibliothek mehr Gewicht als Nutzen.
-   ============================================================ */
-function flascheBauen(gl){
-  /* --- Profil einer Marasca-Flasche: (Radius, Höhe), unten nach oben --- */
-  const PROFIL = [
-    [0.000,0.000],[0.300,0.000],[0.330,0.010],[0.335,0.030],
-    [0.335,0.470],[0.332,0.540],[0.322,0.590],[0.300,0.630],
-    [0.262,0.668],[0.215,0.702],[0.168,0.735],[0.132,0.768],
-    [0.112,0.800],[0.104,0.836],[0.102,0.900],[0.102,0.958],
-    [0.112,0.968],[0.118,0.980],[0.112,0.992],[0.096,1.000],
-    [0.000,1.000]
-  ];
-  const SEG = 72;                       /* Umfangsunterteilung */
-  const pos = [], nrm = [], uvs = [], idx = [];
-
-  /* Normalen aus der Profilsteigung: für einen Rotationskörper exakt,
-     kein Nachglätten nötig. */
-  for(let i = 0; i < PROFIL.length; i++){
-    const [r, y] = PROFIL[i];
-    const a = PROFIL[Math.max(i - 1, 0)];
-    const b = PROFIL[Math.min(i + 1, PROFIL.length - 1)];
-    let dr = b[0] - a[0], dy = b[1] - a[1];
-    let nr = dy, ny = -dr;               /* Normale = Tangente um 90° gedreht */
-    const L = Math.hypot(nr, ny) || 1;
-    nr /= L; ny /= L;
-    for(let s = 0; s <= SEG; s++){
-      const t = s / SEG, w = t * Math.PI * 2;
-      const c = Math.cos(w), si = Math.sin(w);
-      pos.push(r * c, y - 0.5, r * si);
-      nrm.push(nr * c, ny, nr * si);
-      uvs.push(t, y);
-    }
-  }
-  const R = SEG + 1;
-  for(let i = 0; i < PROFIL.length - 1; i++){
-    for(let s = 0; s < SEG; s++){
-      const a = i * R + s, b = a + 1, c = a + R, d = c + 1;
-      idx.push(a, b, c, b, d, c);
-    }
-  }
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
-  const puffer = (daten, ort, groesse) => {
-    const p = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, p);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(daten), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(ort);
-    gl.vertexAttribPointer(ort, groesse, gl.FLOAT, false, 0, 0);
-  };
-  puffer(pos, 0, 3); puffer(nrm, 1, 3); puffer(uvs, 2, 2);
-  const ip = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ip);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
-  gl.bindVertexArray(null);
-
-  return {vao, anzahl: idx.length};
-}
-
-
-/* ============================================================
-   19 — Der Protagonist
-
-   Die Reise zeigt Orte. Was fehlte, ist das Ding, um das es geht.
-   Eine Flasche ist ein Rotationskörper — also wird sie gerechnet,
-   nicht modelliert: ein Profil, um die Hochachse gedreht. Das ergibt
-   eine perfekte Silhouette bei null Kilobyte Modelldaten, ist in
-   jeder Auflösung scharf und braucht keine Ladezeit.
-
-   Kein Three.js: für einen Körper, eine Kamera und ein Licht wäre
-   eine Szenengraph-Bibliothek mehr Gewicht als Nutzen.
-   ============================================================ */
-function flascheBauen(gl){
-  /* --- Profil einer Marasca-Flasche: (Radius, Höhe), unten nach oben --- */
-  const PROFIL = [
-    [0.000,0.000],[0.300,0.000],[0.330,0.010],[0.335,0.030],
-    [0.335,0.470],[0.332,0.540],[0.322,0.590],[0.300,0.630],
-    [0.262,0.668],[0.215,0.702],[0.168,0.735],[0.132,0.768],
-    [0.112,0.800],[0.104,0.836],[0.102,0.900],[0.102,0.958],
-    [0.112,0.968],[0.118,0.980],[0.112,0.992],[0.096,1.000],
-    [0.000,1.000]
-  ];
-  const SEG = 72;                       /* Umfangsunterteilung */
-  const pos = [], nrm = [], uvs = [], idx = [];
-
-  /* Normalen aus der Profilsteigung: für einen Rotationskörper exakt,
-     kein Nachglätten nötig. */
-  for(let i = 0; i < PROFIL.length; i++){
-    const [r, y] = PROFIL[i];
-    const a = PROFIL[Math.max(i - 1, 0)];
-    const b = PROFIL[Math.min(i + 1, PROFIL.length - 1)];
-    let dr = b[0] - a[0], dy = b[1] - a[1];
-    let nr = dy, ny = -dr;               /* Normale = Tangente um 90° gedreht */
-    const L = Math.hypot(nr, ny) || 1;
-    nr /= L; ny /= L;
-    for(let s = 0; s <= SEG; s++){
-      const t = s / SEG, w = t * Math.PI * 2;
-      const c = Math.cos(w), si = Math.sin(w);
-      pos.push(r * c, y - 0.5, r * si);
-      nrm.push(nr * c, ny, nr * si);
-      uvs.push(t, y);
-    }
-  }
-  const R = SEG + 1;
-  for(let i = 0; i < PROFIL.length - 1; i++){
-    for(let s = 0; s < SEG; s++){
-      const a = i * R + s, b = a + 1, c = a + R, d = c + 1;
-      idx.push(a, b, c, b, d, c);
-    }
-  }
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
-  const puffer = (daten, ort, groesse) => {
-    const p = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, p);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(daten), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(ort);
-    gl.vertexAttribPointer(ort, groesse, gl.FLOAT, false, 0, 0);
-  };
-  puffer(pos, 0, 3); puffer(nrm, 1, 3); puffer(uvs, 2, 2);
-  const ip = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ip);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
-  gl.bindVertexArray(null);
-
-  return {vao, anzahl: idx.length};
-}
-
-/* --- Ein wenig Matrizenrechnung; mehr braucht es nicht --- */
-
-/* ============================================================
    18 — Reise-Renderer (WebGL2)
 
    Sechs fotografische Kapitel, teils als Bewegtbild. Kein Modell,
@@ -1853,6 +1712,21 @@ void main(){
 
    Der GLB-Lader liest genau das, was dieses Modell enthält:
    POSITION, NORMAL, TEXCOORD_0, Indizes und eine Basisfarbtextur.
+
+   Zwei Dinge nimmt er zusätzlich in Kauf, weil beide sonst still
+   danebengehen:
+
+   Quantisierte Attribute. Position und Normale liegen als int16
+   vor, Texturkoordinaten als uint16 — das spart ein gutes Viertel
+   der Datei. Die glTF-Komponententypen sind zufällig genau die
+   GL-Konstanten, die Grafikkarte rechnet normalisierte Ganzzahlen
+   also von sich aus zurück. Nur die Position wird auf der CPU
+   entpackt, weil sie für die Einpassung ohnehin gebraucht wird.
+
+   Fehlende Normalen. Ohne sie rechnet der Shader normalize(vec3(0)),
+   sämtliche Lichtterme fallen auf null und das Erzeugnis steht
+   flach im Bild — ein Fehler, der nicht kracht, sondern bloß
+   schlecht aussieht. Fehlen sie, werden sie hier erzeugt.
    ============================================================ */
 (function objektRenderer(){
   const halter = document.querySelector("[data-objekt]");
@@ -1917,20 +1791,77 @@ void main(){
                  5123:Uint16Array, 5125:Uint32Array, 5126:Float32Array};
     const ANZ = {SCALAR:1, VEC2:2, VEC3:3, VEC4:4};
 
+    /* Ein Attribut samt Typ — der Typ entscheidet später, wie die
+       Grafikkarte die Zahlen zu lesen hat. */
     function lesen(nr){
       const a = json.accessors[nr];
       const s = json.bufferViews[a.bufferView];
       const T = TYP[a.componentType], n = ANZ[a.type];
       const versatz = (s.byteOffset || 0) + (a.byteOffset || 0);
-      return new T(bin, versatz, a.count * n);
+      return {feld: new T(bin, versatz, a.count * n),
+              typ: a.componentType, norm: !!a.normalized};
+    }
+
+    /* Ganzzahlen auf Fließkomma zurückrechnen, so wie es die Norm
+       für normalisierte Zugriffe vorschreibt. */
+    function entpacken(z){
+      if(z.typ === 5126) return z.feld;
+      const grenze = {5120:127, 5121:255, 5122:32767, 5123:65535}[z.typ] || 1;
+      const f = new Float32Array(z.feld.length);
+      for(let i = 0; i < f.length; i++)
+        f[i] = z.norm ? Math.max(z.feld[i] / grenze, -1) : z.feld[i];
+      return f;
+    }
+
+    /* Flächengewichtete Normalen, gemittelt über gleiche Positionen.
+       Das Kreuzprodukt ist bereits proportional zur Dreiecksfläche —
+       große Dreiecke wiegen dadurch von selbst schwerer. Gemittelt
+       wird über die Position, nicht über die Ecke: sonst zöge sich
+       die Naht der Texturkoordinaten als Kante durchs Bild. */
+    function normalenRechnen(p, idx){
+      const anzahl = p.length / 3;
+      const topf = new Map(), zu = new Int32Array(anzahl);
+      for(let i = 0; i < anzahl; i++){
+        const k = p[3*i] + "," + p[3*i+1] + "," + p[3*i+2];
+        let g = topf.get(k);
+        if(g === undefined){ g = topf.size; topf.set(k, g); }
+        zu[i] = g;
+      }
+      const summe = new Float32Array(topf.size * 3);
+      /* Ohne Indexpuffer bilden je drei aufeinanderfolgende Ecken ein Dreieck */
+      const ecken = idx ? idx.length : anzahl;
+      const holen = idx ? (t => idx[t]) : (t => t);
+      for(let t = 0; t + 2 < ecken; t += 3){
+        const a = holen(t), b = holen(t+1), c = holen(t+2);
+        const ux = p[3*b] - p[3*a], uy = p[3*b+1] - p[3*a+1], uz = p[3*b+2] - p[3*a+2];
+        const vx = p[3*c] - p[3*a], vy = p[3*c+1] - p[3*a+1], vz = p[3*c+2] - p[3*a+2];
+        const nx = uy*vz - uz*vy, ny = uz*vx - ux*vz, nz = ux*vy - uy*vx;
+        for(const ecke of [a, b, c]){
+          const g = zu[ecke] * 3;
+          summe[g] += nx; summe[g+1] += ny; summe[g+2] += nz;
+        }
+      }
+      const f = new Float32Array(anzahl * 3);
+      for(let i = 0; i < anzahl; i++){
+        const g = zu[i] * 3;
+        const x = summe[g], y = summe[g+1], z = summe[g+2];
+        const l = Math.hypot(x, y, z);
+        if(l < 1e-12) f[3*i+1] = 1;          /* entartet: nach oben, statt NaN */
+        else { f[3*i] = x/l; f[3*i+1] = y/l; f[3*i+2] = z/l; }
+      }
+      return f;
     }
 
     /* Erstes Mesh mit Dreiecken genügt — das Modell hat genau eines */
     const prim = json.meshes[0].primitives[0];
-    const pos  = lesen(prim.attributes.POSITION);
-    const nrm  = prim.attributes.NORMAL !== undefined ? lesen(prim.attributes.NORMAL) : null;
-    const uv   = prim.attributes.TEXCOORD_0 !== undefined ? lesen(prim.attributes.TEXCOORD_0) : null;
-    const idx  = prim.indices !== undefined ? lesen(prim.indices) : null;
+    const pos  = entpacken(lesen(prim.attributes.POSITION));
+    const idx  = prim.indices !== undefined ? lesen(prim.indices).feld : null;
+    const nrm  = prim.attributes.NORMAL !== undefined
+               ? lesen(prim.attributes.NORMAL)
+               : {feld: normalenRechnen(pos, idx), typ: 5126, norm: false};
+    const uv   = prim.attributes.TEXCOORD_0 !== undefined
+               ? lesen(prim.attributes.TEXCOORD_0)
+               : {feld: new Float32Array(pos.length / 3 * 2), typ: 5126, norm: false};
 
     /* Basisfarbtextur, falls vorhanden */
     let bild = null;
@@ -2050,16 +1981,18 @@ void main(){
 
     vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
-    const puffer = (daten, ort, groesse) => {
+    /* Die glTF-Komponententypen sind genau die GL-Konstanten; normalisierte
+       Ganzzahlen rechnet die Grafikkarte beim Lesen selbst zurück. */
+    const puffer = (z, ort, groesse) => {
       const b = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, b);
-      gl.bufferData(gl.ARRAY_BUFFER, daten, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, z.feld, gl.STATIC_DRAW);
       gl.enableVertexAttribArray(ort);
-      gl.vertexAttribPointer(ort, groesse, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(ort, groesse, z.typ, z.norm, 0, 0);
     };
-    puffer(p, 0, 3);
-    puffer(daten.nrm || new Float32Array(p.length), 1, 3);
-    puffer(daten.uv  || new Float32Array(p.length / 3 * 2), 2, 2);
+    puffer({feld: p, typ: gl.FLOAT, norm: false}, 0, 3);
+    puffer(daten.nrm, 1, 3);
+    puffer(daten.uv,  2, 2);
 
     if(daten.idx){
       const ib = gl.createBuffer();
