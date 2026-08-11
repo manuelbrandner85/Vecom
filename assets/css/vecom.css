@@ -827,6 +827,24 @@ section[id],main [id]{scroll-margin-top:96px}
 /* Der Inhalt darunter rückt an die Szene heran */
 .szene + .wrap > .ware,.szene + .wrap > .portraet,.szene + .wrap > .rezept{padding-top:clamp(2rem,5vw,3.2rem)}
 
+
+/* ---------- Erzeugnis als Geometrie ---------- */
+.objekt{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:3px;
+  overflow:hidden;background:radial-gradient(120% 100% at 50% 12%,#2C3304,#12160A 72%);
+  box-shadow:var(--shadow-m);display:grid;place-items:center}
+.objekt__gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.objekt__gl:active{cursor:grabbing}
+.objekt:focus-visible{outline:2.5px solid var(--sea);outline-offset:3px}
+.objekt__hinweis{position:absolute;z-index:2;left:50%;bottom:.9rem;transform:translateX(-50%);
+  display:flex;align-items:center;gap:.45rem;white-space:nowrap;
+  color:rgba(246,238,219,.72);pointer-events:none;opacity:0;transition:opacity .5s}
+.objekt.objekt-an .objekt__hinweis{opacity:1}
+.objekt__hinweis svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+/* Ohne Renderer bleibt das Standbild stehen */
+.objekt__ersatz{width:100%;height:100%;object-fit:contain;display:block}
+.objekt.objekt-an .objekt__ersatz{display:none}
+
 /* ---------- Weitere Ansichten ---------- */
 .galerie{display:flex;gap:.5rem;padding:.6rem;background:var(--paper-warm);border-top:1px solid var(--line)}
 .galerie button{flex:0 0 auto;width:clamp(58px,15%,84px);aspect-ratio:1;padding:0;border:1px solid var(--line);border-radius:2px;
