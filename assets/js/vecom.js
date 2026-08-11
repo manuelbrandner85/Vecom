@@ -1169,6 +1169,62 @@ document.addEventListener("keydown", e => {
    ============================================================ */
 const VECOM = window.VECOM = window.VECOM || {};
 
+/* ------------------------------------------------------------
+   Gerät: einmal erkennen, dann nur noch nachschlagen
+
+   Dieselbe Erkennung stand vorher dreimal wortgleich im Code —
+   einmal je Renderer. Das ist nicht nur doppelt, es driftet
+   auseinander: Wer eine Grenze verschiebt, verschiebt sie an
+   einer Stelle und vergisst die anderen.
+
+   Herauskommt eine Stufe, keine Sammlung von Einzelflags:
+
+     aus     kein WebGL2, Software-Rasterizer oder
+             Bewegungsreduktion — es läuft nichts
+     mittel  Fingergerät oder schmale Anzeige: die Inszenierung
+             läuft, aber gröber gerechnet und ohne das schwere
+             Einzelobjekt
+     hoch    alles
+
+   „mittel" ist der eigentliche Punkt. Vorher war unter 900 px
+   hart abgeschaltet — Telefone bekamen gar keine Inszenierung.
+   Das ist die kleinere Fassung, nicht die keine.
+   ------------------------------------------------------------ */
+(function geraet(){
+  const erzwingen = /[?&]renderer=erzwingen/.test(location.search);
+  let karte = "", webgl2 = false;
+  try{
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if(gl){
+      webgl2 = true;
+      const i = gl.getExtension("WEBGL_debug_renderer_info");
+      karte = (i ? gl.getParameter(i.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || "";
+      /* Den Prüfkontext gleich wieder hergeben — Browser erlauben nur
+         eine begrenzte Zahl davon, und wir brauchen ihn nur für den Namen. */
+      const w = gl.getExtension("WEBGL_lose_context"); if(w) w.loseContext();
+    }
+  }catch(e){}
+
+  const weich  = /swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte);
+  const ruhig  = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finger = matchMedia("(hover: none), (pointer: coarse)").matches;
+  const schmal = innerWidth < 900;
+
+  /* ?renderer=erzwingen hebt die HARDWARE-Sperre auf, damit sich die
+     Inszenierung auch auf einem Software-Rasterizer pruefen laesst. Die
+     Geraeteklasse hebt es ausdruecklich nicht auf — sonst waere die
+     mittlere Stufe die einzige, die niemand testen kann. */
+  const stufe = (ruhig || (!erzwingen && (!webgl2 || weich))) ? "aus"
+              : (schmal || finger) ? "mittel"
+              : "hoch";
+
+  /* Auf kleinen Anzeigen ist die Pixeldichte oft 3 — das dritte Mal
+     kostet mehr, als es zeigt. */
+  const dpr = Math.min(devicePixelRatio || 1, stufe === "mittel" ? 1.5 : 2);
+
+  VECOM.geraet = () => ({stufe, dpr, webgl2, weich, ruhig, finger, schmal, karte});
+})();
+
 (function traegheit(){
   const ruhig  = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finger = matchMedia("(hover: none), (pointer: coarse)").matches;
@@ -1533,11 +1589,9 @@ function kartenAuftritt(){
   });
   if(!gl) return;
 
-  const info  = gl.getExtension("WEBGL_debug_renderer_info");
-  const karte = (info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL)
-                      : gl.getParameter(gl.RENDERER)) || "";
-  if(!erzwingen && /swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte)) return;
-  if(!erzwingen && innerWidth < 900) return;
+  /* Erkannt wird einmal zentral, hier wird nur nachgeschlagen. */
+  const geraet = (window.VECOM && VECOM.geraet) ? VECOM.geraet() : {stufe:"hoch", dpr:2};
+  if(geraet.stufe === "aus") return;
 
   /* ---------------- Shader ---------------- */
   const VERT = `#version 300 es
@@ -1712,7 +1766,12 @@ void main(){
   /* ---------------- Gitter ---------------- */
   /* Nur der Bildschirmort je Punkt; Tiefe und Weltlage rechnet der
      Vertex-Shader. Ein Puffer, ein Indexpuffer, sonst nichts. */
-  let gitterX = 176, gitterY = 99, indexAnzahl = 0;
+  /* Auf dem Telefon ein groeberes Gitter: rund ein Drittel der Dreiecke.
+     Die Parallaxe braucht Aufloesung dort, wo die Tiefe springt — und das
+     sind Kanten, keine Flaechen. Grob genug faellt es nicht auf, fein genug
+     kostet es die Bildrate. */
+  const fein = geraet.stufe === "mittel" ? [96, 54] : [176, 99];
+  let gitterX = fein[0], gitterY = fein[1], indexAnzahl = 0;
   const vao = gl.createVertexArray();
   const eckPuffer = gl.createBuffer(), idxPuffer = gl.createBuffer();
 
@@ -1846,7 +1905,7 @@ void main(){
   }
 
   /* ---------------- Adaptive Qualität ---------------- */
-  const maxDpr = Math.min(devicePixelRatio || 1, 2);
+  const maxDpr = geraet.dpr;
   let dpr = maxDpr, post = 1.0, relief = 1.0, tempoGlatt = 0;
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 
@@ -2034,10 +2093,11 @@ void main(){
   const gl = leinwand.getContext("webgl2", {alpha:true, antialias:true, depth:true,
                                             premultipliedAlpha:false, powerPreference:"high-performance"});
   if(!gl) return;
-  const info  = gl.getExtension("WEBGL_debug_renderer_info");
-  const karte = (info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || "";
-  if(!erzwingen && /swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte)) return;
-  if(!erzwingen && innerWidth < 900) return;
+  /* Das Einzelobjekt bleibt der vollen Stufe vorbehalten: es ist ein
+     Download von rund einem Megabyte und ein zweiter GL-Kontext auf
+     derselben Seite. Auf dem Telefon traegt die Reise die Inszenierung. */
+  const geraet = (window.VECOM && VECOM.geraet) ? VECOM.geraet() : {stufe:"hoch", dpr:2};
+  if(geraet.stufe !== "hoch") return;
 
   /* ---------------- Matrizen ---------------- */
   const M = {

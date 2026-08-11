@@ -48,11 +48,9 @@
   });
   if(!gl) return;
 
-  const info  = gl.getExtension("WEBGL_debug_renderer_info");
-  const karte = (info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL)
-                      : gl.getParameter(gl.RENDERER)) || "";
-  if(!erzwingen && /swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte)) return;
-  if(!erzwingen && innerWidth < 900) return;
+  /* Erkannt wird einmal zentral, hier wird nur nachgeschlagen. */
+  const geraet = (window.VECOM && VECOM.geraet) ? VECOM.geraet() : {stufe:"hoch", dpr:2};
+  if(geraet.stufe === "aus") return;
 
   /* ---------------- Shader ---------------- */
   const VERT = `#version 300 es
@@ -227,7 +225,12 @@ void main(){
   /* ---------------- Gitter ---------------- */
   /* Nur der Bildschirmort je Punkt; Tiefe und Weltlage rechnet der
      Vertex-Shader. Ein Puffer, ein Indexpuffer, sonst nichts. */
-  let gitterX = 176, gitterY = 99, indexAnzahl = 0;
+  /* Auf dem Telefon ein groeberes Gitter: rund ein Drittel der Dreiecke.
+     Die Parallaxe braucht Aufloesung dort, wo die Tiefe springt — und das
+     sind Kanten, keine Flaechen. Grob genug faellt es nicht auf, fein genug
+     kostet es die Bildrate. */
+  const fein = geraet.stufe === "mittel" ? [96, 54] : [176, 99];
+  let gitterX = fein[0], gitterY = fein[1], indexAnzahl = 0;
   const vao = gl.createVertexArray();
   const eckPuffer = gl.createBuffer(), idxPuffer = gl.createBuffer();
 
@@ -361,7 +364,7 @@ void main(){
   }
 
   /* ---------------- Adaptive Qualität ---------------- */
-  const maxDpr = Math.min(devicePixelRatio || 1, 2);
+  const maxDpr = geraet.dpr;
   let dpr = maxDpr, post = 1.0, relief = 1.0, tempoGlatt = 0;
   let fenster = 0, bilder = 0, gut = 0, aus = false;
 

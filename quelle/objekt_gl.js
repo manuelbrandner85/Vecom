@@ -39,10 +39,11 @@
   const gl = leinwand.getContext("webgl2", {alpha:true, antialias:true, depth:true,
                                             premultipliedAlpha:false, powerPreference:"high-performance"});
   if(!gl) return;
-  const info  = gl.getExtension("WEBGL_debug_renderer_info");
-  const karte = (info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || "";
-  if(!erzwingen && /swiftshader|llvmpipe|software|basic render|microsoft basic/i.test(karte)) return;
-  if(!erzwingen && innerWidth < 900) return;
+  /* Das Einzelobjekt bleibt der vollen Stufe vorbehalten: es ist ein
+     Download von rund einem Megabyte und ein zweiter GL-Kontext auf
+     derselben Seite. Auf dem Telefon traegt die Reise die Inszenierung. */
+  const geraet = (window.VECOM && VECOM.geraet) ? VECOM.geraet() : {stufe:"hoch", dpr:2};
+  if(geraet.stufe !== "hoch") return;
 
   /* ---------------- Matrizen ---------------- */
   const M = {
