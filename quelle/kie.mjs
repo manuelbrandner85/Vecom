@@ -82,6 +82,36 @@ export async function hochrechnen(quelle, faktor = '4') {
   throw new Error('Zeit abgelaufen. Zuletzt: ' + JSON.stringify(letzte));
 }
 
+/* Das Ergebnis holen — und pruefen, dass es wirklich ein Bild ist.
+
+   Ohne diese Pruefung ging es schief: Bei zwei von fuenfzehn Auftraegen
+   antwortete der Weg nach draussen mit "DNS resolution failure", 22 Bytes
+   Text. Die wurden als PNG weggeschrieben, die Hochrechnung war bezahlt,
+   und aufgefallen waere es erst beim Rechnen der Auslieferstufen. Deshalb:
+   auf die Kennung am Dateianfang schauen und bei Misserfolg neu versuchen.
+   Der Auftrag ist zu diesem Zeitpunkt bereits fertig und bezahlt — ein
+   erneuter Abruf kostet nichts. */
+const KENNUNG = [
+  ['png',  [0x89, 0x50, 0x4E, 0x47]],
+  ['jpeg', [0xFF, 0xD8, 0xFF]],
+  ['webp', [0x52, 0x49, 0x46, 0x46]],
+];
+export async function holen(adresse, versuche = 4) {
+  let letzter = '';
+  for (let i = 0; i < versuche; i++) {
+    if (i) await schlaf(2000 * i);
+    try {
+      const a = await fetch(adresse);
+      if (!a.ok) { letzter = `HTTP ${a.status}`; continue; }
+      const roh = Buffer.from(await a.arrayBuffer());
+      if (KENNUNG.some(([, k]) => k.every((b, j) => roh[j] === b))) return roh;
+      letzter = `kein Bild (${roh.length} Bytes: ${roh.subarray(0, 40).toString('utf8').trim()})`;
+    } catch (e) { letzter = e.message; }
+    process.stdout.write('!');
+  }
+  throw new Error(`Ergebnis nicht abholbar nach ${versuche} Versuchen — ${letzter}`);
+}
+
 /* --- als Programm aufgerufen --- */
 if (import.meta.url === `file://${process.argv[1]}`) {
   if (process.argv[2] === '--kontostand') {
@@ -97,7 +127,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const adresse = await hochrechnen(quelle, faktor);
     console.log(`\nErgebnis ${adresse}`);
 
-    const roh = Buffer.from(await (await fetch(adresse)).arrayBuffer());
+    const roh = await holen(adresse);
     const endung = (adresse.split('?')[0].match(/\.(png|jpe?g|webp)$/i)?.[1] || 'png').toLowerCase();
     const datei = `${ziel}.${endung}`;
     writeFileSync(datei, roh);
