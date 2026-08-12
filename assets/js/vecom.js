@@ -989,7 +989,7 @@ $$(".rv").forEach(el=>io.observe(el));
       if(!q) return;
       if(q.pfad){
         im.src = q.pfad + "-1000.webp";
-        im.srcset = q.pfad + "-1000.webp 1000w, " + q.pfad + "-1376.webp 1376w";
+        im.srcset = sprossen(q.pfad, [1000, 1376, 1920, 2560, 3840]);
         im.sizes = "100vw";
       } else {
         im.src = q.bild;
@@ -1025,7 +1025,7 @@ $$(".rv").forEach(el=>io.observe(el));
     const q = REISE["hain"];
     if(q && q.pfad){
       zw.src = q.pfad + "-1000.webp";
-      zw.srcset = q.pfad + "-1000.webp 1000w, " + q.pfad + "-1376.webp 1376w";
+      zw.srcset = sprossen(q.pfad, [1000, 1376, 1920, 2560, 3840]);
       zw.sizes = "100vw";
     } else if(q) zw.src = q.bild;
   }
@@ -1241,6 +1241,26 @@ const VECOM = window.VECOM = window.VECOM || {};
   VECOM.geraet = () => ({stufe, dpr, webgl2, weich, ruhig, finger, schmal, karte});
 })();
 
+/* Sprossenliste für srcset.
+
+   Die Kapitelbilder und das Heldenstandbild gibt es seit der Hochrechnung
+   bis 3840; welche Fassung geholt wird, entscheidet der Browser über sizes
+   und Pixeldichte selbst. Nur eine Ausnahme trifft das Gerät nicht selbst:
+   Bei eingeschaltetem Sparmodus wird bei 1376 gedeckelt. Die großen
+   Fassungen sind ein Vielfaches schwer, und wer Datensparen einschaltet,
+   hat das genau dafür getan. Dieselbe Regel gilt schon für die Filme.
+
+   Bewusst eine Funktionsdeklaration und keine Eigenschaft an VECOM: VECOM ist
+   ein const und steht weiter unten in dieser Datei. Die Kapitelbilder greifen
+   weiter oben darauf zu und liefen damit in die zeitliche Totzone — "Cannot
+   access VECOM before initialization". Eine Funktionsdeklaration wird an den
+   Anfang ihres Gueltigkeitsbereichs gehoben und ist von ueberall aufrufbar. */
+function sprossen(pfad, breiten){
+  const sparsam = (navigator.connection || {}).saveData;
+  return breiten.filter(b => !sparsam || b <= 1376)
+                .map(b => `${pfad}-${b}.webp ${b}w`).join(", ");
+}
+
 (function traegheit(){
   const ruhig  = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finger = matchMedia("(hover: none), (pointer: coarse)").matches;
@@ -1351,7 +1371,7 @@ const VECOM = window.VECOM = window.VECOM || {};
     if(HERO.bild.startsWith("data:")) bild.src = HERO.bild;
     else {
       bild.src = HERO.bild + "-1376.webp";
-      bild.srcset = HERO.bild + "-1000.webp 1000w, " + HERO.bild + "-1376.webp 1376w, " + HERO.bild + "-1920.webp 1920w";
+      bild.srcset = sprossen(HERO.bild, [1000, 1376, 1920, 2560, 3840]);
       bild.sizes = "100vw";
     }
   }

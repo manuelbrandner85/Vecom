@@ -30,14 +30,23 @@ import { chromium } from 'playwright';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
-const [quelle, name, ordner = 'assets/img/reise'] = process.argv.slice(2);
+const [quelle, name, ordner = 'assets/img/reise', breiten] = process.argv.slice(2);
 if (!quelle || !name) {
-  console.error('Aufruf: node quelle/leiter.mjs <4k-bild.png> <zielname> [zielordner]');
+  console.error('Aufruf: node quelle/leiter.mjs <4k-bild.png> <zielname> [zielordner] [breiten]');
   process.exit(2);
 }
 
 /* Breite -> Guete. Groessere Fassungen vertragen mehr Kompression. */
-const STUFEN = [[3840, 0.72], [2560, 0.74], [1376, 0.78], [1000, 0.80]];
+const STANDARD = [[3840, 0.72], [2560, 0.74], [1376, 0.78], [1000, 0.80]];
+
+/* Eigene Sprossenliste, etwa fuer den Hero, der eine 1920er behalten soll:
+       node quelle/leiter.mjs bild.png hero assets/img/hero 3840,2560,1920,1376,1000
+   Die Guete wird dann zwischen den Eckwerten der Standardleiter aufgespannt,
+   damit eine zusaetzliche Sprosse nicht aus der Reihe faellt. */
+const guete = b => Math.round((0.72 + (3840 - b) / 2840 * 0.08) * 1000) / 1000;
+const STUFEN = breiten
+  ? breiten.split(',').map(Number).filter(Boolean).sort((a, b) => b - a).map(b => [b, guete(b)])
+  : STANDARD;
 
 const browser = await chromium.launch();
 const seite = await browser.newPage();
