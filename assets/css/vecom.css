@@ -1435,3 +1435,8 @@ body.is-locked .atmo{opacity:0}
   .niche__flip,.niche__face::after,.niche,.niche__trinacria{transition:none}
 }
 html{scroll-behavior:smooth}
+
+
+/* Italienische Fachbegriffe: eigene Sprache für Screenreader und Silbentrennung.
+   Ein Vorleseprogramm spricht "Nocellara del Belice" sonst deutsch betont. */
+[lang="it"]{hyphens:manual;font-variant-ligatures:common-ligatures}
