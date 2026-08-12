@@ -48,6 +48,21 @@
   });
   if(!gl) return;
 
+  /* Bilder kommen aus dem DOM mit der ersten Zeile OBEN. WebGL legt sie ohne
+     diese Zeile so ab, dass die erste Zeile bei v = 0 landet — der Shader
+     rechnet v = 0 aber unten (uv = ndc * 0.5 + 0.5). Ergebnis: die ganze
+     Buehne stand auf dem Kopf.
+
+     Nachgemessen an der Leinwand gegen die Quellbilder:
+         aufrecht -0,026     gespiegelt +0,357
+     Aufgefallen ist es nie, weil die Leinwand seit ihrem Einbau bei
+     Deckkraft 0 lag und niemand sie je gesehen hat.
+
+     Die Einstellung gilt fuer den ganzen Kontext, also auch fuer die
+     Tiefenkarten und die Kapitelfilme — alle drehen sich gemeinsam, die
+     Zuordnung Bild zu Tiefe bleibt damit unveraendert. */
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
   /* Erkannt wird einmal zentral, hier wird nur nachgeschlagen. */
   const geraet = (window.VECOM && VECOM.geraet) ? VECOM.geraet() : {stufe:"hoch", dpr:2};
   if(geraet.stufe === "aus") return;
