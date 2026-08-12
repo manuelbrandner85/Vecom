@@ -44,8 +44,13 @@ const seite = await browser.newPage();
 await seite.goto(process.env.VECOM_ORT || 'http://localhost:8099/404.html');
 
 const roh = readFileSync(resolve(quelle)).toString('base64');
-const aus = await seite.evaluate(async ({ roh, stufen }) => {
-  const bm = await createImageBitmap(await (await fetch('data:image/png;base64,' + roh)).blob());
+/* Den Typ aus der Endung ableiten, nicht fest auf PNG setzen. Die
+   Hochrechnung liefert je nach Anbieter PNG oder JPEG; mit fest
+   verdrahtetem image/png scheitert das Dekodieren dann still. */
+const typ = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' }
+  [(quelle.split('.').pop() || '').toLowerCase()] || 'image/png';
+const aus = await seite.evaluate(async ({ roh, typ, stufen }) => {
+  const bm = await createImageBitmap(await (await fetch(`data:${typ};base64,` + roh)).blob());
   const r = { quelle: bm.width + ' x ' + bm.height };
   for (const [breite, guete] of stufen) {
     if (breite > bm.width) continue;            /* nie hochrechnen, nur herunter */
@@ -58,7 +63,7 @@ const aus = await seite.evaluate(async ({ roh, stufen }) => {
     r[breite] = { d: c.toDataURL('image/webp', guete).split(',')[1], hoehe };
   }
   return r;
-}, { roh, stufen: STUFEN });
+}, { roh, typ, stufen: STUFEN });
 
 await browser.close();
 
