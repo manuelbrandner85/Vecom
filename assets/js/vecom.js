@@ -121,7 +121,7 @@ function quelle(p, v, sizes){
   const q = IMG[p.id];
   if(q.startsWith("data:")) return `src="${q}"`;
   const b = q + (v ? "-" + v : "");
-  return `src="${b}-680.webp" srcset="${b}-680.webp 680w, ${b}-1024.webp 1024w" sizes="${sizes}"`;
+  return `src="${b}-680.webp" srcset="${sprossen(b, [680, 1024, 1376, 1920, 2560])}" sizes="${sizes}"`;
 }
 
 function img(p, sizes){
@@ -727,7 +727,7 @@ document.addEventListener("click", e => {
     const gross  = halter && halter.querySelector(".pd__media img, .ware__bild img");
     if(gross){
       const b = ans.dataset.ansicht;
-      gross.srcset = `${b}-680.webp 680w, ${b}-1024.webp 1024w`;
+      gross.srcset = sprossen(b, [680, 1024, 1376, 1920, 2560]);
       gross.sizes  = ans.dataset.sizes || "100vw";
       gross.src    = b + "-680.webp";
       halter.querySelectorAll("[data-ansicht]").forEach(k =>
