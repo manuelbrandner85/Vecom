@@ -47,12 +47,18 @@ export async function kontostand() {
   return a.data;
 }
 
+/* Hochrechnen ist nur ein Auftrag von mehreren. Darunter liegt dieselbe
+   Maschinerie: anlegen, nachfragen, Adresse zurueckgeben. */
+export async function hochrechnen(quelle, faktor = '4') {
+  return auftrag('topaz/image-upscale', { image_url: quelle, upscale_factor: faktor });
+}
+
 /* Auftrag anlegen und warten, bis er fertig ist.
    Zurueck kommt die Adresse des Ergebnisses. */
-export async function hochrechnen(quelle, faktor = '4') {
+export async function auftrag(modell, eingabe) {
   const anlegen = await (await fetch(`${BASIS}/jobs/createTask`, {
     method: 'POST', headers: KOPF,
-    body: JSON.stringify({ model: 'topaz/image-upscale', input: { image_url: quelle, upscale_factor: faktor } }),
+    body: JSON.stringify({ model: modell, input: eingabe }),
   })).json();
   if (anlegen.code !== 200 || !anlegen.data?.taskId) throw new Error('Auftrag: ' + JSON.stringify(anlegen));
   const auftrag = anlegen.data.taskId;
