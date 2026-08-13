@@ -1584,18 +1584,38 @@ const ruhigeBewegung = matchMedia("(prefers-reduced-motion: reduce)").matches;
   zeichnen();
 })();
 
-/* --- Warenkarten treten gestaffelt auf --- */
+/* --- Warenkarten treten gestaffelt auf ---
+
+   Diese Liste muss mit dem Stilblatt uebereinstimmen. Dort stehen fuenf
+   Sorten auf Deckkraft 0 und warten auf die Klasse "da"; hier wurden nur
+   vier davon beobachtet. Die beiden Listenpunkte fehlten — mit der Folge,
+   dass die Erzeugeruebersicht und die Rezeptuebersicht leer aussahen: Der
+   Eintrag stand auf Deckkraft 0, waehrend die Karte darin brav ihr "da"
+   bekam. Ein Kind kann in einem unsichtbaren Elternteil nicht sichtbar
+   sein.
+
+   Wer diese Liste aendert, aendert sie in vecom.css gleich mit. */
+const AUFTRITT = "#grid .card, .weiter__karte, .betrieb__link, .rezept__karte, .betriebe li, .rezepte li";
+
 function kartenAuftritt(){
-  const karten = $$("#grid .card:not(.da), .weiter__karte:not(.da), .betrieb__link:not(.da), .rezept__karte:not(.da)");
+  const karten = $$(AUFTRITT).filter(k => !k.classList.contains("da"));
   if(!karten.length) return;
-  if(ruhigeBewegung){ karten.forEach(k => k.classList.add("da")); return; }
+
+  /* Verschachteltes mitnehmen: ein .betrieb__link liegt in einem li, und
+     versteckt sind beide. */
+  const zeigen = (el, reihe) => {
+    el.style.transitionDelay = (Math.min(reihe % 8, 5) * 70) + "ms";
+    el.classList.add("da");
+    el.querySelectorAll(AUFTRITT).forEach(k => k.classList.add("da"));
+  };
+
+  if(ruhigeBewegung){ karten.forEach(k => zeigen(k, 0)); return; }
   const beob = new IntersectionObserver(es => {
     es.forEach(e => {
       if(!e.isIntersecting) return;
-      const geschwister = Array.from(e.target.parentElement.parentElement.children);
-      const reihe = Math.max(geschwister.indexOf(e.target.parentElement), geschwister.indexOf(e.target), 0);
-      e.target.style.transitionDelay = (Math.min(reihe % 8, 5) * 70) + "ms";
-      e.target.classList.add("da");
+      const eltern = e.target.parentElement;
+      const reihe = eltern ? Array.prototype.indexOf.call(eltern.children, e.target) : 0;
+      zeigen(e.target, Math.max(reihe, 0));
       beob.unobserve(e.target);
     });
   }, {rootMargin: "0px 0px -8% 0px", threshold: .05});
