@@ -87,12 +87,28 @@ async function aufnehmen(a) {
   await seite.waitForTimeout(1200);
 
   if (a.ziel !== 0) {
-    await seite.evaluate(z => {
-      const [sel, plus] = String(z).split('+');
-      const el = document.querySelector(sel);
-      const y = el ? el.getBoundingClientRect().top + scrollY + (+plus || 0) : 0;
-      scrollTo({ top: y, behavior: 'instant' });
-    }, a.ziel);
+    /* Einmal springen genuegt nicht. Die Seite hat eine traege
+       Bildlaufsteuerung, die nach einem programmierten Sprung noch auf ihr
+       eigenes Ziel nachzieht — und je nach Lauf blieb sie ein paar Pixel
+       woanders stehen. Im Bild sah man dasselbe Sortiment, nur um wenige
+       Zeilen verschoben: start-sortiment meldete dann 9,03 % Abweichung,
+       zweimal exakt derselbe Wert. Ein wiederkehrender exakter Wert ist ein
+       Zustand, kein Rauschen.
+
+       Also: springen, warten bis der Stand steht, und wenn er weggelaufen
+       ist, noch einmal springen. */
+    for (let versuch = 0; versuch < 6; versuch++) {
+      await seite.evaluate(z => {
+        const [sel, plus] = String(z).split('+');
+        const el = document.querySelector(sel);
+        const y = el ? el.getBoundingClientRect().top + scrollY + (+plus || 0) : 0;
+        scrollTo({ top: y, behavior: 'instant' });
+      }, a.ziel);
+      await seite.waitForTimeout(500);
+      const [x, y] = [await seite.evaluate(() => Math.round(scrollY)),
+      await (async () => { await seite.waitForTimeout(350); return seite.evaluate(() => Math.round(scrollY)); })()];
+      if (x === y) break;                     /* steht */
+    }
   }
   await seite.waitForTimeout(2600);          /* Auftritte und Ueberblendungen auslaufen lassen */
 
