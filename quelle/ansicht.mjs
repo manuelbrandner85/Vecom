@@ -43,6 +43,13 @@ const ANSICHTEN = [
   { name: 'warengruppe',     url: 'kategorie-antipasti.html?renderer=erzwingen', ziel: 0 },
   { name: 'erzeugnis',       url: 'produkt-pistaziencreme-aus-bronte.html?renderer=erzwingen', ziel: 0 },
   { name: 'rezept',          url: 'rezept-caponata.html',                       ziel: 0 },
+  /* Die beiden Uebersichten. Sie fehlten hier, und genau auf ihnen sind zwoelf
+     Betriebe und acht Rezepte monatelang unsichtbar geblieben: Das Stilblatt
+     setzte die Listenpunkte auf Deckkraft 0, das Skript kannte sie nicht.
+     Beide Seiten sahen unterhalb der Karte einfach leer aus. Kein
+     Funktionstest schlug an — die Elemente waren ja da. */
+  { name: 'erzeuger',        url: 'erzeuger.html',                              ziel: '.betriebe+-260' },
+  { name: 'rezeptliste',     url: 'rezepte.html',                               ziel: '.rezepte+-200' },
   { name: 'telefon-auftakt', url: 'index.html?renderer=erzwingen',              ziel: 0,
     fenster: { width: 390, height: 844 }, finger: true },
   { name: 'telefon-reise',   url: 'index.html?renderer=erzwingen',              ziel: '.reise__spur+600',
@@ -86,6 +93,7 @@ async function aufnehmen(a) {
   await seite.goto(`${ORT}/${a.url}`, { waitUntil: 'load' });
   await seite.waitForTimeout(1200);
 
+  let zielY = null;
   if (a.ziel !== 0) {
     /* Einmal springen genuegt nicht. Die Seite hat eine traege
        Bildlaufsteuerung, die nach einem programmierten Sprung noch auf ihr
@@ -98,15 +106,18 @@ async function aufnehmen(a) {
        Also: springen, warten bis der Stand steht, und wenn er weggelaufen
        ist, noch einmal springen. */
     for (let versuch = 0; versuch < 6; versuch++) {
-      await seite.evaluate(z => {
+      zielY = await seite.evaluate(z => {
         const [sel, plus] = String(z).split('+');
         const el = document.querySelector(sel);
         const y = el ? el.getBoundingClientRect().top + scrollY + (+plus || 0) : 0;
-        scrollTo({ top: y, behavior: 'instant' });
+        const ganz = Math.round(y);
+        scrollTo({ top: ganz, behavior: 'instant' });
+        return ganz;
       }, a.ziel);
       await seite.waitForTimeout(500);
-      const [x, y] = [await seite.evaluate(() => Math.round(scrollY)),
-      await (async () => { await seite.waitForTimeout(350); return seite.evaluate(() => Math.round(scrollY)); })()];
+      const x = await seite.evaluate(() => Math.round(scrollY));
+      await seite.waitForTimeout(350);
+      const y = await seite.evaluate(() => Math.round(scrollY));
       if (x === y) break;                     /* steht */
     }
   }
@@ -177,7 +188,30 @@ async function aufnehmen(a) {
      auch auf einer schnelleren Maschine der bindende Wert. */
   await seite.waitForFunction(() => window.__bilder() >= 200, null, { timeout: 30000 }).catch(() => { });
   await seite.evaluate(() => window.__einfrieren());
-  await seite.waitForTimeout(200);
+
+  /* Uebergaenge abschalten. Die Karten treten gestaffelt auf — bis 350 ms
+     Verzoegerung plus 780 ms Dauer — und wann der Beobachter ausloest, haengt
+     am Scrollzeitpunkt. Die Aufnahme traf dadurch mal den Endstand und mal
+     kurz davor: rezeptliste meldete 0,85 % bei voellig unveraendertem Code.
+
+     Wichtig: Es wird nur die BEWEGUNG abgeschaltet, nicht die Klasse "da"
+     gesetzt. Ein Element, das seinen Auftritt nie bekommen hat, bleibt also
+     unsichtbar und faellt weiter auf — genau dieser Fehler hat zwoelf
+     Betriebe und acht Rezepte verschwinden lassen. */
+  await seite.addStyleTag({
+    content: '*,*::before,*::after{transition:none !important;' +
+             'animation-duration:0s !important;animation-delay:0s !important}',
+  });
+
+  /* Jetzt erst auf ganze Bildpunkte setzen — vorher hatte es keinen Zweck.
+     Die traege Bildlaufsteuerung laeuft ueber rAF und schrieb nach jedem
+     Sprung selbst weiter; sie landete bei 10280,6 statt 10281, und ein
+     einziges Pixel verschiebt das ganze Raster um eine Zeile. Bei einer
+     Schwelle von 24 unterscheiden sich dann saemtliche Kanten, und
+     start-sortiment meldete immer wieder exakt 9,03 %. Nach dem Einfrieren
+     kann niemand mehr dazwischenfunken. */
+  if (zielY !== null) await seite.evaluate(y => scrollTo({ top: y, behavior: 'instant' }), zielY);
+  await seite.waitForTimeout(250);
   const bild = await seite.screenshot();
   await seite.close();
   return bild;
