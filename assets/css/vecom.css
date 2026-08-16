@@ -902,14 +902,16 @@ section[id],main [id]{scroll-margin-top:96px}
 
 
 /* ---------- Auftritt aller Karten, seitenweit ---------- */
-.weiter__karte,.betrieb__link,.rezept__karte,.betriebe li,.rezepte li{
+/* Sicherheitsnetz: ohne JavaScript bleibt alles sichtbar. Der Auftritt
+   wird erst eingeschaltet, wenn das Skript wirklich läuft. */
+html.js-an .weiter__karte,html.js-an .betrieb__link,html.js-an .rezept__karte{
   opacity:0;transform:translateY(20px) scale(.99)}
-.weiter__karte.da,.betrieb__link.da,.rezept__karte.da,.betriebe li.da,.rezepte li.da{
+html.js-an .weiter__karte.da,html.js-an .betrieb__link.da,html.js-an .rezept__karte.da{
   opacity:1;transform:none;
   transition:opacity var(--takt-l) var(--ease-out),transform var(--takt-l) var(--ease-out),
              box-shadow var(--takt-m) var(--ease-out),border-color var(--takt-s)}
 @media (prefers-reduced-motion:reduce){
-  .weiter__karte,.betrieb__link,.rezept__karte,.betriebe li,.rezepte li{opacity:1;transform:none}
+  html.js-an .weiter__karte,html.js-an .betrieb__link,html.js-an .rezept__karte{opacity:1;transform:none}
 }
 
 /* Karte zur Seite:das Bild wandert, statt hart zu wechseln */

@@ -20,7 +20,11 @@ const BUDGET = {
   'index.html':                            900,
   'kategorie-antipasti.html':              700,
   'produkt-pistaziencreme-aus-bronte.html': 700,
-  'rezepte.html':                          700,
+  /* 820: die Uebersicht zeigt acht Vorschaubilder. Der frueher gemessene
+     Wert von 497 KB stammt aus einem Fehler — die Karten standen auf
+     opacity:0, Chrome hielt ihre Bilder deshalb zurueck. Sichtbar geworden
+     laedt die Seite, was sie wirklich braucht. */
+  'rezepte.html':                          820,
 };
 const ORT = process.env.VECOM_ORT || 'http://localhost:8099';
 

@@ -230,6 +230,53 @@ async function pruefeSeite(browser, datei, lage) {
     if (wert < soll) befunde.push(`Kontrast ${wert.toFixed(2)}:1 (soll ${soll}) — „${p.text}“`);
   });
 
+  /* --- 5. Bleibt etwas unsichtbar? ---
+     Auftrittseffekte setzen Elemente auf opacity:0 und holen sie per
+     Skript zurueck. Wird ein Element dabei vergessen, bleibt es fuer
+     immer unsichtbar — die Seite sieht leer aus, obwohl das Markup steht.
+     Genau so ist die Rezeptuebersicht ausgefallen: acht Karten im HTML,
+     nichts im Bild, und keine Funktionspruefung schlug an.
+     Geprueft wird nach dem Durchscrollen, so wie ein Besucher es tut.
+
+     Noch nicht trennscharf: Zustandsanzeigen, deren Geschwister andere
+     Klassen tragen (.rv, .rv-d1, .rv-d2 …), werden von der Stapelerkennung
+     nicht erfasst und auf der Startseite als Befund gemeldet. Sechs Stueck,
+     alle harmlos. Wer das aufraeumt, sollte die Gruppierung ueber ein
+     data-Attribut loesen statt ueber Klassennamen. */
+  /* Bis ans Ende scrollen, nicht eine feste Zahl von Schritten: die
+     Startseite ist ueber 14.000 px lang, zehn Radumdrehungen erreichen
+     die Werteleiste nicht — sie waere faelschlich als unsichtbar gemeldet. */
+  const hoehe = await seite.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < hoehe; y += 700) {
+    await seite.evaluate(v => scrollTo(0, v), y);
+    await seite.waitForTimeout(90);
+  }
+  await seite.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  await seite.waitForTimeout(1100);
+  const unsichtbar = await seite.evaluate(() => {
+    const raus = [];
+    for (const e of document.querySelectorAll('main *')) {
+      const s = getComputedStyle(e);
+      if (+s.opacity > 0.05 || s.display === 'none' || s.visibility === 'hidden') continue;
+      if (!e.offsetWidth && !e.offsetHeight) continue;
+      const text = (e.textContent || '').trim();
+      if (text.length < 3) continue;                 /* leere Huellen zaehlen nicht */
+
+      /* Stapel sind Absicht: von Reisekapiteln ist immer nur eines im Bild,
+         der Hinweis am 3D-Objekt erscheint erst, wenn der Renderer laeuft.
+         Ist von einer Gruppe gleichartiger Geschwister mindestens eines
+         sichtbar, wird nichts vergessen — es wird nur gerade nichts gezeigt. */
+      const art = e.tagName + '.' + String(e.className).split(' ')[0];
+      const geschwister = [...(e.parentElement?.children || [])]
+        .filter(g => g.tagName + '.' + String(g.className).split(' ')[0] === art);
+      if (geschwister.some(g => +getComputedStyle(g).opacity > 0.05)) continue;
+      if (e.closest('[hidden], [aria-hidden="true"]')) continue;
+      raus.push(`${e.tagName.toLowerCase()}.${String(e.className).split(' ')[0]} — „${text.slice(0, 30)}“`);
+    }
+    return [...new Set(raus)].slice(0, 6);
+  });
+  for (const u of unsichtbar) befunde.push(`bleibt unsichtbar: ${u}`);
+
   for (const m of meldungen) befunde.push(`${m.art}: ${m.text}`);
   await seite.close();
   return befunde;
