@@ -1,7 +1,17 @@
 # Sprachumschaltung Italienisch
 
 Der Shop lässt sich auf Italienisch umstellen — über den Wähler in der Kopfzeile,
-auf schmalen Displays über die große Navigation. Die Wahl wird gemerkt und gilt für
+auf **allen** Bildschirmbreiten sichtbar.
+
+Der Wähler zeigt beide Sprachen nebeneinander, die aktuelle ausgefüllt: **DE | IT**.
+Ein einzelner Knopf mit der aktuellen Sprache wäre mehrdeutig — heißt „DE“, dass man
+auf Deutsch ist, oder dass man hier auf Deutsch schaltet? Zwei Felder beantworten das
+ohne Erklärung.
+
+Auf schmalen Displays bleibt er in voller Größe (44 × 44 px je Feld). Statt alle
+Bedienelemente zu schrumpfen, weichen einzelne ganz: erst der Klangschalter, dann die
+Suche — beide sind über die große Navigation erreichbar — und zuletzt die Wortmarke
+neben dem Siegel. Die Wahl wird gemerkt und gilt für
 alle Folgeseiten. Wer den Browser auf Italienisch gestellt hat, bekommt sie beim
 ersten Besuch automatisch.
 

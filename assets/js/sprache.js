@@ -157,20 +157,33 @@
     ziel.after(h);
   }
 
-  /* ---------- Umschalter ---------- */
-  const knopf = document.createElement('button');
-  knopf.type = 'button';
-  knopf.className = 'iconbtn sprachbtn';
-  knopf.id = 'sprachToggle';
-  knopf.innerHTML = '<span class="sprachbtn__kuerzel">DE</span>';
+  /* ---------- Umschalter ----------
+     Ein Segment mit beiden Sprachen, nicht ein Knopf mit der aktuellen.
+     „DE“ allein ist mehrdeutig: heisst es „du bist auf Deutsch“ oder
+     „hier klicken fuer Deutsch“? Zwei Felder nebeneinander beantworten
+     das ohne Erklaerung — man sieht die Wahl, nicht nur den Zustand. */
+  const waehler = document.createElement('div');
+  waehler.className = 'sprachwahl';
+  waehler.id = 'sprachwahl';
+  waehler.setAttribute('role', 'group');
+  waehler.setAttribute('aria-label', 'Sprache · Lingua');
+  waehler.innerHTML =
+      '<button type="button" data-sprache="de" lang="de">DE</button>'
+    + '<span class="sprachwahl__strich" aria-hidden="true"></span>'
+    + '<button type="button" data-sprache="it" lang="it">IT</button>';
+
+  const feldDe = waehler.querySelector('[data-sprache="de"]');
+  const feldIt = waehler.querySelector('[data-sprache="it"]');
 
   let knopfSetzen = function(nachIt){
-    knopf.querySelector('.sprachbtn__kuerzel').textContent = nachIt ? 'IT' : 'DE';
-    knopf.setAttribute('aria-label', nachIt
-      ? 'Cambia lingua in tedesco' : 'Sprache auf Italienisch umstellen');
-    knopf.setAttribute('title', nachIt ? 'Italiano · Deutsch' : 'Deutsch · Italiano');
-    knopf.setAttribute('aria-pressed', String(nachIt));
+    feldDe.setAttribute('aria-pressed', String(!nachIt));
+    feldIt.setAttribute('aria-pressed', String(nachIt));
+    feldDe.setAttribute('aria-label', 'Deutsch' + (nachIt ? '' : ' — aktuelle Sprache'));
+    feldIt.setAttribute('aria-label', 'Italiano' + (nachIt ? ' — lingua attuale' : ''));
   };
+
+  feldDe.addEventListener('click', () => { if(wurzel.lang === 'it') umschalten(false); });
+  feldIt.addEventListener('click', () => { if(wurzel.lang !== 'it') umschalten(true); });
 
   /* Das Woerterbuch ist auf vier Dateien verteilt: Oberflaeche zuerst,
      dann die Fliesstexte. Alle schreiben in dasselbe Objekt und werden
@@ -205,33 +218,12 @@
     try { localStorage.setItem(SPEICHER, nachIt ? 'it' : 'de'); } catch(e){}
   }
 
-  knopf.addEventListener('click', () => umschalten(wurzel.lang !== 'it'));
 
   const werkzeuge = document.querySelector('.tools');
-  if(werkzeuge) werkzeuge.insertBefore(knopf, werkzeuge.firstChild);
+  if(werkzeuge) werkzeuge.insertBefore(waehler, werkzeuge.firstChild);
   knopfSetzen(false);
 
-  /* Zweiter Zugang in der grossen Navigation — auf schmalen Displays
-     ist er der einzige, dort fehlt in der Kopfzeile der Platz. */
-  const neben = document.querySelector('.welt__neben');
-  if(neben){
-    const feld = document.createElement('div');
-    feld.className = 'welt__sprache';
-    const zweit = document.createElement('button');
-    zweit.type = 'button';
-    zweit.innerHTML = '<b class="welt__sprache__kuerzel">IT</b><span>Italiano</span>';
-    zweit.addEventListener('click', () => umschalten(wurzel.lang !== 'it'));
-    feld.appendChild(zweit);
-    neben.appendChild(feld);
-    const alt = knopfSetzen;
-    knopfSetzen = function(nachIt){
-      alt(nachIt);
-      zweit.querySelector('b').textContent = nachIt ? 'DE' : 'IT';
-      zweit.querySelector('span').textContent = nachIt ? 'Deutsch' : 'Italiano';
-      zweit.setAttribute('aria-label', nachIt ? 'Passa al tedesco' : 'Auf Italienisch umstellen');
-    };
-    knopfSetzen(wurzel.lang === 'it');
-  }
+
 
   /* Gemerkte Wahl, sonst Browsersprache */
   let wunsch = null;
