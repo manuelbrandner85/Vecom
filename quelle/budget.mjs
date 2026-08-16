@@ -25,6 +25,7 @@ const BUDGET = {
 const ORT = process.env.VECOM_ORT || 'http://localhost:8099';
 
 const browser = await chromium.launch({
+  ...(process.env.VECOM_BROWSER ? { executablePath: process.env.VECOM_BROWSER } : {}),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
 

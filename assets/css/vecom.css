@@ -206,7 +206,7 @@ body.is-locked{overflow:hidden}
 
 .nav{display:none;margin-inline:auto;gap:.3rem}
 @media(min-width:1180px){.nav{display:flex}}
-.nav a{font-family:var(--ui);font-size:.82rem;letter-spacing:.06em;text-decoration:none;padding:.55rem .8rem;border-radius:3px;color:#3C341D;position:relative}
+.nav a{display:flex;align-items:center;min-height:44px;font-family:var(--ui);font-size:.82rem;letter-spacing:.06em;text-decoration:none;padding:.55rem .8rem;border-radius:3px;color:#3C341D;position:relative}
 .nav a::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:.34rem;height:1.5px;background:var(--citron);transform:scaleX(0);transform-origin:left;transition:transform var(--takt-s) var(--ease-out)}
 .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
 
@@ -258,7 +258,7 @@ body.is-locked{overflow:hidden}
 .hero__grid>*{min-width:0}
 .hero__wort{max-width:36rem}
 
-.hero__eyebrow{display:flex;align-items:center;gap:.7rem;color:var(--citron);margin-bottom:1.1rem;
+.hero__eyebrow{display:flex;align-items:center;gap:.7rem;color:#F0D384;margin-bottom:1.1rem;
   letter-spacing:.14em;font-size:.64rem}
 .hero__eyebrow::before{content:"";flex:0 0 auto;width:34px;height:1.5px;background:var(--citron)}
 @media(min-width:560px){.hero__eyebrow{letter-spacing:.2em;font-size:.68rem}.hero__eyebrow::before{width:44px}}
@@ -432,7 +432,7 @@ body.is-locked{overflow:hidden}
 .btn--primary:hover{background:var(--olive-deep);box-shadow:var(--shadow-m)}
 .btn--ghost{border-color:var(--olive);color:var(--olive-deep);background:transparent}
 .btn--ghost:hover{background:rgba(74,78,10,.09)}
-.btn--gold{background:var(--citron);color:#3A2A05}
+.btn--gold{background:var(--citron);color:#241A02}
 .btn--gold:hover{background:#CE9614}
 .btn--block{width:100%}
 .btn[disabled]{opacity:.5;pointer-events:none}
@@ -522,7 +522,7 @@ section[id],main [id]{scroll-margin-top:96px}
 /* ---------- Produktseite ---------- */
 .krumen{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding-block:1.4rem .4rem;
   font-family:var(--ui);font-size:.74rem;color:var(--ink-soft)}
-.krumen a{color:var(--ink-soft);text-decoration:none;padding:.35rem 0}
+.krumen a{display:inline-flex;align-items:center;min-height:44px;min-width:44px;justify-content:center;padding-inline:.3rem;color:var(--ink-soft);text-decoration:none;padding:.35rem 0}
 .krumen a:hover{color:var(--olive)}
 .krumen span[aria-hidden]{color:var(--line)}
 .krumen [aria-current]{color:var(--olive-deep)}
@@ -802,8 +802,8 @@ section[id],main [id]{scroll-margin-top:96px}
 .welt__titel{color:var(--citron-soft);margin-top:1.4rem;margin-bottom:.5rem}
 .welt__titel:first-child{margin-top:0}
 .welt__klein{list-style:none;margin:0;padding:0}
-.welt__klein a,.welt__klein button{display:block;width:100%;text-align:left;background:none;border:0;
-  padding:.5rem 0;color:rgba(246,238,219,.86);text-decoration:none;
+.welt__klein a,.welt__klein button{display:flex;align-items:center;min-height:44px;width:100%;text-align:left;background:none;border:0;
+  padding:.55rem 0;color:rgba(246,238,219,.86);text-decoration:none;
   font-family:var(--body);font-size:1.02rem;transition:color var(--takt-s),padding-left var(--takt-s) var(--ease-out)}
 .welt__klein a:hover,.welt__klein button:hover,
 .welt__klein a:focus-visible,.welt__klein button:focus-visible{color:var(--citron);padding-left:.4rem}
@@ -1290,7 +1290,7 @@ html{scrollbar-color:var(--olive-soft) var(--paper-warm);scrollbar-width:thin}
 .pd__price{display:flex;align-items:baseline;gap:.7rem;margin-block:1.1rem}
 .pd__price b{font-family:var(--display);font-weight:400;font-size:2rem}
 .pd__buy{display:flex;gap:.7rem;align-items:center;margin-block:1.4rem}
-.pd__buy .qty button{width:42px;height:46px}
+.pd__buy .qty button{width:44px;height:44px}
 .spec{border-top:1px solid var(--line);margin-top:1.4rem;padding-top:1rem}
 .spec div{display:grid;grid-template-columns:38% 1fr;gap:.6rem;padding:.4rem 0;font-size:.86rem;border-bottom:1px dotted rgba(203,184,143,.8)}
 .spec dt{font-family:var(--ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#605535;padding-top:.15rem}
@@ -1440,3 +1440,10 @@ html{scroll-behavior:smooth}
 /* Italienische Fachbegriffe: eigene Sprache für Screenreader und Silbentrennung.
    Ein Vorleseprogramm spricht "Nocellara del Belice" sonst deutsch betont. */
 [lang="it"]{hyphens:manual;font-variant-ligatures:common-ligatures}
+
+.spec dd a{display:inline-flex;align-items:center;min-height:44px;min-width:44px}
+
+/* Trefferflaechen: Zutatenverweise und Warengruppen-Chips brauchen
+   44 px Hoehe, sonst trifft man sie auf dem Telefon nicht zuverlaessig. */
+.zutaten a{display:inline-flex;align-items:center;min-height:44px}
+.katnav a{min-height:44px;display:inline-flex;align-items:center}

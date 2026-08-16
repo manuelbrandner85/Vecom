@@ -52,6 +52,7 @@ const ANSICHTEN = [
 mkdirSync(ORDNER, { recursive: true });
 
 const browser = await chromium.launch({
+  ...(process.env.VECOM_BROWSER ? { executablePath: process.env.VECOM_BROWSER } : {}),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
 
