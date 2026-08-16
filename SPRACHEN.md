@@ -9,8 +9,13 @@ ersten Besuch automatisch.
 
 | Datei | Inhalt |
 |---|---|
-| `assets/js/sprache-it.js` | Wörterbuch: deutscher Text → italienischer Text |
 | `assets/js/sprache.js` | Mechanik: Wähler, Textersetzung, Speicherung |
+| `assets/js/sprache-it.js` | Oberfläche, Navigation, Warenkorb, Kasse |
+| `assets/js/sprache-it-2.js` | Produkttexte und Reisekapitel |
+| `assets/js/sprache-it-3.js` | Erzeugerporträts |
+| `assets/js/sprache-it-4.js` | Rezepte |
+
+Zusammen 72 KB, geladen nur beim Umschalten.
 
 Umgesetzt als **Textersetzung im Browser**, nicht als zweiter Seitenbaum. Beim
 Umschalten werden alle Textknoten und die Beschriftungen (`aria-label`,
@@ -56,5 +61,18 @@ node quelle/zugang.mjs        # prüft auch, ob der Wähler die Kopfzeile spreng
 node quelle/budget.mjs
 ```
 
-Noch nicht übersetzt sind die langen Fließtexte der Erzeugerporträts, der
-Rezeptschritte und der Reisekapitel. Titel, Teaser und alle Bedienelemente sind es.
+Gemessener Übersetzungsgrad (Anteil italienischer Funktionswörter am sichtbaren
+Text): Startseite 89 %, Rezeptübersicht 94 %, Rezeptseite 91 %, Erzeugerübersicht
+100 %, Erzeugerporträt 96 %, Produktseite 100 %. Der Rest sind Rechtstexte und
+einzelne Fachangaben.
+
+## Eine Falle beim Ersetzen
+
+Absätze, in denen ein italienischer Fachbegriff als `<span lang="it">` ausgezeichnet
+ist, zerfallen in mehrere Textknoten — der Satz steht nie am Stück im Wörterbuch.
+Deshalb werden zusätzlich **ganze Elemente** geprüft.
+
+Dabei darf nur ersetzt werden, wenn die einzigen Element-Kinder `<span>` sind. Ein
+`<li>`, das ein `<p>` enthält, würde durch `textContent` sein inneres `<p>` verlieren —
+die Rezeptliste verkürzte sich dabei um einen Schritt, und alle folgenden rutschten
+eine Position nach oben.

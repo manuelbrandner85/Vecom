@@ -74,9 +74,39 @@
     return null;
   }
 
+  /* Absaetze, die durch <span lang="it"> in mehrere Textknoten zerfallen,
+     stehen nie am Stueck im Woerterbuch. Deshalb werden auch ganze Elemente
+     geprueft — aber nur solche, deren einzige Element-Kinder <span> sind.
+     Ein <li>, das ein <p> enthaelt, darf nicht ersetzt werden: textContent
+     wuerde das <p> loeschen und die Liste um einen Eintrag verkuerzen. */
+  const GANZ = 'p, dd, dt, h1, h2, h3, figcaption';
+  let ganzeOriginale = null;
+
+  function ganzeSichern(){
+    if(ganzeOriginale) return;
+    ganzeOriginale = [];
+    for(const e of document.querySelectorAll(GANZ)){
+      if(e.closest(TABU)) continue;
+      if([...e.children].some(k => k.tagName !== 'SPAN')) continue;
+      if(!e.querySelector('span')) continue;          /* einteilig: Textknoten genuegt */
+      const glatt = e.textContent.trim().replace(/\s+/g, ' ');
+      if(glatt.length > 12) ganzeOriginale.push({e, html: e.innerHTML, glatt});
+    }
+  }
+
   function anwenden(nachIt){
     urtexteSichern();
     attributeSichern();
+    ganzeSichern();
+
+    for(const {e, html, glatt} of ganzeOriginale){
+      if(!e.isConnected) continue;
+      if(nachIt){
+        if(paket[glatt] && e.innerHTML === html) e.textContent = paket[glatt];
+      } else if(e.innerHTML !== html){
+        e.innerHTML = html;
+      }
+    }
 
     for(const [knoten, urtext] of originale){
       if(!knoten.isConnected) continue;
@@ -142,16 +172,29 @@
     knopf.setAttribute('aria-pressed', String(nachIt));
   };
 
-  async function paketLaden(){
-    if(paket) return true;
-    if(window.VECOM_IT){ paket = window.VECOM_IT; return true; }
+  /* Das Woerterbuch ist auf vier Dateien verteilt: Oberflaeche zuerst,
+     dann die Fliesstexte. Alle schreiben in dasselbe Objekt und werden
+     nur geholt, wenn jemand tatsaechlich umschaltet. */
+  const TEILE = ['sprache-it.js', 'sprache-it-2.js', 'sprache-it-3.js', 'sprache-it-4.js'];
+
+  function teilLaden(datei){
     return new Promise(fertig => {
       const s = document.createElement('script');
-      s.src = 'assets/js/sprache-it.js';
-      s.onload = () => { paket = window.VECOM_IT || {}; fertig(true); };
+      s.src = 'assets/js/' + datei;
+      s.onload = () => fertig(true);
       s.onerror = () => fertig(false);
       document.head.appendChild(s);
     });
+  }
+
+  let geladen = false;
+  async function paketLaden(){
+    if(geladen){ paket = window.VECOM_IT; return true; }
+    const ergebnis = await Promise.all(TEILE.map(teilLaden));
+    if(!ergebnis[0]) return false;          /* ohne Oberflaeche gar nicht erst */
+    geladen = true;
+    paket = window.VECOM_IT || {};
+    return true;
   }
 
   async function umschalten(nachIt){
@@ -207,7 +250,7 @@
     clearTimeout(warteZeit);
     warteZeit = setTimeout(() => {
       beobachterAn = false;
-      originale = null; attrOriginale = null;
+      originale = null; attrOriginale = null; ganzeOriginale = null;
       anwenden(true);
       requestAnimationFrame(() => { beobachterAn = true; });
     }, 60);

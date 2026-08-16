@@ -364,6 +364,80 @@ window.VECOM_IT = {
   "Kapitel": "Capitolo",
   "Film starten": "Avvia il video",
 
+  /* ---------- Reisekapitel und Produkttexte ---------- */
+  "Weiß, bevor irgendetwas reift":
+    "Bianco, prima che maturi qualcosa",
+  "Im Februar blüht der Mandelbaum, bevor auf der Insel sonst irgendetwas treibt. Zwischen den Tempeln von Agrigento wird daraus ein ganzes Tal aus Weiß — zwei Wochen lang, dann ist es vorbei. Geerntet wird erst im Spätsommer, und an der anderen Küste. Das Jahr fängt hier an.":
+    "A febbraio fiorisce il mandorlo, prima che sull’isola germogli qualsiasi altra cosa. Tra i templi di Agrigento ne nasce un’intera valle bianca — per due settimane, poi è finita. Il raccolto arriva solo a fine estate, e sull’altra costa. L’anno comincia qui.",
+  "Die Knospe, bevor sie aufgeht":
+    "Il bocciolo, prima che si apra",
+  "Auf der Vulkaninsel wachsen die Kapernsträucher im Windschatten niedriger Trockenmauern. Gepflückt wird im Morgengrauen, von Hand, bevor die Knospe sich öffnet — danach ist sie nur noch Blüte.":
+    "Sull’isola vulcanica i cespugli di cappero crescono al riparo di bassi muri a secco. Si raccoglie all’alba, a mano, prima che il bocciolo si apra — dopo è soltanto un fiore.",
+  "Meer, das zu Salz wird":
+    "Mare che diventa sale",
+  "In flachen Becken zwischen Trapani und Marsala verdunstet Meerwasser, seit der Antike, bewegt von Windmühlen. Im Hochsommer wird geschöpft — ungewaschen, ohne Rieselhilfe. Deshalb klumpt das Salz und schmeckt nach mehr als Salz.":
+    "In vasche basse tra Trapani e Marsala l’acqua di mare evapora, dall’antichità, mossa dai mulini a vento. In piena estate si raccoglie — non lavato, senza antiagglomeranti. Per questo il sale si compatta e sa di più che di sale.",
+  "Ernte auf erstarrter Lava":
+    "Raccolto sulla lava indurita",
+  "Am Westhang des Ätna tragen die Pistazienbäume nur in ungeraden Jahren. Im Jahr dazwischen werden die Blüten entfernt, damit der Baum Kraft sammelt. Das halbiert den Ertrag — und erklärt, warum diese Frucht kostet, was sie kostet.":
+    "Sul versante ovest dell’Etna i pistacchi danno frutto solo negli anni dispari. Nell’anno intermedio i fiori vengono rimossi, perché l’albero raccolga forze. Questo dimezza la resa — e spiega perché questo frutto costa quello che costa.",
+  "Vier Stunden bis zur Mühle":
+    "Quattro ore fino al frantoio",
+  "Mitte Oktober, bei beginnender Reife. Netze unter den Bäumen, gepflückt wird mit Kämmen statt mit Schüttelmaschinen. Zwischen Baum und Mühle liegen selten mehr als vier Stunden — Polyphenole zerfallen schnell.":
+    "A metà ottobre, a maturazione iniziale. Reti sotto gli alberi, si raccoglie con i pettini invece che con gli scuotitori. Tra albero e frantoio passano raramente più di quattro ore — i polifenoli si degradano in fretta.",
+  "Grün, das aus dem Hahn läuft":
+    "Verde che esce dal rubinetto",
+  "Kalt gepresst, dunkel gelagert, unter Stickstoff. Das Öl kratzt im Hals, und genau das gehört dazu: Es ist der Geschmack von Bitterstoffen, die ein Jahr später nicht mehr da wären.":
+    "Spremuto a freddo, conservato al buio, sotto azoto. L’olio pizzica in gola, ed è proprio così che deve essere: è il sapore delle sostanze amare che un anno dopo non ci sarebbero più.",
+  "Holzwolle, Papier, Ihr Name":
+    "Truciolo, carta, il tuo nome",
+  "Jede Kiste wird von Hand gepackt, mit Holzwolle statt Plastik, mit einer Karte, auf der steht, wer das Glas gefüllt hat. Ein bis zwei Werktage später steht sie vor Ihrer Tür.":
+    "Ogni cassetta viene preparata a mano, con truciolo di legno invece della plastica, con un biglietto che dice chi ha riempito il barattolo. Uno o due giorni lavorativi dopo è alla tua porta.",
+  "Unser Lager":
+    "Il nostro magazzino",
+  "Februar":
+    "Febbraio",
+  "Juni":
+    "Giugno",
+  "Juli":
+    "Luglio",
+  "September":
+    "Settembre",
+  "Oktober":
+    "Ottobre",
+  "Dezember":
+    "Dicembre",
+  "Grasig, mit Artischocke und einer klaren Schärfe im Abgang. Das Alltagsöl für alles, was roh serviert wird.":
+    "Erbaceo, con carciofo e un piccante netto in chiusura. L’olio di ogni giorno per tutto ciò che si serve crudo.",
+  "Milder als die Nocellara, mit Mandel und reifer Tomate. Für Menschen, denen scharfes Öl zu viel ist.":
+    "Più delicato della Nocellara, con mandorla e pomodoro maturo. Per chi trova l’olio piccante eccessivo.",
+  "Zwei Jahre im Kastanienfass. Dunkel, weich, ohne die scharfe Spitze industrieller Essige.":
+    "Due anni in botte di castagno. Scuro, morbido, senza la punta aggressiva degli aceti industriali.",
+  "Mit Schale eingekocht, deutlich weniger süß als üblich. Herb im Nachgang.":
+    "Cotta con la scorza, molto meno dolce del solito. Amarognola in chiusura.",
+  "Tiefrot, mit feiner Bitterkeit aus der Schale. Schmeckt nach Winter am Ätna.":
+    "Rosso intenso, con una fine amarezza della scorza. Sa d’inverno sull’Etna.",
+  "45 % Pistazie, keine Palmfette. Grün, weil die Pistazie grün ist — nicht wegen Farbstoff.":
+    "45 % di pistacchio, nessun grasso di palma. Verde perché il pistacchio è verde — non per il colorante.",
+  "Hell, blumig, mit deutlichem Zitrusduft. Kristallisiert langsam und fein.":
+    "Chiaro, floreale, con un netto profumo di agrumi. Cristallizza lentamente e finemente.",
+  "Flach, schmal, sehr aromatisch. Die Mandel, aus der Marzipan gemacht wurde, bevor es Industrie gab.":
+    "Piatta, stretta, molto aromatica. La mandorla con cui si faceva il marzapane prima dell’industria.",
+  "Groß, fleischig, mild. In Salzlake statt in Essig, deshalb schmeckt man die Olive.":
+    "Grandi, carnose, delicate. In salamoia invece che in aceto, così si sente l’oliva.",
+  "In Salz gereift, nicht in Essig eingelegt. Vor Gebrauch kurz wässern.":
+    "Maturati sotto sale, non conservati in aceto. Sciacquare brevemente prima dell’uso.",
+  "An der Sonne getrocknet, mit Oregano und Knoblauch in Olivenöl eingelegt.":
+    "Essiccati al sole, conservati sott’olio con origano e aglio.",
+  "Pistazie, Basilikum, Pecorino. Ohne Sahne, ohne Stärke, ohne Palmöl.":
+    "Pistacchio, basilico, pecorino. Senza panna, senza amido, senza olio di palma.",
+  "Von Wind und Sonne getrocknet, grob vermahlen. Mineralisch, nicht bloß salzig.":
+    "Essiccato da vento e sole, macinato grosso. Minerale, non soltanto salato.",
+  "Ganze Rispen, luftgetrocknet. Zwischen den Fingern zerrieben ergibt das eine ganz andere Wolke als Streugewürz.":
+    "Mazzetti interi, essiccati all’aria. Sbriciolato tra le dita sprigiona un profumo tutt’altro che da spezia in barattolo.",
+  "Olivenöl 250 ml, Zitronenmarmelade, Pistaziencreme, Kapern und Oregano in der Holzkiste.":
+    "Olio d’oliva 250 ml, marmellata di limoni, crema di pistacchio, capperi e origano in cassetta di legno.",
+
   /* ---------- Hinweis zu den Rechtstexten ---------- */
   "__RECHT_HINWEIS__":
     "Nota: i testi legali (Impressum, condizioni generali, recesso, privacy) "
