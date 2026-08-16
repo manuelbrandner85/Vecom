@@ -58,10 +58,15 @@
   function uebersetze(text){
     const roh = text.trim();
     if(!roh) return null;
+    /* Im Markup umbrochene Absaetze enthalten Zeilenumbrueche und
+       Einrueckungen. Ohne Normalisierung findet das Woerterbuch sie nie —
+       und genau die langen Fliesstexte blieben deutsch stehen. */
+    const glatt = roh.replace(/\s+/g, ' ');
+    if(paket[glatt]) return text.replace(roh, paket[glatt]);
     if(paket[roh]) return text.replace(roh, paket[roh]);
     /* Zusammengesetzte Zeilen: Satzteile einzeln versuchen */
-    if(roh.includes(' · ')){
-      const teile = roh.split(' · ');
+    if(glatt.includes(' · ')){
+      const teile = glatt.split(' · ');
       if(teile.some(t => paket[t.trim()])){
         return text.replace(roh, teile.map(t => paket[t.trim()] || t).join(' · '));
       }

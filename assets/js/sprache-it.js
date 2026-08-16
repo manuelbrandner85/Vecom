@@ -76,6 +76,8 @@ window.VECOM_IT = {
 
   /* ---------- Auftakt ---------- */
   "Ätna · Ionische Küste · Val di Noto": "Etna · Costa ionica · Val di Noto",
+  "Ätna": "Etna",
+  "Ionische Küste": "Costa ionica",
   "Sizilien,": "La Sicilia,",
   "in Gläsern": "in barattoli",
   "abgefüllt.": "e bottiglie.",
@@ -314,6 +316,20 @@ window.VECOM_IT = {
   "Zu den Rezepten": "Alle ricette",
   "Zu den Erzeugern": "Ai produttori",
   "Nicht gefunden": "Non trovato",
+
+  /* ---------- Nachtrag: mehrzeilige Ueberschriften ---------- */
+  "Fünfzehn Erzeugnisse,": "Quindici prodotti,",
+  "kein Regalfüller darunter.": "nessun riempitivo da scaffale.",
+  "Der Weg ist kurz,": "Il percorso è breve,",
+  "die Liste der Hände auch.": "e anche l’elenco delle mani.",
+  "Wenn das neue Öl kommt,": "Quando arriva l’olio nuovo,",
+  "erfahren Sie es zuerst.": "lo saprai per primo.",
+  "Die Menschen,": "Le persone",
+  "bei denen wir einkaufen.": "da cui acquistiamo.",
+  "Versand, Zahlung,": "Spedizione, pagamento,",
+  "Ionische Küste": "Costa ionica",
+  "Alles, was hier steht, hat einen Ort und einen Namen.": "Tutto ciò che trovi qui ha un luogo e un nome.",
+  "Zwölf Betriebe · vier Herkünfte": "Dodici aziende · quattro origini",
 
   /* ---------- Nachtrag: Kasse, Dialoge, Bedienhilfen ---------- */
   "E-Mail für die Bestellbestätigung": "E-mail per la conferma d’ordine",
