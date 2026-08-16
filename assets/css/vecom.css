@@ -1449,3 +1449,23 @@ html{scroll-behavior:smooth}
    44 px Hoehe, sonst trifft man sie auf dem Telefon nicht zuverlaessig. */
 .zutaten a{display:inline-flex;align-items:center;min-height:44px}
 .katnav a{min-height:44px;display:inline-flex;align-items:center}
+
+/* ---------- Sprachumschalter ---------- */
+.sprachbtn{font-family:var(--ui);font-size:.66rem;font-weight:700;letter-spacing:.1em}
+.sprachbtn__kuerzel{display:block}
+.sprachbtn[aria-pressed="true"]{color:var(--olive);background:rgba(74,78,10,.1)}
+.head.ueber-hero .sprachbtn[aria-pressed="true"]{color:var(--citron);background:rgba(246,238,219,.14)}
+/* Auf schmalen Displays hat die Kopfzeile fuer fuenf Knoepfe keinen Platz.
+   Der Sprachwaehler wandert dann in die grosse Navigation. */
+@media(max-width:519px){.head .sprachbtn{display:none}}
+.welt__sprache{display:none;margin-top:1.4rem}
+@media(max-width:519px){.welt__sprache{display:block}}
+.welt__sprache button{display:flex;align-items:center;gap:.5rem;min-height:44px;width:100%;
+  background:none;border:0;padding:.5rem 0;color:rgba(246,238,219,.86);
+  font-family:var(--body);font-size:1.02rem;text-align:left}
+.welt__sprache button:hover{color:var(--citron)}
+.welt__sprache b{font-family:var(--ui);font-size:.66rem;letter-spacing:.1em;
+  border:1px solid currentColor;border-radius:3px;padding:.15rem .35rem}
+
+.recht-hinweis{grid-column:1/-1;margin-top:1.2rem;padding-top:1rem;
+  border-top:1px solid var(--line);font-size:.82rem;color:var(--ink-soft);max-width:60ch}
