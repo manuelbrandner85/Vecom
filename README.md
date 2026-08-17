@@ -303,6 +303,29 @@ die Tischaufnahmen zeigen ohnehin genau diese Gerichte — kein einziges neues B
 
 Gepflegt in `quelle/rezepte.py`.
 
+## Die Karte
+
+Gezeichnet in der Manier der Portolan-Seekarten des 14. bis 16. Jahrhunderts:
+Pergamentgrund mit Fleckenbildung, achtstrahlige Kompassrose im Tyrrhenischen Meer,
+32 davon ausgehende Windlinien, Kuesten als Federstrich mit landeinwaerts gesetzter
+Schraffur, Wellenlinien im offenen Meer, Kartusche und Massstabsleiste.
+
+**Die Geometrie ist unveraendert**: amtliche Kuestendaten, echte Koordinaten. Nur die
+Darstellung ist neu. Erzeugt von `quelle/seekarte.py`, Kuestenpfade in
+`quelle/kueste.json`.
+
+Zwei Dinge, die dabei schiefgingen und im Skript dokumentiert sind:
+
+- Die Kuestenpfade wurden zuerst aus `erzeuger.html` gelesen — beim zweiten Lauf las
+  das Skript damit sein eigenes Ergebnis, und die Nebeninseln gingen verloren.
+  Geodaten gehoeren in die Quelle, nicht in erzeugtes Markup.
+- Die Pergament-Auflage lag ueber den Standorten und fing alle Klicks ab. Alle
+  Zierschichten tragen jetzt `pointer-events="none"`.
+
+Die Beschriftungen weichen einander aus: geprueft wird gegen die geschaetzte Textbreite
+**und** gegen fremde Standortpunkte. Vorher lief „Frantoio Sciacca“ quer ueber den Punkt
+von Ribera.
+
 ## Erzeuger
 
 Zwölf Betriebe, je eine Porträtseite mit Ort, Gründungsjahr, Leitung, Umfang und
