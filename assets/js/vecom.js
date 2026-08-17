@@ -15,95 +15,95 @@ const CATS = [
 ];
 
 const P = [
-  {id:"olio-noc", cat:"oel", shape:"bottle", name:"Natives Olivenöl Extra – Nocellara", origin:"Valle del Belice", price:24.90, amount:500, unit:"ml",
+  {id:"olio-noc", cat:"oel", shape:"bottle", name:"Natives Olivenöl Extra – Nocellara", origin:"Valle del Belice", price:24.90, amount:500, unit:"ml", kg:0.95,
    badge:"Ernte 2025", badgeGold:true, fill:"#C9B33A", accent:"#46551F",
    desc:"Grasig, mit Artischocke und einer klaren Schärfe im Abgang. Das Alltagsöl für alles, was roh serviert wird.",
    long:"Die Nocellara del Belice wird Mitte Oktober bei beginnender Reife gepflückt und innerhalb von vier Stunden kalt gepresst. Das ergibt ein Öl mit viel Polyphenolen: es kratzt im Hals, und genau das gehört dazu. Zu Tomaten, Bohnen, gegrilltem Fisch und zum Schluss über die Suppe.",
    specs:{"Zutaten":"100 % Olivenöl der Sorte Nocellara del Belice","Erzeuger":"Az. Agr. Lo Bue, Castelvetrano","Säuregehalt":"0,21 %","Haltbarkeit":"18 Monate ab Abfüllung"}},
 
-  {id:"olio-bia", cat:"oel", shape:"bottle", name:"Natives Olivenöl Extra – Biancolilla", origin:"Agrigento", price:14.90, amount:250, unit:"ml",
+  {id:"olio-bia", cat:"oel", shape:"bottle", name:"Natives Olivenöl Extra – Biancolilla", origin:"Agrigento", price:14.90, amount:250, unit:"ml", kg:0.55,
    fill:"#D7C455", accent:"#7A8B4A",
    desc:"Milder als die Nocellara, mit Mandel und reifer Tomate. Für Menschen, denen scharfes Öl zu viel ist.",
    long:"Biancolilla ist die alte Hausolive Westsiziliens. Spät geerntet, sanft gepresst, sehr niedrige Bitterkeit. Passt zu Blattsalaten, Ricotta, Zitrusfrüchten und zum Backen.",
    specs:{"Zutaten":"100 % Olivenöl der Sorte Biancolilla","Erzeuger":"Frantoio Sciacca, Agrigento","Säuregehalt":"0,28 %","Haltbarkeit":"18 Monate ab Abfüllung"}},
 
-  {id:"aceto", cat:"oel", shape:"bottle", name:"Weinessig aus Nero d’Avola", origin:"Val di Noto", price:11.20, amount:500, unit:"ml",
+  {id:"aceto", cat:"oel", shape:"bottle", name:"Weinessig aus Nero d’Avola", origin:"Val di Noto", price:11.20, amount:500, unit:"ml", kg:0.92,
    fill:"#7A2E28", accent:"#4A2C17",
    desc:"Zwei Jahre im Kastanienfass. Dunkel, weich, ohne die scharfe Spitze industrieller Essige.",
    long:"Aus überschüssigem Nero-d’Avola-Wein der Ernte, langsam im offenen Fass vergoren. Die Süße der Traube bleibt spürbar. Für Caponata, gebratene Zwiebeln und alles Süßsaure.",
    specs:{"Zutaten":"Weinessig aus Nero d’Avola, enthält Sulfite","Erzeuger":"Cantina Buccheri, Noto","Säure":"6 %","Haltbarkeit":"36 Monate"}},
 
-  {id:"marm-lim", cat:"suesses", shape:"jar", name:"Zitronenmarmelade Femminello", origin:"Syrakus", price:8.90, amount:340, unit:"g",
+  {id:"marm-lim", cat:"suesses", shape:"jar", name:"Zitronenmarmelade Femminello", origin:"Syrakus", price:8.90, amount:340, unit:"g", kg:0.62,
    fill:"#EDC53C", accent:"#7A8B4A",
    desc:"Mit Schale eingekocht, deutlich weniger süß als üblich. Herb im Nachgang.",
    long:"Femminello-Zitronen aus Syrakus, ungewachst, mit Schale verarbeitet. 55 g Frucht auf 100 g Marmelade, kein Pektinzusatz — die Konsistenz kommt aus der Schale. Auf gebuttertem Brot, zu Pecorino und in Mürbeteig.",
    specs:{"Zutaten":"Zitronen 55 %, Rohrzucker, Zitronensaft","Erzeuger":"Conserve Aretusa, Syrakus","Fruchtanteil":"55 g je 100 g","Haltbarkeit":"24 Monate, geöffnet kühl 4 Wochen"}},
 
-  {id:"marm-ora", cat:"suesses", shape:"jar", name:"Blutorangen-Konfitüre Tarocco", origin:"Ebene von Catania", price:8.90, amount:340, unit:"g",
+  {id:"marm-ora", cat:"suesses", shape:"jar", name:"Blutorangen-Konfitüre Tarocco", origin:"Ebene von Catania", price:8.90, amount:340, unit:"g", kg:0.62,
    fill:"#C8511E", accent:"#46551F",
    desc:"Tiefrot, mit feiner Bitterkeit aus der Schale. Schmeckt nach Winter am Ätna.",
    long:"Die Tarocco reift von Dezember bis März auf der vulkanischen Ebene südlich des Ätna. Der rote Farbstoff entsteht nur, wenn die Nächte kalt genug sind. Wir kochen offen im Kupferkessel, dadurch bleibt die Frucht stückig.",
    specs:{"Zutaten":"Blutorangen 58 %, Rohrzucker, Zitronensaft","Erzeuger":"Az. Agr. Grasso, Paternò","Fruchtanteil":"58 g je 100 g","Haltbarkeit":"24 Monate"}},
 
-  {id:"pistacchio", cat:"suesses", shape:"jar", name:"Pistaziencreme aus Bronte", origin:"Bronte, Ätna-Westhang", price:16.90, amount:200, unit:"g",
+  {id:"pistacchio", cat:"suesses", shape:"jar", name:"Pistaziencreme aus Bronte", origin:"Bronte, Ätna-Westhang", price:16.90, amount:200, unit:"g", kg:0.42,
    badge:"Nur 2-jährige Ernte", fill:"#8FA24A", accent:"#4A2C17",
    desc:"45 % Pistazie, keine Palmfette. Grün, weil die Pistazie grün ist — nicht wegen Farbstoff.",
    long:"Die Pistazie von Bronte wächst auf Lava und wird nur alle zwei Jahre geerntet, in Handarbeit an steilen Hängen. Entsprechend selten und teuer ist sie. Unsere Creme enthält 45 % davon, gemahlen mit Zucker, Milchpulver und Sonnenblumenöl. Auf Brioche, in Eis, oder direkt vom Löffel.",
    specs:{"Zutaten":"Pistazien 45 %, Zucker, Magermilchpulver, Sonnenblumenöl","Allergene":"Schalenfrüchte, Milch","Erzeuger":"Coop. Etnea, Bronte","Haltbarkeit":"12 Monate"}},
 
-  {id:"miele", cat:"suesses", shape:"jar", name:"Zagara-Honig, Orangenblüte", origin:"Ribera", price:10.90, amount:250, unit:"g",
+  {id:"miele", cat:"suesses", shape:"jar", name:"Zagara-Honig, Orangenblüte", origin:"Ribera", price:10.90, amount:250, unit:"g", kg:0.5,
    fill:"#E9B833", accent:"#C9B33A",
    desc:"Hell, blumig, mit deutlichem Zitrusduft. Kristallisiert langsam und fein.",
    long:"Zagara ist der sizilianische Name für die Orangenblüte. Die Völker stehen von April an in den Hainen von Ribera. Kalt geschleudert, ungefiltert, nicht erhitzt — deshalb bleiben Pollen und Aroma erhalten.",
    specs:{"Zutaten":"Orangenblütenhonig, ungefiltert","Erzeuger":"Apicoltura Riberella, Ribera","Hinweis":"Nicht für Kinder unter 12 Monaten","Haltbarkeit":"24 Monate"}},
 
-  {id:"mandorle", cat:"suesses", shape:"sack", name:"Mandeln aus Avola, naturbelassen", origin:"Avola", price:12.40, amount:250, unit:"g",
+  {id:"mandorle", cat:"suesses", shape:"sack", name:"Mandeln aus Avola, naturbelassen", origin:"Avola", price:12.40, amount:250, unit:"g", kg:0.27,
    fill:"#D9B98A", accent:"#7A5236",
    desc:"Flach, schmal, sehr aromatisch. Die Mandel, aus der Marzipan gemacht wurde, bevor es Industrie gab.",
    long:"Die Pizzuta d’Avola gilt als beste Mandel Italiens: dünne Schale, hoher Ölgehalt, intensiver Duft. Ungeröstet und ungesalzen, damit Sie selbst entscheiden. Für Granita, Mandelmilch, Pesto und Gebäck.",
    specs:{"Zutaten":"100 % Mandeln, Sorte Pizzuta","Allergene":"Schalenfrüchte","Erzeuger":"Consorzio Avola","Haltbarkeit":"12 Monate, kühl und dunkel"}},
 
-  {id:"olive-verdi", cat:"antipasti", shape:"glass", name:"Grüne Oliven Nocellara del Belice", origin:"Castelvetrano", price:7.40, amount:314, unit:"ml",
+  {id:"olive-verdi", cat:"antipasti", shape:"glass", name:"Grüne Oliven Nocellara del Belice", origin:"Castelvetrano", price:7.40, amount:314, unit:"ml", kg:0.6,
    fill:"#8CA13F", accent:"#46551F",
    desc:"Groß, fleischig, mild. In Salzlake statt in Essig, deshalb schmeckt man die Olive.",
    long:"Die Castelvetrano-Olive wird grün geerntet und in schwacher Salzlake milchsauer vergoren. Kein Essig, keine Lauge, keine Farbe. Buttrig im Biss, ideal als Aperitivo und in der Caponata.",
    specs:{"Zutaten":"Oliven 60 %, Wasser, Meersalz","Abtropfgewicht":"180 g","Erzeuger":"Az. Agr. Lo Bue, Castelvetrano","Haltbarkeit":"24 Monate"}},
 
-  {id:"capperi", cat:"antipasti", shape:"glass", name:"Kapern aus Pantelleria in Meersalz", origin:"Pantelleria", price:9.80, amount:100, unit:"g",
+  {id:"capperi", cat:"antipasti", shape:"glass", name:"Kapern aus Pantelleria in Meersalz", origin:"Pantelleria", price:9.80, amount:100, unit:"g", kg:0.24,
    badge:"g.g.A.", fill:"#6E7F3C", accent:"#7A5236",
    desc:"In Salz gereift, nicht in Essig eingelegt. Vor Gebrauch kurz wässern.",
    long:"Auf Pantelleria wachsen die Kapernsträucher im Windschatten niedriger Steinmauern. Die Knospen werden von Hand gepflückt und schichtweise in Meersalz gereift — so entsteht das typische, fast blumige Aroma. Für Pasta, Fisch, Caponata und Salsa verde.",
    specs:{"Zutaten":"Kapernknospen, Meersalz","Zubereitung":"10 Minuten in kaltem Wasser wässern","Erzeuger":"Coop. Pantesca","Haltbarkeit":"36 Monate"}},
 
-  {id:"pomodori", cat:"antipasti", shape:"glass", name:"Getrocknete Tomaten in Olivenöl", origin:"Pachino", price:9.60, amount:280, unit:"g",
+  {id:"pomodori", cat:"antipasti", shape:"glass", name:"Getrocknete Tomaten in Olivenöl", origin:"Pachino", price:9.60, amount:280, unit:"g", kg:0.52,
    fill:"#A83A21", accent:"#46551F",
    desc:"An der Sonne getrocknet, mit Oregano und Knoblauch in Olivenöl eingelegt.",
    long:"Pachino-Tomaten trocknen vier Tage auf Holzgestellen an der Südküste, bis nur noch Frucht und Süße übrig sind. Danach in nativem Olivenöl mit Oregano und einer Knoblauchzehe. Das Öl im Glas nicht wegwerfen — es ist die halbe Miete.",
    specs:{"Zutaten":"Tomaten 55 %, Olivenöl, Oregano, Knoblauch, Meersalz","Abtropfgewicht":"160 g","Erzeuger":"Conserve Pachino","Haltbarkeit":"24 Monate"}},
 
-  {id:"pesto", cat:"antipasti", shape:"jar", name:"Pesto Siciliano mit Pistazie", origin:"Bronte / Catania", price:11.50, amount:190, unit:"g",
+  {id:"pesto", cat:"antipasti", shape:"jar", name:"Pesto Siciliano mit Pistazie", origin:"Bronte / Catania", price:11.50, amount:190, unit:"g", kg:0.4,
    fill:"#93A557", accent:"#4A2C17",
    desc:"Pistazie, Basilikum, Pecorino. Ohne Sahne, ohne Stärke, ohne Palmöl.",
    long:"Ein Löffel auf heiße Pasta, ein Löffel Kochwasser dazu, fertig. Auch gut auf gegrilltem Brot mit Ricotta. Nach dem Öffnen mit Öl bedecken und im Kühlschrank innerhalb von fünf Tagen aufbrauchen.",
    specs:{"Zutaten":"Pistazien 30 %, Sonnenblumenöl, Olivenöl, Basilikum, Pecorino, Meersalz","Allergene":"Schalenfrüchte, Milch","Erzeuger":"Coop. Etnea, Bronte","Haltbarkeit":"18 Monate"}},
 
-  {id:"sale", cat:"gewuerze", shape:"sack", name:"Meersalz aus den Salinen von Trapani", origin:"Trapani", price:5.90, amount:500, unit:"g",
+  {id:"sale", cat:"gewuerze", shape:"sack", name:"Meersalz aus den Salinen von Trapani", origin:"Trapani", price:5.90, amount:500, unit:"g", kg:0.53,
    fill:"#E4E0D2", accent:"#1E4A4E",
    desc:"Von Wind und Sonne getrocknet, grob vermahlen. Mineralisch, nicht bloß salzig.",
    long:"In den Salinen zwischen Trapani und Marsala wird seit der Antike Meerwasser in flachen Becken verdunstet. Das Salz wird von Hand geschöpft, ungewaschen und ohne Rieselhilfen abgefüllt. Es klumpt deshalb leicht — ein gutes Zeichen.",
    specs:{"Zutaten":"100 % Meersalz, unraffiniert","Körnung":"grob, mittel gemahlen","Erzeuger":"Saline Ettore, Trapani","Haltbarkeit":"unbegrenzt bei trockener Lagerung"}},
 
-  {id:"origano", cat:"gewuerze", shape:"sack", name:"Oregano vom Ätna-Hang", origin:"Zafferana Etnea", price:6.50, amount:30, unit:"g",
+  {id:"origano", cat:"gewuerze", shape:"sack", name:"Oregano vom Ätna-Hang", origin:"Zafferana Etnea", price:6.50, amount:30, unit:"g", kg:0.05,
    fill:"#6E7F3C", accent:"#7A5236",
    desc:"Ganze Rispen, luftgetrocknet. Zwischen den Fingern zerrieben ergibt das eine ganz andere Wolke als Streugewürz.",
    long:"Wilder Oregano wird im Juli bei voller Blüte geschnitten und im Schatten getrocknet. Wir lassen die Rispen ganz, weil gemahlener Oregano sein Öl innerhalb weniger Wochen verliert. Für Tomatensalat, Pizza, gegrilltes Gemüse.",
    specs:{"Zutaten":"100 % wilder Oregano, ganze Rispen","Erzeuger":"Sammlung Zafferana Etnea","Ernte":"Juli 2025","Haltbarkeit":"24 Monate"}},
 
-  {id:"box", cat:"geschenke", shape:"crate", name:"Geschenkkiste „Piccola Sicilia“", origin:"Fünf Erzeugnisse", price:59.00, amount:1, unit:"St",
+  {id:"box", cat:"geschenke", shape:"crate", name:"Geschenkkiste „Piccola Sicilia“", origin:"Fünf Erzeugnisse", price:59.00, amount:1, unit:"St", kg:2.6,
    badge:"Versandkostenfrei", badgeGold:true, fill:"#B98B52", accent:"#46551F",
    desc:"Olivenöl 250 ml, Zitronenmarmelade, Pistaziencreme, Kapern und Oregano in der Holzkiste.",
    long:"Unsere Auswahl für alle, die Sizilien noch nicht im Schrank haben. In einer Holzkiste mit Holzwolle, dazu eine Karte mit Herkunft und Erzeuger jedes Glases. Auf Wunsch legen wir eine handgeschriebene Grußkarte bei — schreiben Sie den Text einfach ins Bemerkungsfeld der Bestellung.",
-   specs:{"Inhalt":"Olivenöl Biancolilla 250 ml, Zitronenmarmelade 340 g, Pistaziencreme 190 g, Kapern 100 g, Oregano 30 g","Verpackung":"Holzkiste 30 × 20 × 12 cm","Gewicht":"ca. 2,1 kg","Hinweis":"Versandkostenfrei innerhalb Deutschlands"}}
+   specs:{"Inhalt":"Olivenöl Biancolilla 250 ml, Zitronenmarmelade 340 g, Pistaziencreme 190 g, Kapern 100 g, Oregano 30 g","Verpackung":"Holzkiste 30 × 20 × 12 cm","Gewicht":"ca. 2,1 kg","Versandgewicht":"ca. 2,6 kg"}}
 ];
 
 /* ============================================================
@@ -187,13 +187,38 @@ function warenkorbLaden(){
 const cartCount = () => state.cart.reduce((n,l)=>n+l.qty,0);
 const subtotal  = () => state.cart.reduce((n,l)=>n+l.qty*l.price,0);
 
+/* ---------- Versand ----------
+   14,95 € je Paket bis 10 kg. Ab 199 € Warenwert entfaellt das Porto,
+   aber nur bis 10 kg Gesamtgewicht — so lautet die Vorgabe.
+
+   Ueber 10 kg wird je angefangenes weiteres Paket erneut berechnet und die
+   Befreiung greift nicht: sechs Flaschen Oel wiegen fast sechs Kilo, vier
+   Geschenkkisten mehr als zehn. Ohne diese Grenze wuerde der Shop bei
+   schweren Bestellungen draufzahlen. */
+const VERSAND_PREIS = 14.95;
+const VERSAND_FREI  = 199;
+const PAKET_KG      = 10;
+
+function shipWeight(){
+  return state.cart.reduce((s, l) => {
+    const p = P.find(x => x.id === l.id);
+    return s + (p && p.kg ? p.kg : 0.5) * l.qty;
+  }, 0);
+}
+function shipPakete(){
+  return Math.max(1, Math.ceil(shipWeight() / PAKET_KG));
+}
+function shipFrei(){
+  return subtotal() >= VERSAND_FREI
+      && shipWeight() <= PAKET_KG
+      && state.order.land !== "CH";
+}
 function shipCost(){
   const sub = subtotal();
   if(!sub) return 0;
-  const free = {DE:59, AT:89, CH:Infinity}[state.order.land];
-  const base = {DE:4.90, AT:8.90, CH:14.90}[state.order.land];
-  let c = sub >= free ? 0 : base;
-  if(state.order.versand === "express") c += 6.00;
+  const pakete = shipPakete();
+  let c = shipFrei() ? 0 : VERSAND_PREIS * pakete;
+  if(state.order.versand === "express") c += 6.00 * pakete;
   return c;
 }
 const total = () => subtotal() + shipCost();
@@ -318,15 +343,23 @@ function renderCart(){
     </div>`;
   }).join("");
 
-  const sub = subtotal(), free = {DE:59, AT:89, CH:Infinity}[state.order.land];
-  const rest = free - sub;
-  $("#shipbar").innerHTML = (state.order.land === "CH")
-    ? `Schweiz: Versand 14,90 € zzgl. Einfuhrabgaben.`
-    : (rest > 0
-      ? `Noch <b>${eur(rest)}</b> bis zum kostenfreien Versand.
-         <div class="shipbar__track"><div class="shipbar__fill" style="width:${Math.min(100, sub/free*100)}%"></div></div>`
-      : `Versandkostenfrei — erreicht.
-         <div class="shipbar__track"><div class="shipbar__fill" style="width:100%"></div></div>`);
+  const sub = subtotal();
+  const rest = VERSAND_FREI - sub;
+  const kg = shipWeight(), pakete = shipPakete();
+  const kgText = kg.toFixed(1).replace(".", ",");
+  const balken = (breite) => `<div class="shipbar__track">`
+      + `<div class="shipbar__fill" style="width:${breite}%"></div></div>`;
+
+  $("#shipbar").innerHTML =
+      state.order.land === "CH"
+        ? `Schweiz: ${eur(VERSAND_PREIS)} je Paket bis 10 kg, zzgl. Einfuhrabgaben.`
+    : kg > PAKET_KG
+        /* Ueber 10 kg gilt die Befreiung nicht — das muss dastehen,
+           bevor jemand im letzten Schritt ueberrascht wird. */
+        ? `<b>${kgText} kg</b> — über 10 kg, daher ${pakete} × ${eur(VERSAND_PREIS)} Versand.`
+    : rest > 0
+        ? `Noch <b>${eur(rest)}</b> bis zum kostenfreien Versand.${balken(Math.min(100, sub / VERSAND_FREI * 100))}`
+        : `Versandkostenfrei — erreicht. <span class="shipbar__zusatz">${kgText} kg</span>${balken(100)}`;
 
   $("#cartSum").innerHTML = `
     <div><span>Zwischensumme</span><span>${eur(sub)}</span></div>
@@ -438,7 +471,7 @@ function openProduct(id){
           </div>
           <button class="btn btn--primary" type="button" id="pdAdd" style="flex:1">In den Warenkorb</button>
         </div>
-        <p class="card__base">Lieferzeit 1–2 Werktage · Versandkostenfrei ab 59 €</p>
+        <p class="card__base">Lieferzeit 1–2 Werktage · Versandkostenfrei ab 199 €</p>
         <dl class="spec">
           ${Object.entries(p.specs).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
         </dl>
@@ -458,13 +491,14 @@ function openCart(){ renderCart(); openOverlay($("#cart")); }
    10 — Kasse
    ============================================================ */
 const SHIP_OPTS = () => {
-  const l = state.order.land, sub = subtotal();
-  const free = {DE:59, AT:89, CH:Infinity}[l];
-  const base = {DE:4.90, AT:8.90, CH:14.90}[l];
-  const std  = sub >= free ? 0 : base;
+  const pakete = shipPakete();
+  const std  = shipFrei() ? 0 : VERSAND_PREIS * pakete;
+  const zusatz = pakete > 1 ? ` · ${pakete} Pakete à 10 kg` : "";
   return [
-    {id:"standard", t:"Standardversand DHL GoGreen", s:"Zustellung in 1–2 Werktagen", p:std},
-    {id:"express",  t:"Expressversand",              s:"Zustellung am nächsten Werktag bei Bestellung bis 12 Uhr", p:std+6}
+    {id:"standard", t:"Standardversand DHL GoGreen",
+     s:"Zustellung in 1–2 Werktagen" + zusatz, p:std},
+    {id:"express",  t:"Expressversand",
+     s:"Zustellung am nächsten Werktag bei Bestellung bis 12 Uhr" + zusatz, p:std + 6 * pakete}
   ];
 };
 
@@ -655,7 +689,7 @@ const LEGAL = {
   agb: `<div class="legal"><h2>Allgemeine Geschäftsbedingungen</h2>
     <h3>§ 1 Geltungsbereich</h3><p>Für alle Bestellungen über diesen Onlineshop gelten die nachfolgenden Bedingungen. Vertragspartner ist ${PH("VECOM Handels GmbH")}.</p>
     <h3>§ 2 Vertragsschluss</h3><p>Die Darstellung der Produkte stellt kein bindendes Angebot dar. Mit dem Klick auf „Zahlungspflichtig bestellen“ geben Sie ein verbindliches Angebot ab. Der Vertrag kommt mit unserer Auftragsbestätigung oder mit dem Versand der Ware zustande.</p>
-    <h3>§ 3 Preise und Versand</h3><p>Alle Preise verstehen sich inklusive der gesetzlichen Mehrwertsteuer. Lebensmittel unterliegen dem ermäßigten Steuersatz von 7 %. Versandkosten: Deutschland 4,90 € (ab 59 € Warenwert kostenfrei), Österreich 8,90 € (ab 89 € kostenfrei), Schweiz 14,90 € zzgl. Einfuhrabgaben.</p>
+    <h3>§ 3 Preise und Versand</h3><p>Alle Preise verstehen sich inklusive der gesetzlichen Mehrwertsteuer. Lebensmittel unterliegen dem ermäßigten Steuersatz von 7 %. Versandkosten: 14,95 € je Paket bis 10 kg Gesamtgewicht. Ab einem Warenwert von 199 € entfällt der Versand innerhalb Deutschlands und Österreichs. Bei mehr als 10 kg wird je weiteres angefangenes Paket erneut berechnet. Schweiz: 14,95 € je Paket zzgl. Zoll und Einfuhrumsatzsteuer.</p>
     <h3>§ 4 Lieferung</h3><p>Die Lieferung erfolgt innerhalb von 1–2 Werktagen nach Zahlungseingang bzw. bei Rechnungskauf nach Bestelleingang.</p>
     <h3>§ 5 Zahlung</h3><p>Es stehen Rechnung, SEPA-Lastschrift, Kreditkarte und PayPal zur Verfügung. Bei Kauf auf Rechnung ist der Betrag innerhalb von 14 Tagen nach Erhalt der Ware fällig.</p>
     <h3>§ 6 Eigentumsvorbehalt</h3><p>Die Ware bleibt bis zur vollständigen Bezahlung unser Eigentum.</p>
@@ -676,9 +710,9 @@ const LEGAL = {
   versand: `<div class="legal"><h2>Versand &amp; Lieferung</h2>
     <h3>Kosten</h3>
     <ul>
-      <li>Deutschland: 4,90 € — ab 59 € Warenwert kostenfrei</li>
-      <li>Österreich: 8,90 € — ab 89 € Warenwert kostenfrei</li>
-      <li>Schweiz: 14,90 € zzgl. Zoll und Einfuhrumsatzsteuer</li>
+      <li>Deutschland: 14,95 € je Paket bis 10 kg — ab 199 € Warenwert kostenfrei</li>
+      <li>Österreich: 14,95 € je Paket bis 10 kg — ab 199 € Warenwert kostenfrei</li>
+      <li>Schweiz: 14,95 € je Paket bis 10 kg, zzgl. Zoll und Einfuhrumsatzsteuer</li>
       <li>Expresszuschlag: 6,00 €</li>
     </ul>
     <h3>Dauer</h3><p>Wir versenden werktags bis 14 Uhr. Zustellung innerhalb Deutschlands in der Regel in 1–2 Werktagen, Österreich 2–3, Schweiz 3–5 Werktage.</p>

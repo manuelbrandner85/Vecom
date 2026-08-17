@@ -20,11 +20,14 @@ const BUDGET = {
   'index.html':                            900,
   'kategorie-antipasti.html':              700,
   'produkt-pistaziencreme-aus-bronte.html': 700,
-  /* 820: die Uebersicht zeigt acht Vorschaubilder. Der frueher gemessene
+  /* 860: die Uebersicht zeigt acht Vorschaubilder. Der frueher gemessene
      Wert von 497 KB stammt aus einem Fehler — die Karten standen auf
-     opacity:0, Chrome hielt ihre Bilder deshalb zurueck. Sichtbar geworden
-     laedt die Seite, was sie wirklich braucht. */
-  'rezepte.html':                          820,
+     opacity:0, Chrome hielt ihre Bilder deshalb zurueck.
+     ACHTUNG: dieser Wert schwankt zwischen etwa 510 und 825 KB, je nachdem
+     wie viele lazy-Bilder Chrome beim load-Ereignis schon angefangen hat.
+     Ein Riss knapp ueber der Grenze ist deshalb kein sicherer Befund —
+     zweimal messen, bevor man etwas aendert. */
+  'rezepte.html':                          860,
 };
 const ORT = process.env.VECOM_ORT || 'http://localhost:8099';
 

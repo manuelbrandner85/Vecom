@@ -18,7 +18,7 @@ window.VECOM_IT = {
 
   /* ---------- Kopf, Navigation, Fuss ---------- */
   "Zum Inhalt springen": "Vai al contenuto",
-  "Versandkostenfrei ab 59 €": "Spedizione gratuita da 59 €",
+  "Versandkostenfrei ab 199 €": "Spedizione gratuita da 199 €",
   "Direktimport aus Sizilien · Versand in 1–2 Werktagen":
     "Importazione diretta dalla Sicilia · Spedizione in 1–2 giorni lavorativi",
   "Sortiment": "Assortimento",
@@ -66,8 +66,8 @@ window.VECOM_IT = {
   "Ein Jahr in Sizilien": "Un anno in Sicilia",
   "Herkunft & Karte": "Origine e mappa",
   "Versand & Zahlung": "Spedizione e pagamento",
-  "Versandkostenfrei ab 59 € · Lieferung in 1–2 Werktagen":
-    "Spedizione gratuita da 59 € · Consegna in 1–2 giorni lavorativi",
+  "Versandkostenfrei ab 199 € · Lieferung in 1–2 Werktagen":
+    "Spedizione gratuita da 199 € · Consegna in 1–2 giorni lavorativi",
   "Sie sind hier": "Percorso",
   "Startseite": "Home",
   "Scrollen": "Scorri",
@@ -141,8 +141,8 @@ window.VECOM_IT = {
   "Noch": "Ancora",
   "inkl. 7 % MwSt. (Lebensmittel) · Lieferzeit 1–2 Werktage":
     "IVA 7 % inclusa (alimentari) · Consegna in 1–2 giorni lavorativi",
-  "Lieferzeit 1–2 Werktage · Versandkostenfrei ab 59 €":
-    "Consegna in 1–2 giorni lavorativi · Spedizione gratuita da 59 €",
+  "Lieferzeit 1–2 Werktage · Versandkostenfrei ab 199 €":
+    "Consegna in 1–2 giorni lavorativi · Spedizione gratuita da 199 €",
   "liegt im Warenkorb.": "è nel carrello.",
 
   /* ---------- Kasse ---------- */
@@ -437,6 +437,17 @@ window.VECOM_IT = {
     "Mazzetti interi, essiccati all’aria. Sbriciolato tra le dita sprigiona un profumo tutt’altro che da spezia in barattolo.",
   "Olivenöl 250 ml, Zitronenmarmelade, Pistaziencreme, Kapern und Oregano in der Holzkiste.":
     "Olio d’oliva 250 ml, marmellata di limoni, crema di pistacchio, capperi e origano in cassetta di legno.",
+
+  /* ---------- Nachtrag: Versand ---------- */
+  "Versandkostenfrei ab 199 €": "Spedizione gratuita da 199 €",
+  "Versandkostenfrei ab 199 € · Lieferung in 1–2 Werktagen": "Spedizione gratuita da 199 € · Consegna in 1–2 giorni lavorativi",
+  "Lieferzeit 1–2 Werktage · Versandkostenfrei ab 199 €": "Consegna in 1–2 giorni lavorativi · Spedizione gratuita da 199 €",
+  "DHL GoGreen, versichert. 14,95 € je Paket bis 10 kg. Ab 199 € Warenwert entfällt der Versand innerhalb Deutschlands und Österreichs. Schweiz zzgl. Einfuhrabgaben.": "DHL GoGreen, assicurata. 14,95 € per collo fino a 10 kg. Da 199 € di valore merce la spedizione è gratuita in Germania e Austria. Svizzera più oneri d’importazione.",
+  "Standardversand DHL GoGreen": "Spedizione standard DHL GoGreen",
+  "Pakete à 10 kg": "colli da 10 kg",
+  "Versandkostenfrei — erreicht.": "Spedizione gratuita — raggiunta.",
+  "bis zum kostenfreien Versand.": "alla spedizione gratuita.",
+  "Versandgewicht": "Peso di spedizione",
 
   /* ---------- Hinweis zu den Rechtstexten ---------- */
   "__RECHT_HINWEIS__":
